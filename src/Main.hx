@@ -5,6 +5,8 @@ import openfl.events.KeyboardEvent;
 import openfl.system.System;
 
 
+import org.jsoup.Exceptions;
+
 /**
  * 
  * @author azrafe7
@@ -16,6 +18,8 @@ class Main extends Sprite {
 		super();
 		
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		
+		throw new IllegalArgumentException("fail");
 	}
 	
 	public function onKeyDown(e:KeyboardEvent):Void 
