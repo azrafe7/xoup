@@ -18,13 +18,15 @@
   <classpaths>
     <class path="C:\HaxeToolkit\haxe\openfl\git" />
     <class path="C:\HaxeToolkit\haxe\lime\git" />
+    <class path="C:\HaxeToolkit\haxe\polygonal-ds\git\src" />
+    <class path="C:\HaxeToolkit\haxe\polygonal-printf\1,0,2-beta" />
     <class path="src" />
     <class path="c:\HaxeToolkit\haxe\openfl\git\extern" />
-    <class path="bin\windows\cpp\haxe" />
+    <class path="bin\windows\neko\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=3.6.0&#xA;lime=2.9.0&#xA;openfl-next&#xA;tools=2.9.0&#xA;no-compilation&#xA;native&#xA;lime-native&#xA;openfl-native&#xA;windows&#xA;desktop&#xA;display" />
+    <option directives="openfl=3.6.0&#xA;lime=2.9.0&#xA;polygonal-ds=2.0.0-beta&#xA;polygonal-printf=1.0.2-beta&#xA;openfl-next&#xA;tools=2.9.0&#xA;no-compilation&#xA;native&#xA;lime-native&#xA;openfl-native&#xA;windows&#xA;desktop&#xA;display" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />

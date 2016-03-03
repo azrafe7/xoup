@@ -5,7 +5,11 @@ import openfl.events.KeyboardEvent;
 import openfl.system.System;
 
 
+import de.polygonal.ds.ArrayList;
 import org.jsoup.Exceptions;
+import org.jsoup.Interfaces;
+import org.jsoup.helper.Validate;
+import org.jsoup.nodes.Node;
 
 /**
  * 
