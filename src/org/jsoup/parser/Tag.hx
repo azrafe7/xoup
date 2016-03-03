@@ -134,7 +134,7 @@ class Tag {
      *
      * @return if a known tag
      */
-    public function isKnownTag():Bool {
+    public function isKnown():Bool {
         return tags.exists(tagName);
     }
 
@@ -145,7 +145,7 @@ class Tag {
      * @return if known HTML tag
      */
 	//NOTE(az): renamed
-    public static function staticIsKnownTag(tagName:String):Bool {
+    public static function isKnownTag(tagName:String):Bool {
         return tags.exists(tagName);
     }
 
