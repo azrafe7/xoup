@@ -14,7 +14,8 @@ class Validate {
      * @param obj object to test
      * @param msg message to output if validation fails
      */
-    public static function notNull(obj, msg:String = "Object must not be null") {
+	//NOTE(az): Dynamic?
+    public static function notNull(obj:Dynamic, msg:String = "Object must not be null") {
         if (obj == null)
             throw new IllegalArgumentException(msg);
     }

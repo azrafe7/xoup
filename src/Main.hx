@@ -9,7 +9,8 @@ import de.polygonal.ds.ArrayList;
 import org.jsoup.Exceptions;
 import org.jsoup.Interfaces;
 import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Node;
+//import org.jsoup.nodes.Node;
+import org.jsoup.parser.Tag;
 
 /**
  * 

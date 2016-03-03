@@ -31,13 +31,13 @@ import java.util.List;
 
  @author Jonathan Hedley, jonathan@hedley.net */
 class Node implements Cloneable implements Hashable {
-    private static var EMPTY_NODES:List<Node> = new ArrayList<Node>();
+    private static inline var EMPTY_NODES:List<Node> = new ArrayList<Node>();
     
-	var parentNode:Node;
-    var childNodes:List<Node>;
-    var attributes:Attributes;
-    var baseUri:String;
-    var siblingIndex:Int;
+	var parentNode:Node = null;
+    var childNodes:List<Node> = null;
+    var attributes:Attributes = null;
+    var baseUri:String = null;
+    var siblingIndex:Int = 0;
 
     /**
      Create a new Node.
@@ -49,8 +49,8 @@ class Node implements Cloneable implements Hashable {
         Validate.notNull(attributes);
         
         childNodes = EMPTY_NODES;
-        if (baseUri != null) this.baseUri = baseUri.trim();
-        if (attributes != null) this.attributes = attributes;
+        this.baseUri = baseUri != null ? baseUri.trim() : "";
+        this.attributes = attributes != null ? attributes : new Attributes();
     }
 
     /**
@@ -444,7 +444,7 @@ class Node implements Cloneable implements Hashable {
             reparentChild(child);
             ensureChildNodes();
             childNodes.add(child);
-            child.setSiblingIndex(childNodes.size()-1);
+            child.setSiblingIndex(childNodes.size-1);
         }
     }
 
