@@ -11,6 +11,7 @@ import org.jsoup.Interfaces;
 import org.jsoup.helper.Validate;
 //import org.jsoup.nodes.Node;
 import org.jsoup.parser.Tag;
+import org.jsoup.nodes.Element;
 
 /**
  * 

@@ -5,7 +5,9 @@ package org.jsoup;
 /*interface Cloneable<T> {
 	function clone():T;
 }
+*/
 
-interface IterableWithLength<T>:Iterable<T> {
+typedef IterableWithLength<T> = {
+	function iterator() : Iterator<T>;
 	var length:Int;
-}*/
+}

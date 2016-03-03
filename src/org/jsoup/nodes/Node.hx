@@ -5,6 +5,7 @@ import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.Dll;
 import de.polygonal.ds.Hashable;
 import de.polygonal.ds.List;
+import org.jsoup.Interfaces.IterableWithLength;
 import org.jsoup.select.NodeVisitor;
 
 import org.jsoup.helper.Validate;
@@ -30,7 +31,7 @@ import java.util.List;
  The base, abstract Node model. Elements, Documents, Comments etc are all Node instances.
 
  @author Jonathan Hedley, jonathan@hedley.net */
-class Node implements Cloneable implements Hashable {
+class Node implements Cloneable<Node> implements Hashable {
     private static inline var EMPTY_NODES:List<Node> = new ArrayList<Node>();
     
 	var parentNode:Node = null;
