@@ -5,7 +5,7 @@ package org.jsoup.parser;
  */
 class ParseError {
     private var pos:Int;
-    private errorMsg:String;
+    private var errorMsg:String;
 
     public function new(pos:Int, errorMsg:String) {
         this.pos = pos;
