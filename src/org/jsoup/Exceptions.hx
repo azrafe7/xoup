@@ -27,3 +27,4 @@ class GenericException {
 
 
 class IllegalArgumentException extends GenericException { }
+class MissingResourceException extends GenericException { }

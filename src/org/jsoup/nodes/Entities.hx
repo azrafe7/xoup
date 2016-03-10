@@ -1,7 +1,11 @@
 package org.jsoup.nodes;
 
+import org.jsoup.Exceptions.MissingResourceException;
 import org.jsoup.helper.StringUtil;
-import org.jsoup.parser.Parser;
+import unifill.CodePoint;
+
+using StringTools;
+using unifill.Unifill;
 
 /*import java.io.IOException;
 import java.io.InputStream;
@@ -9,47 +13,35 @@ import java.nio.charset.CharsetEncoder;
 import java.util.*;
 */
 
+typedef Character = String;
+
 /**
  * HTML entities, and escape routines.
  * Source: <a href="http://www.w3.org/TR/html5/named-character-references.html#named-character-references">W3C HTML
  * named character references</a>.
  */
-//NOTE(az): refactor EscapeMode out in two classes (see end of file)
+//NOTE(az): refactored EscapeMode
 class Entities {
-    enum EscapeMode {
-        /** Restricted entities suitable for XHTML output: lt, gt, amp, and quot only. */
-        xhtml(xhtmlByVal),
-        /** Default HTML output entities. */
-        base(baseByVal),
-        /** Complete HTML entities. */
-        extended(fullByVal);
 
-        private Map<Character, String> map;
+	static inline var MIN_SUPPLEMENTARY_CODE_POINT:CodePoint = 0x10000;
+	
+    private static var full:Map<String, Character>;
+    private static var xhtmlByVal:Map<Character, String>;
+    private static var base:Map<String, Character>;
+    private static var baseByVal:Map<Character, String>;
+    private static var fullByVal:Map<Character, String>;
+	
+	static var maps:Map<EscapeMode, Map<Character, String>>;
 
-        EscapeMode(Map<Character, String> map) {
-            this.map = map;
-        }
-
-        public Map<Character, String> getMap() {
-            return map;
-        }
-    }
-
-    private static final Map<String, Character> full;
-    private static final Map<Character, String> xhtmlByVal;
-    private static final Map<String, Character> base;
-    private static final Map<Character, String> baseByVal;
-    private static final Map<Character, String> fullByVal;
-
-    private Entities() {}
+    function new() {}
 
     /**
      * Check if the input is a known named entity
      * @param name the possible entity name (e.g. "lt" or "amp")
      * @return true if a known named entity
      */
-    public static boolean isNamedEntity(String name) {
-        return full.containsKey(name);
+    public static function isNamedEntity(name:String):Bool {
+        return full.exists(name);
     }
 
     /**
@@ -58,8 +50,8 @@ class Entities {
      * @return true if a known named entity in the base set
      * @see #isNamedEntity(String)
      */
-    public static boolean isBaseNamedEntity(String name) {
-        return base.containsKey(name);
+    public static function isBaseNamedEntity(name:String):Bool {
+        return base.exists(name);
     }
 
     /**
@@ -67,37 +59,40 @@ class Entities {
      * @param name named entity (e.g. "lt" or "amp")
      * @return the Character value of the named entity (e.g. '{@literal <}' or '{@literal &}')
      */
-    public static Character getCharacterByName(String name) {
+    public static function getCharacterByName(name:String):Character {
         return full.get(name);
     }
     
-    static String escape(String string, Document.OutputSettings out) {
-        StringBuilder accum = new StringBuilder(string.length() * 2);
-        escape(accum, string, out, false, false, false);
+    static function escape(string:String, out:Document.OutputSettings):String {
+        var accum = new StringBuf(/*string.length() * 2*/);
+        _escape(accum, string, out, false, false, false);
         return accum.toString();
     }
 
     // this method is ugly, and does a lot. but other breakups cause rescanning and stringbuilder generations
-    static void escape(StringBuilder accum, String string, Document.OutputSettings out,
-                       boolean inAttribute, boolean normaliseWhite, boolean stripLeadingWhite) {
+    static function _escape(accum:StringBuf, string:String, out:Document.OutputSettings,
+                   inAttribute:Bool, normaliseWhite:Bool, stripLeadingWhite:Bool):Void {
 
-        boolean lastWasWhite = false;
-        boolean reachedNonWhite = false;
-        final EscapeMode escapeMode = out.escapeMode();
-        final CharsetEncoder encoder = out.encoder();
-        final CoreCharset coreCharset = CoreCharset.byName(encoder.charset().name());
-        final Map<Character, String> map = escapeMode.getMap();
-        final int length = string.length();
+        var lastWasWhite:Bool = false;
+        var reachedNonWhite:Bool = false;
+        var escapeMode:EscapeMode = out.escapeMode();
+        var encoder:CharsetEncoder = out.encoder();
+        var coreCharset:CoreCharset = CoreCharset.byName(encoder.charset().name());
+        var map:Map<Character, String> = escapeMode.getMap();
+        var length = string.uLength();
 
-        int codePoint;
-        for (int offset = 0; offset < length; offset += Character.charCount(codePoint)) {
+        var codePoint:CodePoint = 0;
+        //NOTE(az): recheck this loop
+		//for (int offset = 0; offset < length; offset += Character.charCount(codePoint)) {
+		var offset = 0;
+		while (offset < length) {
             codePoint = string.codePointAt(offset);
 
             if (normaliseWhite) {
                 if (StringUtil.isWhitespace(codePoint)) {
                     if ((stripLeadingWhite && !reachedNonWhite) || lastWasWhite)
                         continue;
-                    accum.append(' ');
+                    accum.add(' ');
                     lastWasWhite = true;
                     continue;
                 } else {
@@ -106,58 +101,60 @@ class Entities {
                 }
             }
             // surrogate pairs, split implementation for efficiency on single char common case (saves creating strings, char[]):
-            if (codePoint < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
-                final char c = (char) codePoint;
+            if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
+                var c:CodePoint = codePoint;
                 // html specific and required escapes:
                 switch (c) {
-                    case '&':
-                        accum.append("&amp;");
-                        break;
+                    case '&'.code:
+                        accum.add("&amp;");
                     case 0xA0:
                         if (escapeMode != EscapeMode.xhtml)
-                            accum.append("&nbsp;");
+                            accum.add("&nbsp;");
                         else
-                            accum.append("&#xa0;");
-                        break;
-                    case '<':
+                            accum.add("&#xa0;");
+                    case '<'.code:
                         // escape when in character data or when in a xml attribue val; not needed in html attr val
                         if (!inAttribute || escapeMode == EscapeMode.xhtml)
-                            accum.append("&lt;");
+                            accum.add("&lt;");
                         else
-                            accum.append(c);
-                        break;
-                    case '>':
+                            accum.add(c);
+                    case '>'.code:
                         if (!inAttribute)
-                            accum.append("&gt;");
+                            accum.add("&gt;");
                         else
-                            accum.append(c);
-                        break;
-                    case '"':
+                            accum.add(c);
+                    case '"'.code:
                         if (inAttribute)
-                            accum.append("&quot;");
+                            accum.add("&quot;");
                         else
-                            accum.append(c);
-                        break;
+                            accum.add(c);
                     default:
                         if (canEncode(coreCharset, c, encoder))
-                            accum.append(c);
-                        else if (map.containsKey(c))
-                            accum.append('&').append(map.get(c)).append(';');
-                        else
-                            accum.append("&#x").append(Integer.toHexString(codePoint)).append(';');
+                            accum.add(c);
+                        else if (map.exists(c))
+                            accum.add('&').add(map.get(c)).add(';');
+                        else {
+                            accum.add("&#x");
+							accum.add(StringTools.hex(codePoint));
+							accum.add(';');
+						}
                 }
             } else {
-                final String c = new String(Character.toChars(codePoint));
+                var c:String = codePoint.toString();
                 if (encoder.canEncode(c)) // uses fallback encoder for simplicity
-                    accum.append(c);
+                    accum.add(c);
                 else
-                    accum.append("&#x").append(Integer.toHexString(codePoint)).append(';');
+                    accum.add("&#x");
+					accum.add(StringTools.hex(codePoint));
+					accum.add(';');
             }
+			
+			offset += codePoint.toString().uLength();
         }
     }
 
-    static String unescape(String string) {
-        return unescape(string, false);
+    static function unescape(string:String):String {
+        return _unescape(string, false);
     }
 
     /**
@@ -166,7 +163,7 @@ class Entities {
      * @param strict if "strict" (that is, requires trailing ';' char, otherwise that's optional)
      * @return unescaped string
      */
-    static String unescape(String string, boolean strict) {
+    static function _unescape(string:String, strict:Bool):String {
         return Parser.unescapeEntities(string, strict);
     }
 
@@ -184,7 +181,7 @@ class Entities {
      * Jsoup: 167, 2
      */
 
-    private static boolean canEncode(final CoreCharset charset, final char c, final CharsetEncoder fallback) {
+    private static function canEncode(charset:CoreCharset, c:CodePoint, fallback:CharsetEncoder):Bool {
         // todo add more charset tests if impacted by Android's bad perf in canEncode
         switch (charset) {
             case ascii:
@@ -196,73 +193,92 @@ class Entities {
         }
     }
 
-    private enum CoreCharset {
-        ascii, utf, fallback;
-
-        private static CoreCharset byName(String name) {
-            if (name.equals("US-ASCII"))
-                return ascii;
-            if (name.startsWith("UTF-")) // covers UTF-8, UTF-16, et al
-                return utf;
-            return fallback;
-        }
-    }
-
 
     // xhtml has restricted entities
-    private static final Object[][] xhtmlArray = {
-            {"quot", 0x00022},
-            {"amp", 0x00026},
-            {"lt", 0x0003C},
-            {"gt", 0x0003E}
-    };
+    private static var xhtmlArray = [
+            "quot" => 0x00022,
+            "amp" => 0x00026,
+            "lt" => 0x0003C,
+            "gt" => 0x0003E
+    ];
 
-    static {
-        xhtmlByVal = new HashMap<Character, String>();
+    static function __init__() {
+        xhtmlByVal = new Map<Character, String>();
         base = loadEntities("entities-base.properties");  // most common / default
         baseByVal = toCharacterKey(base);
         full = loadEntities("entities-full.properties"); // extended and overblown.
         fullByVal = toCharacterKey(full);
 
-        for (Object[] entity : xhtmlArray) {
-            Character c = Character.valueOf((char) ((Integer) entity[1]).intValue());
-            xhtmlByVal.put(c, ((String) entity[0]));
+        for (key in xhtmlArray.keys()) {
+            var c:CodePoint = xhtmlArray[key];
+            xhtmlByVal.set(c.toString(), key);
         }
     }
 
-    private static Map<String, Character> loadEntities(String filename) {
-        Properties properties = new Properties();
-        Map<String, Character> entities = new HashMap<String, Character>();
+	//NOTE(az): check loading is done correcty (resources, splitting, etc.)
+    private static function loadEntities(filename:String):Map<String, Character> {
+        var entities = new Map<String, Character>();
         try {
-            InputStream in = Entities.class.getResourceAsStream(filename);
-            properties.load(in);
-            in.close();
-        } catch (IOException e) {
-            throw new MissingResourceException("Error loading entities resource: " + e.getMessage(), "Entities", filename);
+            var resource = haxe.Resource.getString(filename);
+            var entries = resource.split("\n");
+			for (entry in entries) {
+				var pair = entry.split("=");
+				if (pair.length == 2) {
+					var name = pair[0];
+					var val:CodePoint = Std.parseInt("0x" + pair[1]);
+					entities.set(name, val.toString());
+				}
+			}
+        } catch (e:Dynamic) {
+            throw new MissingResourceException("Error loading entities resource. Entities: " + filename);
         }
-
-        for (Map.Entry entry: properties.entrySet()) {
-            Character val = Character.valueOf((char) Integer.parseInt((String) entry.getValue(), 16));
-            String name = (String) entry.getKey();
-            entities.put(name, val);
-        }
+		
         return entities;
     }
 
-    private static Map<Character, String> toCharacterKey(Map<String, Character> inMap) {
-        Map<Character, String> outMap = new HashMap<Character, String>();
-        for (Map.Entry<String, Character> entry: inMap.entrySet()) {
-            Character character = entry.getValue();
-            String name = entry.getKey();
+    private static function toCharacterKey(inMap:Map<String, Character>):Map<Character, String> {
+        var outMap = new Map<Character, String>();
+        for (key in inMap.keys()) {
+            var character:Character = inMap[key];
+            var name:String = key;
 
-            if (outMap.containsKey(character)) {
+            if (outMap.exists(character)) {
                 // dupe, prefer the lower case version
-                if (name.toLowerCase().equals(name))
-                    outMap.put(character, name);
+                if (name.toLowerCase() == name)
+                    outMap.set(character, name);
             } else {
-                outMap.put(character, name);
+                outMap.set(character, name);
             }
         }
         return outMap;
     }
 }
+
+@:enum abstract EscapeMode(String) from String to String {
+	
+	/** Restricted entities suitable for XHTML output: lt, gt, amp, and quot only. */
+	var xhtml = "XHTML";
+	/** Default HTML output entities. */
+	var base = "BASE";
+	/** Complete HTML entities. */
+	var extended = "EXTENDED";
+
+	public function getMap():Map<Character, String> {
+		return Entities.maps[this];
+	}
+}
+
+@:enum abstract CoreCharset(String) from String to String {
+	var ascii = "ASCII";
+	var utf = "UTF";
+	var fallback = "FALLBACK";
+
+	static function byName(name:String):String {
+		if (name == "US-ASCII")
+			return ascii;
+		if (name.startsWith("UTF-")) // covers UTF-8, UTF-16, et al
+			return utf;
+		return fallback;
+	}
+}
+
