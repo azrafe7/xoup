@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="project" package="com.example.project" version="1.0.0" company="Company Name" />
+	<app main="TestAll" path="bin/test" file="test" />
+	<window background="#101010" fps="60" />
+	<window width="600" height="400" unless="mobile" />
+	<window orientation="landscape" vsync="false" antialiasing="0" if="cpp" />
+	
+	<set name="SWF_VERSION" value="11.2" />
+	
+	<source path="test" />
+	<source path="src" />
+	
+	<haxelib name="openfl" />
+	<haxelib name="utest" />
+	<haxelib name="polygonal-ds" />
+	<haxelib name="unifill" />
+	
+	<assets path="assets" rename="assets" exclude="openfl.svg" />
+	<icon path="assets/openfl.svg" />
+	
+</project>

@@ -594,6 +594,7 @@ class OutputSettings implements Cloneable<OutputSettings> {
 	}
 
 	//@Override
+	//NOTE(az): add missing props
 	public function clone():OutputSettings {
 		var clone:OutputSettings;
 		try {
