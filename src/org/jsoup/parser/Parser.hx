@@ -1,5 +1,6 @@
 package org.jsoup.parser;
 
+import de.polygonal.ds.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -21,7 +22,7 @@ class Parser {
      * Create a new Parser, using the specified TreeBuilder
      * @param treeBuilder TreeBuilder to use to parse input into Documents.
      */
-    public function(treeBuilder:TreeBuilder) {
+    public function new(treeBuilder:TreeBuilder) {
         this.treeBuilder = treeBuilder;
     }
     
@@ -35,7 +36,7 @@ class Parser {
      * Get the TreeBuilder currently in use.
      * @return current TreeBuilder.
      */
-    public TreeBuilder getTreeBuilder() {
+    public function getTreeBuilder():TreeBuilder {
         return treeBuilder;
     }
 
@@ -44,7 +45,7 @@ class Parser {
      * @param treeBuilder current TreeBuilder
      * @return this, for chaining
      */
-    public Parser setTreeBuilder(TreeBuilder treeBuilder) {
+    public function setTreeBuilder(treeBuilder:TreeBuilder):Parser {
         this.treeBuilder = treeBuilder;
         return this;
     }
@@ -53,7 +54,7 @@ class Parser {
      * Check if parse error tracking is enabled.
      * @return current track error state.
      */
-    public boolean isTrackErrors() {
+    public function isTrackErrors():Bool {
         return maxErrors > 0;
     }
 
@@ -62,7 +63,7 @@ class Parser {
      * @param maxErrors the maximum number of errors to track. Set to 0 to disable.
      * @return this, for chaining
      */
-    public Parser setTrackErrors(int maxErrors) {
+    public function setTrackErrors(maxErrors:Int):Parser {
         this.maxErrors = maxErrors;
         return this;
     }
@@ -71,7 +72,7 @@ class Parser {
      * Retrieve the parse errors, if any, from the last parse.
      * @return list of parse errors, up to the size of the maximum errors tracked.
      */
-    public List<ParseError> getErrors() {
+    public function getErrors():List<ParseError> {
         return errors;
     }
 
@@ -84,8 +85,8 @@ class Parser {
      *
      * @return parsed Document
      */
-    public static Document parse(String html, String baseUri) {
-        TreeBuilder treeBuilder = new HtmlTreeBuilder();
+    public static function parse(html:String, baseUri:String):Document {
+        var treeBuilder:TreeBuilder = new HtmlTreeBuilder();
         return treeBuilder.parse(html, baseUri, ParseErrorList.noTracking());
     }
 
@@ -99,8 +100,8 @@ class Parser {
      *
      * @return list of nodes parsed from the input HTML. Note that the context element, if supplied, is not modified.
      */
-    public static List<Node> parseFragment(String fragmentHtml, Element context, String baseUri) {
-        HtmlTreeBuilder treeBuilder = new HtmlTreeBuilder();
+    public static function parseFragment(fragmentHtml:String, context:Element, baseUri:String):List<Node> {
+        var treeBuilder:HtmlTreeBuilder = new HtmlTreeBuilder();
         return treeBuilder.parseFragment(fragmentHtml, context, baseUri, ParseErrorList.noTracking());
     }
 
@@ -111,8 +112,8 @@ class Parser {
      * @param baseUri base URI of document (i.e. original fetch location), for resolving relative URLs.
      * @return list of nodes parsed from the input XML.
      */
-    public static List<Node> parseXmlFragment(String fragmentXml, String baseUri) {
-        XmlTreeBuilder treeBuilder = new XmlTreeBuilder();
+    public static function parseXmlFragment(fragmentXml:String, baseUri:String):List<Node> {
+        var treeBuilder:XmlTreeBuilder = new XmlTreeBuilder();
         return treeBuilder.parseFragment(fragmentXml, baseUri, ParseErrorList.noTracking());
     }
 
@@ -124,15 +125,19 @@ class Parser {
      *
      * @return Document, with empty head, and HTML parsed into body
      */
-    public static Document parseBodyFragment(String bodyHtml, String baseUri) {
-        Document doc = Document.createShell(baseUri);
-        Element body = doc.body();
-        List<Node> nodeList = parseFragment(bodyHtml, body, baseUri);
-        Node[] nodes = nodeList.toArray(new Node[nodeList.size()]); // the node list gets modified when re-parented
-        for (int i = nodes.length - 1; i > 0; i--) {
+	//NOTE(az): loop
+    public static function parseBodyFragment(bodyHtml:String, baseUri:String):Document {
+        var doc:Document = Document.createShell(baseUri);
+        var body:Element = doc.body();
+        var nodeList:List<Node> = parseFragment(bodyHtml, body, baseUri);
+        var nodes:Array<Node> = nodeList.toArray(/*new Node[nodeList.size()]*/); // the node list gets modified when re-parented
+        var i = nodes.length - 1;
+		//for (int i = nodes.length - 1; i > 0; i--) {
+		while (i > 0) {
             nodes[i].remove();
+			i--;
         }
-        for (Node node : nodes) {
+        for (node in nodes) {
             body.appendChild(node);
         }
         return doc;
@@ -144,8 +149,8 @@ class Parser {
      * @param inAttribute if the string is to be escaped in strict mode (as attributes are)
      * @return an unescaped string
      */
-    public static String unescapeEntities(String string, boolean inAttribute) {
-        Tokeniser tokeniser = new Tokeniser(new CharacterReader(string), ParseErrorList.noTracking());
+    public static function unescapeEntities(string:String, inAttribute:Bool):String {
+        var tokeniser = new Tokeniser(new CharacterReader(string), ParseErrorList.noTracking());
         return tokeniser.unescapeEntities(inAttribute);
     }
 
@@ -156,7 +161,7 @@ class Parser {
      * @return parsed Document
      * @deprecated Use {@link #parseBodyFragment} or {@link #parseFragment} instead.
      */
-    public static Document parseBodyFragmentRelaxed(String bodyHtml, String baseUri) {
+    public static function parseBodyFragmentRelaxed(bodyHtml:String, baseUri:String):Document {
         return parse(bodyHtml, baseUri);
     }
     
@@ -167,7 +172,7 @@ class Parser {
      * based on a knowledge of the semantics of the incoming tags.
      * @return a new HTML parser.
      */
-    public static Parser htmlParser() {
+    public static function htmlParser():Parser {
         return new Parser(new HtmlTreeBuilder());
     }
 
@@ -176,7 +181,7 @@ class Parser {
      * rather creates a simple tree directly from the input.
      * @return a new simple XML parser.
      */
-    public static Parser xmlParser() {
+    public static function xmlParser():Parser {
         return new Parser(new XmlTreeBuilder());
     }
 }

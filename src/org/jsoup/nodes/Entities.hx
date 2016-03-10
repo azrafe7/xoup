@@ -3,6 +3,7 @@ package org.jsoup.nodes;
 import org.jsoup.Exceptions.MissingResourceException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document.CharsetEncoder;
+import org.jsoup.parser.Parser;
 import unifill.CodePoint;
 
 using StringTools;
