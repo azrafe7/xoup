@@ -1,104 +1,104 @@
 package org.jsoup.nodes;
 
-import org.jsoup.Jsoup;
-import org.junit.Test;
+//import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document.OutputSettings;
+import org.jsoup.nodes.Entities.EscapeMode.*;
+import unifill.CodePoint;
 
-import static org.jsoup.nodes.Document.OutputSettings;
-import static org.jsoup.nodes.Entities.EscapeMode.*;
-import static org.junit.Assert.*;
+import utest.Assert;
 
 
-public class EntitiesTest {
-    @Test public void escape() {
-        String text = "Hello &<> Å å π 新 there ¾ © »";
-        String escapedAscii = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(base));
-        String escapedAsciiFull = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(extended));
-        String escapedAsciiXhtml = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(xhtml));
-        String escapedUtfFull = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(extended));
-        String escapedUtfMin = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(xhtml));
+class EntitiesTest {
+    static public function testEscape() {
+        var text = "Hello &<> Å å π 新 there ¾ © »";
+        var escapedAscii = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(base));
+        var escapedAsciiFull = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(extended));
+        var escapedAsciiXhtml = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(xhtml));
+        var escapedUtfFull = Entities.escape(text, new OutputSettings().setCharset("UTF-8").setEscapeMode(extended));
+        var escapedUtfMin = Entities.escape(text, new OutputSettings().setCharset("UTF-8").setEscapeMode(xhtml));
 
-        assertEquals("Hello &amp;&lt;&gt; &Aring; &aring; &#x3c0; &#x65b0; there &frac34; &copy; &raquo;", escapedAscii);
-        assertEquals("Hello &amp;&lt;&gt; &angst; &aring; &pi; &#x65b0; there &frac34; &copy; &raquo;", escapedAsciiFull);
-        assertEquals("Hello &amp;&lt;&gt; &#xc5; &#xe5; &#x3c0; &#x65b0; there &#xbe; &#xa9; &#xbb;", escapedAsciiXhtml);
-        assertEquals("Hello &amp;&lt;&gt; Å å π 新 there ¾ © »", escapedUtfFull);
-        assertEquals("Hello &amp;&lt;&gt; Å å π 新 there ¾ © »", escapedUtfMin);
+        Assert.equals("Hello &amp;&lt;&gt; &Aring; &aring; &#x3c0; &#x65b0; there &frac34; &copy; &raquo;", escapedAscii);
+        Assert.equals("Hello &amp;&lt;&gt; &angst; &aring; &pi; &#x65b0; there &frac34; &copy; &raquo;", escapedAsciiFull);
+        Assert.equals("Hello &amp;&lt;&gt; &#xc5; &#xe5; &#x3c0; &#x65b0; there &#xbe; &#xa9; &#xbb;", escapedAsciiXhtml);
+        Assert.equals("Hello &amp;&lt;&gt; Å å π 新 there ¾ © »", escapedUtfFull);
+        Assert.equals("Hello &amp;&lt;&gt; Å å π 新 there ¾ © »", escapedUtfMin);
         // odd that it's defined as aring in base but angst in full
 
         // round trip
-        assertEquals(text, Entities.unescape(escapedAscii));
-        assertEquals(text, Entities.unescape(escapedAsciiFull));
-        assertEquals(text, Entities.unescape(escapedAsciiXhtml));
-        assertEquals(text, Entities.unescape(escapedUtfFull));
-        assertEquals(text, Entities.unescape(escapedUtfMin));
+        Assert.equals(text, Entities.unescape(escapedAscii));
+        Assert.equals(text, Entities.unescape(escapedAsciiFull));
+        Assert.equals(text, Entities.unescape(escapedAsciiXhtml));
+        Assert.equals(text, Entities.unescape(escapedUtfFull));
+        Assert.equals(text, Entities.unescape(escapedUtfMin));
     }
 
-    @Test public void escapeSupplementaryCharacter(){
-        String text = new String(Character.toChars(135361));
-        String escapedAscii = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(base));
-        assertEquals("&#x210c1;", escapedAscii);
-        String escapedUtf = Entities.escape(text, new OutputSettings().charset("UTF-8").escapeMode(base));
-        assertEquals(text, escapedUtf);
+    static public function testEscapeSupplementaryCharacter(){
+        var text = CodePoint.fromInt(135361).toString();
+        var escapedAscii = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(base));
+        Assert.equals("&#x210c1;", escapedAscii);
+        var escapedUtf = Entities.escape(text, new OutputSettings().setCharset("UTF-8").setEscapeMode(base));
+        Assert.equals(text, escapedUtf);
     }
 
-    @Test public void unescape() {
-        String text = "Hello &amp;&LT&gt; &reg &angst; &angst &#960; &#960 &#x65B0; there &! &frac34; &copy; &COPY;";
-        assertEquals("Hello &<> ® Å &angst π π 新 there &! ¾ © ©", Entities.unescape(text));
+    static public function testUnescape() {
+        var text = "Hello &amp;&LT&gt; &reg &angst; &angst &#960; &#960 &#x65B0; there &! &frac34; &copy; &COPY;";
+        Assert.equals("Hello &<> ® Å &angst π π 新 there &! ¾ © ©", Entities.unescape(text));
 
-        assertEquals("&0987654321; &unknown", Entities.unescape("&0987654321; &unknown"));
+        Assert.equals("&0987654321; &unknown", Entities.unescape("&0987654321; &unknown"));
     }
 
-    @Test public void strictUnescape() { // for attributes, enforce strict unescaping (must look like &#xxx; , not just &#xxx)
-        String text = "Hello &amp= &amp;";
-        assertEquals("Hello &amp= &", Entities.unescape(text, true));
-        assertEquals("Hello &= &", Entities.unescape(text));
-        assertEquals("Hello &= &", Entities.unescape(text, false));
+    static public function testStrictUnescape() { // for attributes, enforce strict unescaping (must look like &#xxx; , not just &#xxx)
+        var text = "Hello &amp= &amp;";
+        Assert.equals("Hello &amp= &", Entities.unescape(text, true));
+        Assert.equals("Hello &= &", Entities.unescape(text));
+        Assert.equals("Hello &= &", Entities.unescape(text, false));
     }
 
     
-    @Test public void caseSensitive() {
-        String unescaped = "Ü ü & &";
-        assertEquals("&Uuml; &uuml; &amp; &amp;",
-                Entities.escape(unescaped, new OutputSettings().charset("ascii").escapeMode(extended)));
+    static public function testCaseSensitive() {
+        var unescaped = "Ü ü & &";
+        Assert.equals("&Uuml; &uuml; &amp; &amp;",
+                Entities.escape(unescaped, new OutputSettings().setCharset("ascii").setEscapeMode(extended)));
         
-        String escaped = "&Uuml; &uuml; &amp; &AMP";
-        assertEquals("Ü ü & &", Entities.unescape(escaped));
+        var escaped = "&Uuml; &uuml; &amp; &AMP";
+        Assert.equals("Ü ü & &", Entities.unescape(escaped));
     }
     
-    @Test public void quoteReplacements() {
-        String escaped = "&#92; &#36;";
-        String unescaped = "\\ $";
+    static public function testQuoteReplacements() {
+        var escaped = "&#92; &#36;";
+        var unescaped = "\\ $";
         
-        assertEquals(unescaped, Entities.unescape(escaped));
+        Assert.equals(unescaped, Entities.unescape(escaped));
     }
 
-    @Test public void letterDigitEntities() {
-        String html = "<p>&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;</p>";
-        Document doc = Jsoup.parse(html);
+    static public function testLetterDigitEntities() {
+        var html = "<p>&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;</p>";
+        var doc:Document = Jsoup.parse(html);
         doc.outputSettings().charset("ascii");
-        Element p = doc.select("p").first();
-        assertEquals("&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;", p.html());
-        assertEquals("¹²³¼½¾", p.text());
+        var p:Element = doc.select("p").first();
+        Assert.equals("&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;", p.html());
+        Assert.equals("¹²³¼½¾", p.text());
         doc.outputSettings().charset("UTF-8");
-        assertEquals("¹²³¼½¾", p.html());
+        Assert.equals("¹²³¼½¾", p.html());
     }
 
-    @Test public void noSpuriousDecodes() {
-        String string = "http://www.foo.com?a=1&num_rooms=1&children=0&int=VA&b=2";
-        assertEquals(string, Entities.unescape(string));
+    static public function testNoSpuriousDecodes() {
+        var string = "http://www.foo.com?a=1&num_rooms=1&children=0&int=VA&b=2";
+        Assert.equals(string, Entities.unescape(string));
     }
 
-    @Test public void escapesGtInXmlAttributesButNotInHtml() {
+    static public function testEscapesGtInXmlAttributesButNotInHtml() {
         // https://github.com/jhy/jsoup/issues/528 - < is OK in HTML attribute values, but not in XML
 
 
-        String docHtml = "<a title='<p>One</p>'>One</a>";
-        Document doc = Jsoup.parse(docHtml);
-        Element element = doc.select("a").first();
+        var docHtml = "<a title='<p>One</p>'>One</a>";
+        var doc:Document = Jsoup.parse(docHtml);
+        var element:Element = doc.select("a").first();
 
         doc.outputSettings().escapeMode(base);
-        assertEquals("<a title=\"<p>One</p>\">One</a>", element.outerHtml());
+        Assert.equals("<a title=\"<p>One</p>\">One</a>", element.outerHtml());
 
         doc.outputSettings().escapeMode(xhtml);
-        assertEquals("<a title=\"&lt;p>One&lt;/p>\">One</a>", element.outerHtml());
+        Assert.equals("<a title=\"&lt;p>One&lt;/p>\">One</a>", element.outerHtml());
     }
 }
