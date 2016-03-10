@@ -179,7 +179,7 @@ class Element extends Node {
 
     private static function accumulateParents(el:Element, parents:Elements):Void {
         var parent:Element = el.parent();
-        if (parent != null && !parent.getTagName().equals("#root")) {
+        if (parent != null && !parent.getTagName() == "#root") {
             parents.add(parent);
             accumulateParents(parent, parents);
         }
