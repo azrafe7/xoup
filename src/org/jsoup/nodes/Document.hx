@@ -430,12 +430,12 @@ enum Syntax {
 /**
  * A Document's output settings control the form of the text() and html() methods.
  */
-//NOTE(az): moved out, refactor as props
+//NOTE(az): moved out, refactor as props, dummy Charset and CharsetEncoder
 class OutputSettings implements Cloneable<OutputSettings> {
 
 	private var _escapeMode:Entities.EscapeMode = Entities.EscapeMode.base;
 	private var _charset:Charset = Charset.forName("UTF-8");
-	private var _charsetEncoder:CharsetEncoder = charset.newEncoder();
+	private var _charsetEncoder:CharsetEncoder = _charset.newEncoder();
 	private var _prettyPrint:Bool = true;
 	private var _outline:Bool = false;
 	private var _indentAmount:Int = 1;
@@ -451,7 +451,8 @@ class OutputSettings implements Cloneable<OutputSettings> {
 	 * The default escape mode is <code>base</code>.
 	 * @return the document's current escape mode
 	 */
-	public function escapeMode():Entities.EscapeMode {
+	//NOTE(az): getter
+	public function getEscapeMode():Entities.EscapeMode {
 		return _escapeMode;
 	}
 
@@ -461,7 +462,8 @@ class OutputSettings implements Cloneable<OutputSettings> {
 	 * @param escapeMode the new escape mode to use
 	 * @return the document's output settings, for chaining
 	 */
-	public function escapeMode(escapeMode:Entities.EscapeMode):OutputSettings {
+	//NOTE(az): setter
+	public function setEscapeMode(escapeMode:Entities.EscapeMode):OutputSettings {
 		this._escapeMode = escapeMode;
 		return this;
 	}
@@ -607,4 +609,36 @@ class OutputSettings implements Cloneable<OutputSettings> {
 		// indentAmount, prettyPrint are primitives so object.clone() will handle
 		return clone;
 	}
+}
+
+//NOTE(az): dummy
+@:enum abstract Charset(String) to String {
+	var ascii = "ASCII";
+	var utf8 = "UTF-8";
+	
+	public function forName(name:String) {
+		if (name == ascii) return Charset.ascii;
+		else if (name == utf8) return Charset.utf8;
+		else throw IllegalArgumentException("Invalid charset name");
+	}
+
+	public function displayName():String {
+		return this;
+	}
+	
+	public function newEncoder():CharsetEncoder {
+		return newEncoder(this);
+	}
+}
+
+//NOTE(az): dummy
+@:allow(org.jsoup.nodes.Charset)
+class CharsetEncoder {
+	
+	var charset:Charset;
+	
+	function new(charset:Charset) { 
+		this.charset = charset;
+	}
+	
 }
