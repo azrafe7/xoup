@@ -3,6 +3,7 @@ package org.jsoup.select;
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.ListSet;
 import de.polygonal.ds.Set;
+import org.jsoup.nodes.FormElement;
 
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Element;
@@ -73,7 +74,7 @@ class Elements extends ArrayList<Element> {
     public function getAttr(attributeKey:String):String {
         for (element in this) {
             if (element.hasAttr(attributeKey))
-                return element.attr(attributeKey);
+                return element.getAttr(attributeKey);
         }
         return "";
     }
@@ -100,7 +101,7 @@ class Elements extends ArrayList<Element> {
     //NOTE(az): renamed to setAttr
 	public function setAttr(attributeKey:String, attributeValue:String):Elements {
         for (element in this) {
-            element.attr(attributeKey, attributeValue);
+            element.setAttr(attributeKey, attributeValue);
         }
         return this;
     }
@@ -174,7 +175,7 @@ class Elements extends ArrayList<Element> {
 	//NOTE(az): renamed to getVal
     public function getVal():String {
         if (size > 0)
-            return first().val();
+            return first().getVal();
         else
             return "";
     }
@@ -187,7 +188,7 @@ class Elements extends ArrayList<Element> {
 	//NOTE(az): renamed to setVal
     public function setVal(value:String):Elements {
         for (element in this)
-            element.val(value);
+            element.setVal(value);
         return this;
     }
     
@@ -204,7 +205,7 @@ class Elements extends ArrayList<Element> {
         for (element in this) {
             if (sb.length != 0)
                 sb.add(" ");
-            sb.add(element.text());
+            sb.add(element.getText());
         }
         return sb.toString();
     }
@@ -228,8 +229,8 @@ class Elements extends ArrayList<Element> {
         var sb = new StringBuf();
         for (element in this) {
             if (sb.length != 0)
-                sb.append("\n");
-            sb.append(element.getHtml());
+                sb.add("\n");
+            sb.add(element.getHtml());
         }
         return sb.toString();
     }
@@ -244,8 +245,8 @@ class Elements extends ArrayList<Element> {
         var sb = new StringBuf();
         for (element in this) {
             if (sb.length != 0)
-                sb.append("\n");
-            sb.append(element.outerHtml());
+                sb.add("\n");
+            sb.add(element.outerHtml());
         }
         return sb.toString();
     }
@@ -270,7 +271,7 @@ class Elements extends ArrayList<Element> {
      */
     public function tagName(tagName:String):Elements{
         for (element in this) {
-            element.tagName(tagName);
+            element.setTagName(tagName);
         }
         return this;
     }
@@ -284,7 +285,7 @@ class Elements extends ArrayList<Element> {
 	//NOTE(az): renamed to setHtml
     public function setHtml(html:String):Elements {
         for (element in this) {
-            element.html(html);
+            element.setHtml(html);
         }
         return this;
     }
@@ -450,7 +451,7 @@ class Elements extends ArrayList<Element> {
      * @return Elements containing only the specified element, or, if that element did not exist, an empty list.
      */
     public function eq(index:Int):Elements {
-        return size > index ? new Elements(get(index)) : new Elements();
+        return size > index ? Elements.fromIterable([get(index)]) : new Elements();
     }
     
     /**
@@ -471,7 +472,7 @@ class Elements extends ArrayList<Element> {
     public function parents():Elements {
         var combo:Set<Element> = new ListSet<Element>();
         for (e in this) {
-            for (p in e.parents()) combo.add(p);
+            for (p in e.parents()) combo.set(p);
         }
         return Elements.fromIterable(combo);
     }
@@ -517,7 +518,7 @@ class Elements extends ArrayList<Element> {
         for (el in this)
             if (Std.is(el, FormElement))
                 forms.add(cast el);
-        return forms;
+        return cast forms;
     }
 
 }

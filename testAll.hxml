@@ -1,5 +1,5 @@
-cp src
-cp test
+-cp src
+-cp test
 -main TestAll
 -debug
 -lib utest

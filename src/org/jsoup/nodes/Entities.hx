@@ -22,6 +22,7 @@ typedef Character = String;
  * named character references</a>.
  */
 //NOTE(az): refactored EscapeMode
+@:allow(org.jsoup.nodes.EscapeMode)
 class Entities {
 
 	static inline var MIN_SUPPLEMENTARY_CODE_POINT:CodePoint = 0x10000;
@@ -64,21 +65,21 @@ class Entities {
         return full.get(name);
     }
     
-    static function escape(string:String, out:Document.OutputSettings):String {
+    public static function escape(string:String, out:Document.OutputSettings):String {
         var accum = new StringBuf(/*string.length() * 2*/);
         _escape(accum, string, out, false, false, false);
         return accum.toString();
     }
 
     // this method is ugly, and does a lot. but other breakups cause rescanning and stringbuilder generations
-    static function _escape(accum:StringBuf, string:String, out:Document.OutputSettings,
+    public static function _escape(accum:StringBuf, string:String, out:Document.OutputSettings,
                    inAttribute:Bool, normaliseWhite:Bool, stripLeadingWhite:Bool):Void {
 
         var lastWasWhite:Bool = false;
         var reachedNonWhite:Bool = false;
-        var escapeMode:EscapeMode = out.escapeMode();
+        var escapeMode:EscapeMode = out.getEscapeMode();
         var encoder:CharsetEncoder = out.encoder();
-        var coreCharset:CoreCharset = CoreCharset.byName(encoder.charset().name());
+        var coreCharset:CoreCharset = CoreCharset.byName(encoder.charset.name());
         var map:Map<Character, String> = escapeMode.getMap();
         var length = string.uLength();
 
@@ -87,7 +88,7 @@ class Entities {
 		//for (int offset = 0; offset < length; offset += Character.charCount(codePoint)) {
 		var offset = 0;
 		while (offset < length) {
-            codePoint = string.codePointAt(offset);
+            codePoint = string.uCodePointAt(offset);
 
             if (normaliseWhite) {
                 if (StringUtil.isWhitespace(codePoint)) {
@@ -103,7 +104,8 @@ class Entities {
             }
             // surrogate pairs, split implementation for efficiency on single char common case (saves creating strings, char[]):
             if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
-                var c:CodePoint = codePoint;
+                var c:Int = codePoint;
+				var cpStr = codePoint.toString();
                 // html specific and required escapes:
                 switch (c) {
                     case '&'.code:
@@ -118,22 +120,25 @@ class Entities {
                         if (!inAttribute || escapeMode == EscapeMode.xhtml)
                             accum.add("&lt;");
                         else
-                            accum.add(c);
+                            accum.add(codePoint.toString());
                     case '>'.code:
                         if (!inAttribute)
                             accum.add("&gt;");
                         else
-                            accum.add(c);
+                            accum.add(cpStr);
                     case '"'.code:
                         if (inAttribute)
                             accum.add("&quot;");
                         else
-                            accum.add(c);
+                            accum.add(cpStr);
                     default:
                         if (canEncode(coreCharset, c, encoder))
-                            accum.add(c);
-                        else if (map.exists(c))
-                            accum.add('&').add(map.get(c)).add(';');
+                            accum.add(cpStr);
+                        else if (map.exists(cpStr)) {
+                            accum.add('&');
+							accum.add(map.get(cpStr));
+							accum.add(';');
+						}
                         else {
                             accum.add("&#x");
 							accum.add(StringTools.hex(codePoint));
@@ -142,7 +147,7 @@ class Entities {
                 }
             } else {
                 var c:String = codePoint.toString();
-                if (encoder.canEncode(c)) // uses fallback encoder for simplicity
+                if (encoder.canEncode(codePoint)) // uses fallback encoder for simplicity
                     accum.add(c);
                 else
                     accum.add("&#x");
@@ -154,17 +159,13 @@ class Entities {
         }
     }
 
-    static function unescape(string:String):String {
-        return _unescape(string, false);
-    }
-
     /**
      * Unescape the input string.
      * @param string to un-HTML-escape
      * @param strict if "strict" (that is, requires trailing ';' char, otherwise that's optional)
      * @return unescaped string
      */
-    static function _unescape(string:String, strict:Bool):String {
+    public static function unescape(string:String, strict:Bool = false):String {
         return Parser.unescapeEntities(string, strict);
     }
 
@@ -274,7 +275,7 @@ class Entities {
 	var utf = "UTF";
 	var fallback = "FALLBACK";
 
-	static function byName(name:String):String {
+	static public function byName(name:String):String {
 		if (name == "US-ASCII")
 			return ascii;
 		if (name.startsWith("UTF-")) // covers UTF-8, UTF-16, et al

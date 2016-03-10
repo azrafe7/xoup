@@ -1,16 +1,20 @@
 package org.jsoup.nodes;
 
 import de.polygonal.ds.ArrayList;
+import de.polygonal.ds.List;
 import de.polygonal.ds.ListSet;
 import de.polygonal.ds.Set;
-import haxe.ds.Either;
 import org.jsoup.Exceptions.IllegalArgumentException;
 import org.jsoup.helper.Validate;
+import org.jsoup.nodes.Attributes.Dataset;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
+import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
-
 import org.jsoup.helper.StringUtil;
+
+using StringTools;
+
 /*import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.Validate;
 import org.jsoup.helper.Validate;
@@ -34,9 +38,9 @@ import java.util.regex.PatternSyntaxException;
  * @author Jonathan Hedley, jonathan@hedley.net
  */
 class Element extends Node {
-    private var _tag:Tag;
+    private var tag:Tag;
 
-    private static inline var classSplit:EReg = ~/\s+/;
+    private static var classSplit:EReg = ~/\s+/;
 
     /**
      * Create a new, standalone Element. (Standalone in that is has no parent.)
@@ -64,7 +68,8 @@ class Element extends Node {
      * 
      * @return the tag name
      */
-    public function tagName():String {
+	//NOTE(az): getter
+    public function getTagName():String {
         return tag.getName();
     }
 
@@ -75,7 +80,8 @@ class Element extends Node {
      * @param tagName new tag name for this element
      * @return this element, for chaining
      */
-    public function tagName(tagName:String):Element {
+	//NOTE(az): setter
+    public function setTagName(tagName:String):Element {
         Validate.notEmpty(tagName, "Tag name must not be empty.");
         tag = Tag.valueOf(tagName);
         return this;
@@ -86,8 +92,9 @@ class Element extends Node {
      * 
      * @return the tag object
      */
-    public function tag():Tag {
-        return _tag;
+	//NOTE(az): getter
+    public function getTag():Tag {
+        return tag;
     }
     
     /**
@@ -151,7 +158,7 @@ class Element extends Node {
      * You can find elements that have data attributes using the {@code [^data-]} attribute key prefix selector.
      * @return a map of {@code key=value} custom data attributes.
      */
-    public function dataset():Map<String, String> {
+    public function dataset():Dataset {
         return attributes.dataset();
     }
 
@@ -172,7 +179,7 @@ class Element extends Node {
 
     private static function accumulateParents(el:Element, parents:Elements):Void {
         var parent:Element = el.parent();
-        if (parent != null && !parent.tagName().equals("#root")) {
+        if (parent != null && !parent.getTagName().equals("#root")) {
             parents.add(parent);
             accumulateParents(parent, parents);
         }
@@ -307,7 +314,7 @@ class Element extends Node {
     public function prependChild(child:Node):Element {
         Validate.notNull(child);
         
-        addChildren(0, child);
+        addChildrenAt(0, [child]);
         return this;
     }
 
@@ -331,7 +338,7 @@ class Element extends Node {
         /*ArrayList<Node> nodes = new ArrayList<Node>();
         Node[] nodeArray = nodes.toArray(new Node[nodes.size()]);
         addChildren(index, nodeArray);*/
-        addChildren(index, children);
+        addChildrenAt(index, children);
         return this;
     }
     
@@ -343,7 +350,7 @@ class Element extends Node {
      *  {@code parent.appendElement("h1").attr("id", "header").text("Welcome");}
      */
     public function appendElement(tagName:String):Element {
-        var child = new Element(Tag.valueOf(tagName), baseUri());
+        var child = new Element(Tag.valueOf(tagName), getBaseUri());
         appendChild(child);
         return child;
     }
@@ -356,7 +363,7 @@ class Element extends Node {
      *  {@code parent.prependElement("h1").attr("id", "header").text("Welcome");}
      */
     public function prependElement(tagName:String):Element {
-        var child:Element = new Element(Tag.valueOf(tagName), baseUri());
+        var child:Element = new Element(Tag.valueOf(tagName), getBaseUri());
         prependChild(child);
         return child;
     }
@@ -368,7 +375,7 @@ class Element extends Node {
      * @return this element
      */
     public function appendText(text:String):Element {
-        var node = new TextNode(text, baseUri());
+        var node = new TextNode(text, getBaseUri());
         appendChild(node);
         return this;
     }
@@ -380,7 +387,7 @@ class Element extends Node {
      * @return this element
      */
     public function prependText(text:String):Element {
-        var node = new TextNode(text, baseUri());
+        var node = new TextNode(text, getBaseUri());
         prependChild(node);
         return this;
     }
@@ -395,7 +402,7 @@ class Element extends Node {
     public function append(html:String):Element {
         Validate.notNull(html);
 
-        var nodes:List<Node> = Parser.parseFragment(html, this, baseUri());
+        var nodes:List<Node> = Parser.parseFragment(html, this, getBaseUri());
         //addChildren(nodes.toArray(new Node[nodes.size()]));
         addChildren(nodes);
         return this;
@@ -498,20 +505,25 @@ class Element extends Node {
         if (id().length > 0)
             return "#" + id();
 
-        var selector = new StringBuf(tagName());
-        var classes:String = StringUtil.join(classNames(), ".");
-        if (classes.length > 0)
-            selector.append('.').append(classes);
+        var selector = new StringBuf();
+		selector.add(getTagName());
+        var classes:String = StringUtil.join(getClassNames().iterator(), ".");
+        if (classes.length > 0) {
+            selector.add('.');
+			selector.add(classes);
+		}
 
         if (parent() == null || Std.is(parent(), Document)) // don't add Document to selector, as will always have a html node
             return selector.toString();
 
-        selector.insert(0, " > ");
-        if (parent().select(selector.toString()).size > 1)
-            selector.append(String.format(
-                ":nth-child(%d)", elementSiblingIndex() + 1));
+        var newSelector = new StringBuf();
+		newSelector.add(" > ");
+		newSelector.add(selector);
+		
+        if (parent().select(newSelector.toString()).size > 1)
+            newSelector.add(':nth-child(${elementSiblingIndex() + 1})');
 
-        return parent().cssSelector() + selector.toString();
+        return parent().cssSelector() + newSelector.toString();
     }
 
     /**
@@ -597,7 +609,7 @@ class Element extends Node {
     }
     
     //NOTE(az): type param, and Null<Int>
-	private static function indexInList<E>(search:Element, elements:List<E>):Null<Int> {
+	private static function indexInList<E>(search:E, elements:List<E>):Null<Int> {
         Validate.notNull(search);
         Validate.notNull(elements);
 
@@ -761,9 +773,9 @@ class Element extends Node {
     public function getElementsByAttributeValueMatching(key:String, regex:String):Elements {
         var pattern;
         try {
-            pattern = new EReg(regex);
+            pattern = new EReg(regex, "");
         } catch (e:Dynamic) {
-            throw new IllegalArgumentException("Pattern syntax error: " + regex, e);
+            throw new IllegalArgumentException("Pattern syntax error: " + regex + ". " +  e);
         }
         return getElementsByAttributeValueMatchingPattern(key, pattern);
     }
@@ -836,9 +848,9 @@ class Element extends Node {
     public function getElementsMatchingText(regex:String):Elements {
         var pattern;
         try {
-            pattern = new EReg(regex);
+            pattern = new EReg(regex, "");
         } catch (e:Dynamic) {
-            throw new IllegalArgumentException("Pattern syntax error: " + regex, e);
+            throw new IllegalArgumentException("Pattern syntax error: " + regex + ". " + e);
         }
         return getElementsMatchingTextPattern(pattern);
     }
@@ -862,9 +874,9 @@ class Element extends Node {
     public function getElementsMatchingOwnText(regex:String):Elements {
         var pattern;
         try {
-            pattern = new EReg(regex);
+            pattern = new EReg(regex, "");
         } catch (e:Dynamic) {
-            throw new IllegalArgumentException("Pattern syntax error: " + regex, e);
+            throw new IllegalArgumentException("Pattern syntax error: " + regex + ". " + e);
         }
         return getElementsMatchingOwnTextPattern(pattern);
     }
@@ -900,7 +912,7 @@ class Element extends Node {
                 } else if (Std.is(node, Element)) {
                     var element:Element = cast node;
                     if (accum.length > 0 &&
-                        (element.isBlock() || element.tag.getName().equals("br")) &&
+                        (element.isBlock() || element.tag.getName() == "br") &&
                         !TextNode.lastCharIsWhitespace(accum))
                         accum.add(" ");
                 }
@@ -927,7 +939,7 @@ class Element extends Node {
      */
     public function ownText():String {
         var sb = new StringBuf();
-        ownText(sb);
+        _ownText(sb);
         return sb.toString().trim();
     }
 
@@ -953,11 +965,11 @@ class Element extends Node {
     }
 
     private static function appendWhitespaceIfBr(element:Element, accum:StringBuf):Void {
-        if (element.tag.getName().equals("br") && !TextNode.lastCharIsWhitespace(accum))
+        if (element.getTag().getName() == "br" && !TextNode.lastCharIsWhitespace(accum))
             accum.add(" ");
     }
 
-    static function preserveWhitespace(node:Node):Bool {
+    public static function preserveWhitespace(node:Node):Bool {
         // looks only at this element and one level up, to prevent recursion & needless stack searches
         if (node != null && Std.is(node, Element)) {
             var element:Element = cast node;
@@ -973,7 +985,7 @@ class Element extends Node {
      * @return this element
      */
 	//NOTE(az): setText
-    public function setText(text:String):String {
+    public function setText(text:String):Element {
         Validate.notNull(text);
 
         empty();
@@ -1039,8 +1051,8 @@ class Element extends Node {
      * the backing {@code class} attribute; use the {@link #classNames(java.util.Set)} method to persist them.
      * @return set of classnames, empty if no class attribute
      */
-	//NOTE(az): using polygonal ListSet
-    public function classNames():Set<String> {
+	//NOTE(az): getter, using polygonal ListSet
+    public function getClassNames():Set<String> {
     	var names = classSplit.split(className());
     	var classNames:Set<String> = new ListSet<String>(names.length, names);
     	classNames.remove(""); // if classNames() was empty, would include an empty class
@@ -1053,9 +1065,10 @@ class Element extends Node {
      @param classNames set of classes
      @return this element, for chaining
      */
-    public function classNames(classNames:Set<String>):Element {
+	//NOTE(az): setter
+    public function setClassNames(classNames:Set<String>):Element {
         Validate.notNull(classNames);
-        attributes.put("class", StringUtil.join(classNames, " "));
+        attributes.put("class", StringUtil.join(classNames.iterator(), " "));
         return this;
     }
 
@@ -1075,12 +1088,12 @@ class Element extends Node {
 	//NOTE(az): toLowerCase (is className passed by value on all targets?)
     public function hasClass(className:String):Bool {
         var classAttr:String = attributes.get("class");
-        if (classAttr.equals("") || classAttr.length() < className.length)
+        if (classAttr == "" || classAttr.length < className.length)
             return false;
 
         var classes:Array<String> = classSplit.split(classAttr);
 		className = className.toLowerCase();
-        for ((name:String) in classes) {
+        for (name in classes) {
             if (className == name.toLowerCase())
                 return true;
         }
@@ -1096,9 +1109,9 @@ class Element extends Node {
     public function addClass(className:String):Element {
         Validate.notNull(className);
 
-        var classes:Set<String> = classNames();
-        classes.add(className);
-        classNames(classes);
+        var classes:Set<String> = getClassNames();
+        classes.set(className);
+        setClassNames(classes);
 
         return this;
     }
@@ -1111,9 +1124,9 @@ class Element extends Node {
     public function removeClass(className:String):Element {
         Validate.notNull(className);
 
-        var classes:Set<String> = classNames();
+        var classes:Set<String> = getClassNames();
         classes.remove(className);
-        classNames(classes);
+        setClassNames(classes);
 
         return this;
     }
@@ -1126,12 +1139,12 @@ class Element extends Node {
     public function toggleClass(className:String):Element {
         Validate.notNull(className);
 
-        var classes:Set<String> = classNames();
+        var classes:Set<String> = getClassNames();
         if (classes.contains(className))
             classes.remove(className);
         else
-            classes.add(className);
-        classNames(classes);
+            classes.set(className);
+        setClassNames(classes);
 
         return this;
     }
@@ -1142,7 +1155,7 @@ class Element extends Node {
      */
 	//NOTE(az): renamed to getVal
     public function getVal():String {
-        if (tagName() == "textarea")
+        if (getTagName() == "textarea")
             return getText();
         else
             return getAttr("value");
@@ -1155,7 +1168,7 @@ class Element extends Node {
      */
 	//NOTE(az): renamed to setVal
     public function setVal(value:String):Element {
-        if (tagName() == "textarea")
+        if (getTagName() == "textarea")
             setText(value);
         else
             setAttr("value", value);
@@ -1163,16 +1176,16 @@ class Element extends Node {
     }
 
     function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings) {
-        if (accum.length > 0 && out.prettyPrint() && (tag.formatAsBlock() || (parent() != null && parent().tag().formatAsBlock()) || out.outline()) )
+        if (accum.length > 0 && out.getPrettyPrint() && (tag.formatAsBlock() || (parent() != null && parent().getTag().formatAsBlock()) || out.getOutline()) )
             indent(accum, depth, out);
         
 		accum.add("<");
-        accum.add(tagName());
-        attributes.html(accum, out);
+        accum.add(getTagName());
+        attributes._html(accum, out);
 
         // selfclosing includes unknown tags, isEmpty defines tags that are always empty
         if (childNodes.isEmpty() && tag.isSelfClosing()) {
-            if (out.syntax() == Document.OutputSettings.Syntax.html && tag.isEmpty())
+            if (out.getSyntax() == Document.Syntax.html && tag.isEmpty())
                 accum.add('>');
             else
                 accum.add(" />"); // <img> in html, <img /> in xml
@@ -1183,12 +1196,14 @@ class Element extends Node {
 
     function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings) {
         if (!(childNodes.isEmpty() && tag.isSelfClosing())) {
-            if (out.prettyPrint() && (!childNodes.isEmpty() && (
-                    tag.formatAsBlock() || (out.outline() && (childNodes.size>1 || (childNodes.size()==1 && !(Std.is(childNodes.get(0), TextNode)))))
+            if (out.getPrettyPrint() && (!childNodes.isEmpty() && (
+                    tag.formatAsBlock() || (out.getOutline() && (childNodes.size>1 || (childNodes.size==1 && !(Std.is(childNodes.get(0), TextNode)))))
             )))
                 indent(accum, depth, out);
             
-			accum.add("</").append(tagName()).append(">");
+			accum.add("</");
+			accum.add(getTagName());
+			accum.add(">");
         }
     }
 
@@ -1203,7 +1218,7 @@ class Element extends Node {
     public function getHtml():String {
         var accum = new StringBuf();
         _html(accum);
-        return getOutputSettings().prettyPrint() ? accum.toString().trim() : accum.toString();
+        return getOutputSettings().getPrettyPrint() ? accum.toString().trim() : accum.toString();
     }
 
     private function _html(accum:StringBuf):Void {

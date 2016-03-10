@@ -5,7 +5,9 @@ import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.Dll;
 import de.polygonal.ds.Hashable;
 import de.polygonal.ds.List;
+import org.jsoup.helper.StringUtil;
 import org.jsoup.Interfaces.IterableWithLength;
+import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 
 import org.jsoup.helper.Validate;
@@ -31,8 +33,9 @@ import java.util.List;
  The base, abstract Node model. Elements, Documents, Comments etc are all Node instances.
 
  @author Jonathan Hedley, jonathan@hedley.net */
+@:allow(org.jsoup.nodes.OuterHtmlVisitor)
 class Node implements Cloneable<Node> implements Hashable {
-    private static inline var EMPTY_NODES:List<Node> = new ArrayList<Node>();
+    private static var EMPTY_NODES:List<Node> = new ArrayList<Node>();
     
 	var parentNode:Node = null;
     var childNodes:List<Node> = null;
@@ -81,7 +84,7 @@ class Node implements Cloneable<Node> implements Hashable {
         if (attributes.hasKey(attributeKey))
             return attributes.get(attributeKey);
         else if (attributeKey.toLowerCase().startsWith("abs:"))
-            return absUrl(attributeKey.substring("abs:".length()));
+            return absUrl(attributeKey.substring("abs:".length));
         else return "";
     }
 
@@ -89,7 +92,7 @@ class Node implements Cloneable<Node> implements Hashable {
      * Get all of the element's attributes.
      * @return attributes (which implements iterable, in same order as presented in original HTML).
      */
-    public function attributes():Attributes {
+    public function getAttributes():Attributes {
         return attributes;
     }
 
@@ -114,7 +117,7 @@ class Node implements Cloneable<Node> implements Hashable {
 
         if (attributeKey.startsWith("abs:")) {
             var key = attributeKey.substring("abs:".length);
-            if (attributes.hasKey(key) && !absUrl(key).equals(""))
+            if (attributes.hasKey(key) && absUrl(key) != "")
                 return true;
         }
         return attributes.hasKey(attributeKey);
@@ -135,7 +138,8 @@ class Node implements Cloneable<Node> implements Hashable {
      Get the base URI of this node.
      @return base URI
      */
-    public function baseUri():String {
+	//NOTE(az): getter
+    public function getBaseUri():String {
         return baseUri;
     }
 
@@ -188,7 +192,7 @@ class Node implements Cloneable<Node> implements Hashable {
         if (!hasAttr(attributeKey)) {
             return ""; // nothing to make absolute with
         } else {
-            return StringUtil.resolve(baseUri, attr(attributeKey));
+            return StringUtil.resolve(baseUri, getAttr(attributeKey));
         }
     }
 
@@ -206,10 +210,10 @@ class Node implements Cloneable<Node> implements Hashable {
      themselves can be manipulated.
      @return list of children. If no children, returns an empty list.
      */
-	//NOTE(az): unmodifiable
-    public function childNodes():List<Node> {
+	//NOTE(az): getter, unmodifiable
+    public function getChildNodes():List<Node> {
         //return Collections.unmodifiableList(childNodes);
-        return childNodes.clone();
+        return cast childNodes.clone(false);
     }
 
     /**
@@ -250,7 +254,8 @@ class Node implements Cloneable<Node> implements Hashable {
      Gets this node's parent node. Node overridable by extending classes, so useful if you really just need the Node type.
      @return parent node; or null if no parent.
      */
-    public function parentNode():Node {
+	//NOTE(az): getter
+    public function getParentNode():Node {
         return parentNode;
     }
     
@@ -297,7 +302,7 @@ class Node implements Cloneable<Node> implements Hashable {
         Validate.notNull(node);
         Validate.notNull(parentNode);
 
-        parentNode.addChildren(siblingIndex, node);
+        parentNode.addChildrenAt(siblingIndex, [node]);
         return this;
     }
 
@@ -323,7 +328,7 @@ class Node implements Cloneable<Node> implements Hashable {
         Validate.notNull(node);
         Validate.notNull(parentNode);
 
-        parentNode.addChildren(siblingIndex + 1, node);
+        parentNode.addChildrenAt(siblingIndex + 1, [node]);
         return this;
     }
 
@@ -333,8 +338,8 @@ class Node implements Cloneable<Node> implements Hashable {
         Validate.notNull(parentNode);
 
         var context:Element = Std.is(parent(), Element) ? cast parent() : null;        
-        var nodes:List<Node> = Parser.parseFragment(html, context, baseUri());
-        parentNode.addChildren(index, nodes.toArray(/*new Node[nodes.size()])*/));
+        var nodes:List<Node> = Parser.parseFragment(html, context, getBaseUri());
+        parentNode.addChildrenAt(index, nodes.toArray(/*new Node[nodes.size()])*/));
     }
 
     /**
@@ -347,7 +352,7 @@ class Node implements Cloneable<Node> implements Hashable {
         Validate.notEmpty(html);
 
         var context = Std.is(parent(), Element) ? cast parent() : null;
-        var wrapChildren:List<Node> = Parser.parseFragment(html, context, baseUri());
+        var wrapChildren:List<Node> = Parser.parseFragment(html, context, getBaseUri());
         var wrapNode:Node = wrapChildren.get(0);
         if (wrapNode == null || !(Std.is(wrapNode, Element))) // nothing to wrap with; noop
             return null;
@@ -355,10 +360,10 @@ class Node implements Cloneable<Node> implements Hashable {
         var wrap:Element = cast wrapNode;
         var deepest:Element = getDeepChild(wrap);
         parentNode.replaceChild(this, wrap);
-        deepest.addChildren(this);
+        deepest.addChildren([this]);
 
         // remainder (unbalanced wrap, like <div></div><p></p> -- The <p> is remainder
-        if (wrapChildren.size() > 0) {
+        if (wrapChildren.size > 0) {
             for (i in 0...wrapChildren.size) {
                 var remainder:Node = wrapChildren.get(i);
                 remainder.parentNode.removeChild(remainder);
@@ -386,8 +391,8 @@ class Node implements Cloneable<Node> implements Hashable {
     public function unwrap():Node {
         Validate.notNull(parentNode);
 
-        var firstChild:Node = childNodes.size() > 0 ? childNodes.get(0) : null;
-        parentNode.addChildren(siblingIndex, this.childNodesAsArray());
+        var firstChild:Node = childNodes.size > 0 ? childNodes.get(0) : null;
+        parentNode.addChildrenAt(siblingIndex, this.childNodesAsArray());
         this.remove();
 
         return firstChild;
@@ -395,7 +400,7 @@ class Node implements Cloneable<Node> implements Hashable {
 
     private function getDeepChild(el:Element):Element {
         var children:List<Element> = el.children();
-        if (children.size() > 0)
+        if (children.size > 0)
             return getDeepChild(children.get(0));
         else
             return el;
@@ -433,7 +438,7 @@ class Node implements Cloneable<Node> implements Hashable {
     /*protected*/ function removeChild(out:Node):Void {
         Validate.isTrue(out.parentNode == this);
         var index:Int = out.siblingIndex;
-        childNodes.remove(index);
+        childNodes.removeAt(index);
         reindexChildren(index);
         out.parentNode = null;
     }
@@ -450,15 +455,16 @@ class Node implements Cloneable<Node> implements Hashable {
     }
 
 	//NOTE(az): renamed addChildrenAt, watch loop, interface
-    /*protected*/ function addChildrenAt(index:Int, children:IterableWithLength<Node>):Void {
+    /*protected*/ function addChildrenAt(index:Int, children:Iterable<Node>):Void {
         Validate.noNullElements(children);
-        //for (int i = children.length - 1; i >= 0; i--) {
-        var i = children.length - 1;
+        var childrenArray = [for (n in children) n];
+		//for (int i = children.length - 1; i >= 0; i--) {
+        var i = childrenArray.length - 1;
 		while (i >= 0) {
-            var inNode:Node = children[i];
+            var inNode:Node = childrenArray[i];
             reparentChild(inNode);
             ensureChildNodes();
-            childNodes.add(index, inNode);
+            childNodes.insert(index, inNode);
 			i--;
         }
         reindexChildren(index);
@@ -490,7 +496,7 @@ class Node implements Cloneable<Node> implements Hashable {
      */
     public function siblingNodes():List<Node> {
         if (parentNode == null)
-            return Collections.emptyList();
+            return EMPTY_NODES;
 
         var nodes:List<Node> = parentNode.childNodes;
         var siblings:List<Node> = new ArrayList<Node>(nodes.size - 1);
@@ -536,7 +542,8 @@ class Node implements Cloneable<Node> implements Hashable {
      * @return position in node sibling list
      * @see org.jsoup.nodes.Element#elementSiblingIndex()
      */
-    public function siblingIndex():Int {
+	//NOTE(az): getter
+    public function getSiblingIndex():Int {
         return siblingIndex;
     }
     
@@ -573,7 +580,7 @@ class Node implements Cloneable<Node> implements Hashable {
 
     // if this node has no document (or parent), retrieve the default output settings
     function getOutputSettings():Document.OutputSettings {
-        return ownerDocument() != null ? ownerDocument().outputSettings() : (new Document("")).outputSettings();
+        return ownerDocument() != null ? ownerDocument().getOutputSettings() : (new Document("")).getOutputSettings();
     }
 
     /**
@@ -624,7 +631,7 @@ class Node implements Cloneable<Node> implements Hashable {
     var key:Int;
 	
 	public function hashCode():Int {
-        var result = childNodes != null ? childNodes.hashCode() : 0;
+        var result = childNodes != null ? childNodes.key : 0;
         result = 31 * result + (attributes != null ? attributes.hashCode() : 0);
         return key = result;
     }
@@ -665,13 +672,7 @@ class Node implements Cloneable<Node> implements Hashable {
      */
 	 //NOTE(az): mmmhh try/catch
 	 /*protected*/ function doClone(parent:Node):Node {
-        var clone:Node;
-
-        try {
-            clone = cast super.clone();
-        } catch (e:Dynamic) {
-            throw "RuntimeException " + e;
-        }
+        var clone:Node = new Node();
 
         clone.parentNode = parent; // can be null, to create an orphan split
         clone.siblingIndex = parent == null ? 0 : siblingIndex;
@@ -692,7 +693,7 @@ class Node implements Cloneable<Node> implements Hashable {
 	var accum:StringBuf;
 	var out:Document.OutputSettings;
 
-	function new(accum:StringBuf, out:Document.OutputSettings) {
+	public function new(accum:StringBuf, out:Document.OutputSettings) {
 		this.accum = accum;
 		this.out = out;
 	}
@@ -702,7 +703,7 @@ class Node implements Cloneable<Node> implements Hashable {
 	}
 
 	public function tail(node:Node, depth:Int):Void {
-		if (!node.nodeName().equals("#text")) // saves a void hit.
+		if (node.nodeName() != "#text") // saves a void hit.
 			node.outerHtmlTail(accum, depth, out);
 	}
 }

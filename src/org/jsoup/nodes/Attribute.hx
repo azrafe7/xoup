@@ -51,7 +51,7 @@ class Attribute implements /*Map.Entry<String, String>,*/ Cloneable<Attribute>  
      Set the attribute key. Gets normalised as per the constructor method.
      @param key the new key; must not be null
      */
-    public function setKey(key:String):String {
+    public function setKey(key:String):Void {
         Validate.notEmpty(key);
         this.key = key.trim().toLowerCase();
     }
@@ -81,15 +81,15 @@ class Attribute implements /*Map.Entry<String, String>,*/ Cloneable<Attribute>  
      */
     public function html():String {
         var accum = new StringBuf();
-        _html(accum, (new Document("")).outputSettings());
+        _html(accum, (new Document("")).getOutputSettings());
         return accum.toString();
     }
     
-    /*protected*/ function _html(accum:StringBuf, out:Document.OutputSettings):Void {
+    /*protected*/ public function _html(accum:StringBuf, out:Document.OutputSettings):Void {
         accum.add(key);
         if (!shouldCollapseAttribute(out)) {
             accum.add("=\"");
-            Entities.escape(accum, value, out, true, false, false);
+            Entities._escape(accum, value, out, true, false, false);
             accum.add('"');
         }
     }
@@ -127,7 +127,7 @@ class Attribute implements /*Map.Entry<String, String>,*/ Cloneable<Attribute>  
 	//NOTE(az): equalsIgnoreCase
     /*protected final*/ function shouldCollapseAttribute(out:Document.OutputSettings):Bool {
         return ("" == value || value.toLowerCase() == key)
-                && out.syntax() == Document.OutputSettings.Syntax.html
+                && out.getSyntax() == Document.Syntax.html
                 && isBooleanAttribute();
     }
 

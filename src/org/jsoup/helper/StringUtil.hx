@@ -1,10 +1,14 @@
 package org.jsoup.helper;
 
 /*import java.net.MalformedURLException;
+import de.polygonal.ds.Itr;
+import de.polygonal.ds.Itr;
+import de.polygonal.ds.Itr;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;*/
+import de.polygonal.ds.Itr;
 import org.jsoup.Exceptions.IllegalArgumentException;
 
 /**
@@ -32,18 +36,20 @@ class StringUtil {
      * @param sep string to place between strings
      * @return joined string
      */
-    public static function join(strings:Iterator, sep:String) {
+	//NOTE(az): toString with Std.string
+    public static function join<T>(strings:Itr<T>, sep:String) {
         if (!strings.hasNext())
             return "";
 
-        var start = strings.next().toString();
+        var start = Std.string(strings.next());
         if (!strings.hasNext()) // only one, avoid builder
             return start;
 
-        sb = new StringBuf(/*64*/).add(start);
+        var sb = new StringBuf(/*64*/);
+		sb.add(start);
         while (strings.hasNext()) {
             sb.add(sep);
-            sb.add(strings.next().toString());
+            sb.add(Std.string(strings.next()));
         }
         return sb.toString();
     }
@@ -53,7 +59,8 @@ class StringUtil {
      * @param width amount of padding desired
      * @return string of spaces * width
      */
-    public static function padding(width:Int):String {
+	//NOTE(az): getter
+    public static function getPadding(width:Int):String {
         if (width < 0)
             throw new IllegalArgumentException("width must be > 0");
 
@@ -142,7 +149,7 @@ class StringUtil {
             if (isWhitespace(c)) {
                 if ((stripLeading && !reachedNonWhite) || lastWasWhite)
                     continue;
-                accum.append(' ');
+                accum.add(' ');
                 lastWasWhite = true;
             }
             else {
@@ -190,8 +197,9 @@ class StringUtil {
      * @param relUrl the relative URL to resolve. (If it's already absolute, it will be returned)
      * @return an absolute URL if one was able to be generated, or the empty string if not
      */
-    /*public static String resolve(final String baseUrl, final String relUrl) {
-        URL base;
+	//NOTE(az): workaround: it simply joins the urls for now
+    public static function resolve(baseUrl:String, relUrl:String):String {
+        /*URL base;
         try {
             try {
                 base = new URL(baseUrl);
@@ -204,6 +212,7 @@ class StringUtil {
         } catch (MalformedURLException e) {
             return "";
         }
-
-    }*/
+		*/
+		return baseUrl + relUrl;
+    }
 }

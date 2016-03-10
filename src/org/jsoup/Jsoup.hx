@@ -16,8 +16,9 @@ import java.net.URL;
  The core public access point to the jsoup functionality.
 
  @author Jonathan Hedley */
-public class Jsoup {
-    private Jsoup() {}
+class Jsoup {
+	
+    private function new() {}
 
     /**
      Parse HTML into a Document. The parser will make a sensible, balanced document tree out of any HTML.
@@ -27,7 +28,7 @@ public class Jsoup {
      before the HTML declares a {@code <base href>} tag.
      @return sane HTML
      */
-    public static Document parse(String html, String baseUri) {
+    public static function parse(String html, String baseUri):Document {
         return Parser.parse(html, baseUri);
     }
 

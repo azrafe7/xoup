@@ -1,13 +1,18 @@
 package org.jsoup.nodes;
 
+import de.polygonal.ds.List;
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.Cloneable;
+import org.jsoup.Exceptions.IllegalArgumentException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.parser.Tag;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import unifill.CodePoint;
+
+using StringTools;
 
 /*import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -57,7 +62,8 @@ class Document extends Element {
      * this will return the final URL from which the document was served from.
      * @return location
      */
-    public function location():String {
+	//NOTE(az): getter
+    public function getLocation():String {
 		return location;
     }
     
@@ -110,7 +116,7 @@ class Document extends Element {
      @return new element
      */
     public function createElement(tagName:String):Element {
-        return new Element(Tag.valueOf(tagName), this.baseUri());
+        return new Element(Tag.valueOf(tagName), this.getBaseUri());
     }
 
     /**
@@ -247,8 +253,8 @@ class Document extends Element {
      */
 	//NOTE(az): setter
     public function setCharset(charset:Charset):Void {
-        updateMetaCharsetElement(true);
-        outputSettings.charset(charset);
+        setUpdateMetaCharsetElement(true);
+        outputSettings.setCharset(charset);
         ensureMetaCharsetElement();
     }
     
@@ -262,7 +268,7 @@ class Document extends Element {
      */
 	//NOTE(az): getter
     public function charset():Charset {
-        return outputSettings.charset();
+        return outputSettings.getCharset();
     }
     
     /**
@@ -324,7 +330,7 @@ class Document extends Element {
      */
     private function ensureMetaCharsetElement():Void {
         if (updateMetaCharset) {
-            var syntax:Syntax = outputSettings().syntax();
+            var syntax:Syntax = getOutputSettings().getSyntax();
 
             if (syntax == Syntax.html) {
                 var metaCharset:Element = select("meta[charset]").first();
@@ -342,7 +348,7 @@ class Document extends Element {
                 // Remove obsolete elements
                 select("meta[name=charset]").remove();
             } else if (syntax == Syntax.xml) {
-                var node:Node = childNodes().get(0);
+                var node:Node = getChildNodes().get(0);
 
                 if (Std.is(node, XmlDeclaration)) {
                     var decl:XmlDeclaration = cast node;
@@ -382,7 +388,7 @@ class Document extends Element {
      * @return the document's current output settings.
      */
 	//NOTE(az): getter
-    public function outputSettings():OutputSettings {
+    public function getOutputSettings():OutputSettings {
         return outputSettings;
     }
 
@@ -392,7 +398,7 @@ class Document extends Element {
      * @return this document, for chaining.
      */
 	//NOTE(az): setter
-    public function outputSettings(outputSettings:OutputSettings):Document {
+    public function setOutputSettings(outputSettings:OutputSettings):Document {
         Validate.notNull(outputSettings);
         this.outputSettings = outputSettings;
         return this;
@@ -435,7 +441,7 @@ class OutputSettings implements Cloneable<OutputSettings> {
 
 	private var _escapeMode:Entities.EscapeMode = Entities.EscapeMode.base;
 	private var _charset:Charset = Charset.forName("UTF-8");
-	private var _charsetEncoder:CharsetEncoder = _charset.newEncoder();
+	private var _charsetEncoder:CharsetEncoder = Charset.forName("UTF-8").newEncoder();
 	private var _prettyPrint:Bool = true;
 	private var _outline:Bool = false;
 	private var _indentAmount:Int = 1;
@@ -489,7 +495,7 @@ class OutputSettings implements Cloneable<OutputSettings> {
 	//NOTE(az): setter, see method below
 	public function setCharset(charset:Dynamic):OutputSettings {
 		if (Std.is(charset, String)) charset = Charset.forName(charset);
-		else if (Std.is(charser, charset)) { }
+		else if (Std.is(charset, Charset)) { }
 		else throw "Invalid charset";
 
 		this._charset = charset;
@@ -507,7 +513,7 @@ class OutputSettings implements Cloneable<OutputSettings> {
 		return this;
 	}*/
 
-	function encoder():CharsetEncoder {
+	public function encoder():CharsetEncoder {
 		return _charsetEncoder;
 	}
 
@@ -598,36 +604,37 @@ class OutputSettings implements Cloneable<OutputSettings> {
 	//@Override
 	//NOTE(az): add missing props
 	public function clone():OutputSettings {
-		var clone:OutputSettings;
-		try {
-			clone = cast super.clone();
-		} catch (e:Dynamic) {
-			throw "RuntimeException " + e;
-		}
-		clone.charset(charset.name()); // new charset and charset encoder
-		clone.escapeMode = Entities.EscapeMode.valueOf(escapeMode.name());
+		var clone:OutputSettings = new OutputSettings();
+		
+		clone.setCharset(getCharset().name()); // new charset and charset encoder
+		clone.setEscapeMode(getEscapeMode());
 		// indentAmount, prettyPrint are primitives so object.clone() will handle
 		return clone;
 	}
 }
 
 //NOTE(az): dummy
-@:enum abstract Charset(String) to String {
+@:enum abstract Charset(String) from String to String {
 	var ascii = "ASCII";
 	var utf8 = "UTF-8";
 	
-	public function forName(name:String) {
+	static public function forName(name:String) {
+		name = name.toUpperCase();
 		if (name == ascii) return Charset.ascii;
 		else if (name == utf8) return Charset.utf8;
-		else throw IllegalArgumentException("Invalid charset name");
+		else throw new IllegalArgumentException("Invalid charset name");
 	}
 
 	public function displayName():String {
 		return this;
 	}
 	
+	public function name():String {
+		return this;
+	}
+	
 	public function newEncoder():CharsetEncoder {
-		return newEncoder(this);
+		return new CharsetEncoder(this);
 	}
 }
 
@@ -635,10 +642,14 @@ class OutputSettings implements Cloneable<OutputSettings> {
 @:allow(org.jsoup.nodes.Charset)
 class CharsetEncoder {
 	
-	var charset:Charset;
+	public var charset:Charset;
 	
 	function new(charset:Charset) { 
 		this.charset = charset;
 	}
 	
+	public function canEncode(c:CodePoint):Bool {
+		trace('$charset + canEncode + $c');
+		return true;
+	}
 }
