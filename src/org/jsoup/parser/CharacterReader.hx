@@ -200,7 +200,7 @@ import java.util.Locale;
 
         while (pos < remaining) {
             var c:CodePoint = val[pos];
-            if (c == '\t'.code || c == '\n'.code || c == '\r'.code || c == 0x0A/*'\f'.code*/ || c == ' '.code || c == '/'.code || c == '>'.code || c == TokeniserState.nullChar)
+            if (c == '\t'.code || c == '\n'.code || c == '\r'.code || c == 0xC/*'\f'.code*/ || c == ' '.code || c == '/'.code || c == '>'.code || c == TokeniserState.nullChar)
                 break;
             pos++;
         }
