@@ -6,6 +6,7 @@ import de.polygonal.ds.tools.ArrayTools;
 import de.polygonal.ds.tools.NativeArrayTools;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities.Character;
+import org.jsoup.parser.tokens.TokeniserState;
 import unifill.CodePoint;
 
 using unifill.Unifill;
@@ -17,6 +18,7 @@ import java.util.Locale;
 /**
  CharacterReader consumes tokens off a string. To replace the old TokenQueue.
  */
+@:allow(org.jsoup.parser)
 /*final*/ class CharacterReader {
     static inline var EOF:Int = -1;
     static inline var nullchar:Int = 0;
@@ -28,7 +30,7 @@ import java.util.Locale;
     private var inputCP:Array<CodePoint>;
     private var length:Int;
     private var pos:Int = 0;
-    private var mark:Int = 0;
+    private var _mark:Int = 0;
     private var stringCache:NativeArray<String> = NativeArrayTools.alloc(512); // holds reused strings in this doc, to lessen garbage
 
     function new(input:String) {
@@ -38,9 +40,9 @@ import java.util.Locale;
         this.length = this.inputCP.length;
     }
 
-    /*function pos():Int {
+    public function getPos():Int {
         return pos;
-    }*/
+    }
 
     function isEmpty():Bool {
         return pos >= length;
@@ -64,12 +66,12 @@ import java.util.Locale;
         pos++;
     }
 
-    /*function mark():Void {
-        mark = pos;
-    }*/
+    function mark():Void {
+        _mark = pos;
+    }
 
     function rewindToMark():Void {
-        pos = mark;
+        pos = _mark;
     }
 
 	//NOTE(az): mmmhh

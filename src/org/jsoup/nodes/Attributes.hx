@@ -1,6 +1,5 @@
 package org.jsoup.nodes;
 
-import de.polygonal.ds.HashTable;
 import de.polygonal.ds.List;
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.Cloneable;
@@ -26,12 +25,9 @@ import org.jsoup.helper.Validate;
 class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attributes> {
     private static var EMPTY_LIST:List<Attribute> = new ArrayList<Attribute>();
     
-	//NOTE(az): used by HashTable
-	private static var SLOT_COUNT:Int = 24;
-
     /*protected final*/ public static inline var dataPrefix:String = "data-";
     
-    private var attributes:HashTable<String, Attribute> = null;
+    private var attributes:Map<String, Attribute> = null;
     // linked hash map to preserve insertion order.
     // null be default as so many elements have no attributes -- saves a good chunk of memory
 
@@ -91,7 +87,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
     public function putAttr(attribute:Attribute) {
         Validate.notNull(attribute);
         if (attributes == null)
-            attributes = new HashTable<String, Attribute>(SLOT_COUNT/*2*/);
+            attributes = new Map<String, Attribute>(/*2*/);
         attributes.set(attribute.getKey(), attribute);
     }
 
@@ -103,7 +99,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
         Validate.notEmpty(key);
         if (attributes == null)
             return;
-        attributes.unset(key.toLowerCase());
+        attributes.remove(key.toLowerCase());
     }
 
     /**
@@ -112,17 +108,18 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
      @return true if key exists, false otherwise
      */
     public function hasKey(key:String):Bool {
-        return attributes != null && attributes.hasKey(key.toLowerCase());
+        return attributes != null && attributes.exists(key.toLowerCase());
     }
 
     /**
      Get the number of attributes in this set.
      @return size
      */
-    public function size():Int {
+    //NOTE(az): siz3
+	public function size():Int {
         if (attributes == null)
             return 0;
-        return attributes.size;
+        return [for (k in attributes.keys()) k].length;
     }
 
     /**
@@ -133,7 +130,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
         if (incoming.size() == 0)
             return;
         if (attributes == null)
-            attributes = new HashTable<String, Attribute>(SLOT_COUNT/*incoming.size()*/);
+            attributes = new Map<String, Attribute>(/*incoming.size()*/);
         for (key in incoming.attributes.keys())
 			attributes.set(key, incoming.attributes.get(key));
     }
@@ -218,7 +215,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
 	
 	//NOTE(az): is this needed?
     public function hashCode():Int {
-        return key = (attributes != null ? attributes.key : 0);
+        return key = (attributes != null ? 1 : 0);
     }
 
     //@Override
@@ -228,7 +225,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
 
         var clone = new Attributes();
         
-        clone.attributes = new HashTable<String, Attribute>(SLOT_COUNT/*attributes.size()*/);
+        clone.attributes = new Map<String, Attribute>(/*attributes.size()*/);
         for (key in attributes.keys())
             clone.attributes.set(key, attributes.get(key).clone());
         return clone;
@@ -250,7 +247,7 @@ class Dataset /*extends AbstractMap<String, String>*/ {
 		this.owner = owner;
 		
 		if (owner.attributes == null)
-			owner.attributes = new HashTable<String, Attribute>(Attributes.SLOT_COUNT/*2*/);
+			owner.attributes = new Map<String, Attribute>(/*2*/);
 	}
 
 	/*@Override

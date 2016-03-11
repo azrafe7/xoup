@@ -2,6 +2,7 @@ package org.jsoup.parser.tokens;
 
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities;
+import org.jsoup.parser.tokens.Token;
 import unifill.CodePoint;
 import unifill.Unifill;
 
@@ -10,12 +11,15 @@ import unifill.Unifill;
 /**
  * Readers the input stream into tokens.
  */
+@:allow(org.jsoup.parser)
 class Tokeniser {
     static var replacementChar = CodePoint.fromInt(0xFFFD); // replaces null character
-    private static var notCharRefCharsSorted:Array<Character> = ['\t', '\n', '\r', String.fromCharCode(0xC/*'\f'*/), ' ', '<', '&'];
+    
+	//NOTE(az)
+	private static var notCharRefCharsSorted:Array<CodePoint> = ['\t'.code, '\n'.code, '\r'.code, 0xC/*'\f'*/, ' '.code, '<'.code, '&'.code];
 
     static function __init__() {
-        notCharRefCharsSorted.sort(Unifill.uCompare);
+        notCharRefCharsSorted.sort(Reflect.compare);
     }
 
     private var reader:CharacterReader; // html input
@@ -28,21 +32,21 @@ class Tokeniser {
     private var charsBuilder:StringBuf = new StringBuf(/*1024*/); // buffers characters to output as one token, if more than one emit per read
     var dataBuffer:StringBuf = new StringBuf(/*1024*/); // buffers data looking for </script>
 
-    var tagPending:Token.Tag; // tag we are building up
-    var Token.StartTag startPending = new Token.StartTag();
-    var Token.EndTag endPending = new Token.EndTag();
-    var Token.Character charPending = new Token.Character();
-    var Token.Doctype doctypePending = new Token.Doctype(); // doctype building up
-    var Token.Comment commentPending = new Token.Comment(); // comment building up
-    private var String lastStartTag; // the last start tag emitted, to test appropriate end tag
-    private var boolean selfClosingFlagAcknowledged = true;
+    var tagPending:TokenTag; // tag we are building up
+    var startPending:TokenStartTag = new TokenStartTag();
+    var endPending:TokenEndTag = new TokenEndTag();
+    var charPending:TokenCharacter = new TokenCharacter();
+    var doctypePending:TokenDoctype = new TokenDoctype(); // doctype building up
+    var commentPending:TokenComment = new TokenComment(); // comment building up
+    private var lastStartTag:String; // the last start tag emitted, to test appropriate end tag
+    private var selfClosingFlagAcknowledged:Bool = true;
 
-    Tokeniser(CharacterReader reader, ParseErrorList errors) {
+    function new(reader:CharacterReader, errors:ParseErrorList) {
         this.reader = reader;
         this.errors = errors;
     }
 
-    Token read() {
+    function read():Token {
         if (!selfClosingFlagAcknowledged) {
             error("Self closing flag not acknowledged");
             selfClosingFlagAcknowledged = true;
@@ -52,13 +56,15 @@ class Tokeniser {
             state.read(this, reader);
 
         // if emit is pending, a non-character token was found: return any chars in buffer, and leave token for next read:
-        if (charsBuilder.length() > 0) {
-            String str = charsBuilder.toString();
-            charsBuilder.delete(0, charsBuilder.length());
+        if (charsBuilder.length > 0) {
+            var str = charsBuilder.toString();
+            //NOTE(az): recreate it
+			//charsBuilder.delete(0, charsBuilder.length());
+			charsBuilder = new StringBuf();
             charsString = null;
-            return charPending.data(str);
+            return charPending.setData(str);
         } else if (charsString != null) {
-            Token token = charPending.data(charsString);
+            var token:Token = charPending.setData(charsString);
             charsString = null;
             return token;
         } else {
@@ -67,65 +73,68 @@ class Tokeniser {
         }
     }
 
-    void emit(Token token) {
+    function emit(token:Token):Void {
         Validate.isFalse(isEmitPending, "There is an unread token pending!");
 
         emitPending = token;
         isEmitPending = true;
 
-        if (token.type == Token.TokenType.StartTag) {
-            Token.StartTag startTag = (Token.StartTag) token;
+        if (token.type == TokenType.StartTag) {
+            var startTag:TokenStartTag = cast token;
             lastStartTag = startTag.tagName;
-            if (startTag.selfClosing)
+            if (startTag.isSelfClosing())
                 selfClosingFlagAcknowledged = false;
-        } else if (token.type == Token.TokenType.EndTag) {
-            Token.EndTag endTag = (Token.EndTag) token;
+        } else if (token.type == TokenType.EndTag) {
+            var endTag:TokenEndTag = cast token;
             if (endTag.attributes != null)
                 error("Attributes incorrectly present on end tag");
         }
     }
 
-    void emit(final String str) {
+	//NOTE(az): renamed to emitString and removed other overloads below
+    function emitString(str:String):Void {
         // buffer strings up until last string token found, to emit only one token for a run of character refs etc.
         // does not set isEmitPending; read checks that
         if (charsString == null) {
             charsString = str;
         }
         else {
-            if (charsBuilder.length() == 0) { // switching to string builder as more than one emit before read
-                charsBuilder.append(charsString);
+            if (charsBuilder.length == 0) { // switching to string builder as more than one emit before read
+                charsBuilder.add(charsString);
             }
-            charsBuilder.append(str);
+            charsBuilder.add(str);
         }
     }
 
-    void emit(char[] chars) {
+	//NOTE(az): removed for now, see above ^^
+    /*void emit(char[] chars) {
         emit(String.valueOf(chars));
     }
 
     void emit(char c) {
         emit(String.valueOf(c));
-    }
+    }*/
 
-    TokeniserState getState() {
+    function getState():TokeniserState {
         return state;
     }
 
-    void transition(TokeniserState state) {
+    function transition(state:TokeniserState):Void {
         this.state = state;
     }
 
-    void advanceTransition(TokeniserState state) {
+    function advanceTransition(state:TokeniserState):Void {
         reader.advance();
         this.state = state;
     }
 
-    void acknowledgeSelfClosingFlag() {
+    function acknowledgeSelfClosingFlag():Void {
         selfClosingFlagAcknowledged = true;
     }
 
-    final private char[] charRefHolder = new char[1]; // holder to not have to keep creating arrays
-    char[] consumeCharacterReference(Character additionalAllowedCharacter, boolean inAttribute) {
+	//NOTE(az): was char[]; , see method below
+    private var charRefHolder:Array<CodePoint> = [0];// new char[1]; // holder to not have to keep creating arrays
+    function consumeCharacterReference(additionalAllowedCharacter:Character, inAttribute:Bool):Array<CodePoint> {
         if (reader.isEmpty())
             return null;
         if (additionalAllowedCharacter != null && additionalAllowedCharacter == reader.current())
@@ -133,123 +142,127 @@ class Tokeniser {
         if (reader.matchesAnySorted(notCharRefCharsSorted))
             return null;
 
-        final char[] charRef = charRefHolder;
+        var charRef:Array<CodePoint> = charRefHolder;
         reader.mark();
         if (reader.matchConsume("#")) { // numbered
-            boolean isHexMode = reader.matchConsumeIgnoreCase("X");
-            String numRef = isHexMode ? reader.consumeHexSequence() : reader.consumeDigitSequence();
-            if (numRef.length() == 0) { // didn't match anything
+            var isHexMode:Bool = reader.matchConsumeIgnoreCase("X");
+            var numRef:String = isHexMode ? reader.consumeHexSequence() : reader.consumeDigitSequence();
+            if (numRef.length == 0) { // didn't match anything
                 characterReferenceError("numeric reference with no numerals");
                 reader.rewindToMark();
                 return null;
             }
             if (!reader.matchConsume(";"))
                 characterReferenceError("missing semicolon"); // missing semi
-            int charval = -1;
-            try {
-                int base = isHexMode ? 16 : 10;
-                charval = Integer.valueOf(numRef, base);
-            } catch (NumberFormatException e) {
-            } // skip
-            if (charval == -1 || (charval >= 0xD800 && charval <= 0xDFFF) || charval > 0x10FFFF) {
+            //NOTE(az): check try/catch, subst for a null check (which is what Std.parse returns in case of error)
+            var charval:Int = -1;
+			var parsedVal:Null<Int> = null;
+			//try {
+                var base:Int = isHexMode ? 16 : 10;
+				parsedVal = Std.parseInt(isHexMode ? "0x" + numRef : numRef);
+				if (parsedVal != null) charval = parsedVal;
+            //} catch (NumberFormatException e) { } // skip
+            
+			if (charval == -1 || (charval >= 0xD800 && charval <= 0xDFFF) || charval > 0x10FFFF) {
                 characterReferenceError("character outside of valid range");
                 charRef[0] = replacementChar;
                 return charRef;
             } else {
                 // todo: implement number replacement table
                 // todo: check for extra illegal unicode points as parse errors
-                if (charval < Character.MIN_SUPPLEMENTARY_CODE_POINT) {
-                    charRef[0] = (char) charval;
+                if (charval < Entities.MIN_SUPPLEMENTARY_CODE_POINT) {
+                    charRef[0] = /*(char)*/ charval;
                     return charRef;
                 } else
-                return Character.toChars(charval);
+                return [CodePoint.fromInt(charval)]; //NOTE(az): mmhhh... toChars()
             }
         } else { // named
             // get as many letters as possible, and look for matching entities.
-            String nameRef = reader.consumeLetterThenDigitSequence();
-            boolean looksLegit = reader.matches(';');
+            var nameRef:String = reader.consumeLetterThenDigitSequence();
+            var looksLegit:Bool = reader.matches(';'.code);
             // found if a base named entity without a ;, or an extended entity with the ;.
-            boolean found = (Entities.isBaseNamedEntity(nameRef) || (Entities.isNamedEntity(nameRef) && looksLegit));
+            var found:Bool = (Entities.isBaseNamedEntity(nameRef) || (Entities.isNamedEntity(nameRef) && looksLegit));
 
             if (!found) {
                 reader.rewindToMark();
                 if (looksLegit) // named with semicolon
-                    characterReferenceError(String.format("invalid named referenece '%s'", nameRef));
+                    characterReferenceError('invalid named referenece "$nameRef"');
                 return null;
             }
-            if (inAttribute && (reader.matchesLetter() || reader.matchesDigit() || reader.matchesAny('=', '-', '_'))) {
+            if (inAttribute && (reader.matchesLetter() || reader.matchesDigit() || reader.matchesAny(['='.code, '-'.code, '_'.code]))) {
                 // don't want that to match
                 reader.rewindToMark();
                 return null;
             }
             if (!reader.matchConsume(";"))
                 characterReferenceError("missing semicolon"); // missing semi
-            charRef[0] = Entities.getCharacterByName(nameRef);
+            charRef[0] = Unifill.uCharCodeAt(Entities.getCharacterByName(nameRef), 0);
             return charRef;
         }
     }
 
-    Token.Tag createTagPending(boolean start) {
+    function createTagPending(start:Bool):TokenTag {
         tagPending = start ? startPending.reset() : endPending.reset();
         return tagPending;
     }
 
-    void emitTagPending() {
+    function emitTagPending():Void {
         tagPending.finaliseTag();
         emit(tagPending);
     }
 
-    void createCommentPending() {
+    function createCommentPending():Void {
         commentPending.reset();
     }
 
-    void emitCommentPending() {
+    function emitCommentPending():Void {
         emit(commentPending);
     }
 
-    void createDoctypePending() {
+    function createDoctypePending():Void {
         doctypePending.reset();
     }
 
-    void emitDoctypePending() {
+    function emitDoctypePending():Void {
         emit(doctypePending);
     }
 
-    void createTempBuffer() {
-        Token.reset(dataBuffer);
+    function createTempBuffer():Void {
+        Token.resetBuf(dataBuffer);
     }
 
-    boolean isAppropriateEndTagToken() {
-        return lastStartTag != null && tagPending.tagName.equals(lastStartTag);
+    function isAppropriateEndTagToken():Bool {
+        return lastStartTag != null && tagPending.tagName == lastStartTag;
     }
 
-    String appropriateEndTagName() {
+    function appropriateEndTagName():String {
         if (lastStartTag == null)
             return null;
         return lastStartTag;
     }
 
-    void error(TokeniserState state) {
+	//NOE(az): renamed
+    function errorState(state:TokeniserState):Void {
         if (errors.canAddError())
-            errors.add(new ParseError(reader.pos(), "Unexpected character '%s' in input state [%s]", reader.current(), state));
+            errors.add(new ParseError(reader.getPos(), 'Unexpected character "${reader.current()}" in input state [${state}]'));
     }
 
-    void eofError(TokeniserState state) {
+    function eofError(state:TokeniserState):Void {
         if (errors.canAddError())
-            errors.add(new ParseError(reader.pos(), "Unexpectedly reached end of file (EOF) in input state [%s]", state));
+            errors.add(new ParseError(reader.getPos(), 'Unexpectedly reached end of file (EOF) in input state [${state}]'));
     }
 
-    private void characterReferenceError(String message) {
+    private function characterReferenceError(message:String):Void {
         if (errors.canAddError())
-            errors.add(new ParseError(reader.pos(), "Invalid character reference: %s", message));
+            errors.add(new ParseError(reader.getPos(), 'Invalid character reference: ${message}'));
     }
 
-    private void error(String errorMsg) {
+    private function error(errorMsg:String):Void {
         if (errors.canAddError())
-            errors.add(new ParseError(reader.pos(), errorMsg));
+            errors.add(new ParseError(reader.getPos(), errorMsg));
     }
 
-    boolean currentNodeInHtmlNS() {
+    function currentNodeInHtmlNS():Bool {
         // todo: implement namespaces correctly
         return true;
         // Element currentNode = currentNode();
@@ -261,17 +274,18 @@ class Tokeniser {
      * @param inAttribute
      * @return unescaped string from reader
      */
-    String unescapeEntities(boolean inAttribute) {
-        StringBuilder builder = new StringBuilder();
+	//NOTE(az): using Array<CodePoint> here too, check adds
+    function unescapeEntities(inAttribute:Bool):String {
+        var builder = new StringBuf();
         while (!reader.isEmpty()) {
-            builder.append(reader.consumeTo('&'));
-            if (reader.matches('&')) {
+            builder.add(reader.consumeTo('&'.code));
+            if (reader.matches('&'.code)) {
                 reader.consume();
-                char[] c = consumeCharacterReference(null, inAttribute);
+                var c:Array<CodePoint> = consumeCharacterReference(null, inAttribute);
                 if (c == null || c.length==0)
-                    builder.append('&');
+                    builder.add('&');
                 else
-                    builder.append(c);
+                    for (u in c) builder.add(u.toString());
             }
         }
         return builder.toString();

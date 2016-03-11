@@ -9,6 +9,7 @@ import de.polygonal.ds.ArrayList;
  * 
  * @author Jonathan Hedley
  */
+@:allow(org.jsoup.parser)
 class ParseErrorList extends ArrayList<ParseError>{
     private static inline var INITIAL_CAPACITY:Int = 16;
     private var maxSize:Int;

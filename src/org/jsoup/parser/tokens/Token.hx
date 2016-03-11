@@ -9,6 +9,7 @@ import org.jsoup.nodes.BooleanAttribute;
  * Parse tokens for the Tokeniser.
  */
 //NOTE(az): brought internal classes out, move in its own package to avoid conflicts
+@:allow(org.jsoup.parser)
 /*abstract*/ class Token {
     var type:TokenType;
 
@@ -18,14 +19,14 @@ import org.jsoup.nodes.BooleanAttribute;
     function tokenType():String {
         //NOTE(az): using Type here
 		//return this.getClass().getSimpleName();
-		return Type.getClassName(getClass(this));
+		return Type.getClassName(Type.getClass(this));
     }
 
     /**
      * Reset the data represent by this token, for reuse. Prevents the need to create transfer objects for every
      * piece of data, which immediately get GCed.
      */
-    /*abstract*/ function reset():Token;
+    /*abstract*/ function reset():Token { throw "Abstract"; };
 
 	//NOTE(az): renamed resetBuf
     static function resetBuf(sb:StringBuf):Void {
@@ -40,7 +41,7 @@ import org.jsoup.nodes.BooleanAttribute;
 		return type == TokenType.Doctype;
 	}
 
-	function asDoctype():Doctype {
+	function asDoctype():TokenDoctype {
 		return cast this;
 	}
 
@@ -48,7 +49,7 @@ import org.jsoup.nodes.BooleanAttribute;
 		return type == TokenType.StartTag;
 	}
 
-	function asStartTag():StartTag {
+	function asStartTag():TokenStartTag {
 		return cast this;
 	}
 
@@ -56,7 +57,7 @@ import org.jsoup.nodes.BooleanAttribute;
 		return type == TokenType.EndTag;
 	}
 
-	function asEndTag():EndTag {
+	function asEndTag():TokenEndTag {
 		return cast this;
 	}
 
@@ -64,15 +65,15 @@ import org.jsoup.nodes.BooleanAttribute;
 		return type == TokenType.Comment;
 	}
 
-	function asComment():Comment {
+	function asComment():TokenComment {
 		return cast this;
 	}
 
-	function isCharacter():Character {
+	function isCharacter():Bool {
 		return type == TokenType.Character;
 	}
 
-	function asCharacter():Character {
+	function asCharacter():TokenCharacter {
 		return cast this;
 	}
 
@@ -82,21 +83,23 @@ import org.jsoup.nodes.BooleanAttribute;
 }
 
 
-/*static final*/ class Doctype extends Token {
+@:allow(org.jsoup.parser)
+/*static final*/ class TokenDoctype extends Token {
 	var name:StringBuf = new StringBuf();
 	var publicIdentifier:StringBuf = new StringBuf();
 	var systemIdentifier:StringBuf = new StringBuf();
 	var forceQuirks:Bool = false;
 
 	function new() {
+		super();
 		type = TokenType.Doctype;
 	}
 
 	//@Override
 	override function reset():Token {
-		reset(name);
-		reset(publicIdentifier);
-		reset(systemIdentifier);
+		Token.resetBuf(name);
+		Token.resetBuf(publicIdentifier);
+		Token.resetBuf(systemIdentifier);
 		forceQuirks = false;
 		return this;
 	}
@@ -119,7 +122,8 @@ import org.jsoup.nodes.BooleanAttribute;
 }
 
 
-/*static abstract*/ class Tag extends Token {
+@:allow(org.jsoup.parser)
+/*static abstract*/ class TokenTag extends Token {
 	/*protected*/ var tagName:String;
 	private var pendingAttributeName:String; // attribute names are generally caught in one hop, not accumulated
 	private var pendingAttributeValue:StringBuf = new StringBuf(); // but values are accumulated, from e.g. & in hrefs
@@ -129,10 +133,10 @@ import org.jsoup.nodes.BooleanAttribute;
 	var attributes:Attributes; // start tags get attributes on construction. End tags get attributes on first new attribute (but only for parser convenience, not used).
 
 	//@Override
-	override function reset():Tag {
+	override function reset():TokenTag {
 		tagName = null;
 		pendingAttributeName = null;
-		reset(pendingAttributeValue);
+		Token.resetBuf(pendingAttributeValue);
 		hasEmptyAttributeValue = false;
 		hasPendingAttributeValue = false;
 		selfClosing = false;
@@ -152,12 +156,12 @@ import org.jsoup.nodes.BooleanAttribute;
 				attribute = new Attribute(pendingAttributeName, "");
 			else
 				attribute = new BooleanAttribute(pendingAttributeName);
-			attributes.put(attribute);
+			attributes.putAttr(attribute);
 		}
 		pendingAttributeName = null;
 		hasEmptyAttributeValue = false;
 		hasPendingAttributeValue = false;
-		reset(pendingAttributeValue);
+		Token.resetBuf(pendingAttributeValue);
 	}
 
 	function finaliseTag():Void {
@@ -175,7 +179,7 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//NOTE(az): setter
-	function setName(name:String):Tag {
+	function setName(name:String):TokenTag {
 		tagName = name;
 		return this;
 	}
@@ -191,7 +195,7 @@ import org.jsoup.nodes.BooleanAttribute;
 
 	// these appenders are rarely hit in not null state-- caused by null chars.
 	function appendTagName(append:String):Void {
-		tagName = tagName == null ? append : tagName.concat(append);
+		tagName = tagName == null ? append : tagName + append;
 	}
 
 	//NOTE(az): removed
@@ -200,7 +204,7 @@ import org.jsoup.nodes.BooleanAttribute;
 	}*/
 
 	function appendAttributeName(append:String):Void {
-		pendingAttributeName = pendingAttributeName == null ? append : pendingAttributeName.concat(append);
+		pendingAttributeName = pendingAttributeName == null ? append : pendingAttributeName + append;
 	}
 
 	//NOTE(az): removed
@@ -210,7 +214,7 @@ import org.jsoup.nodes.BooleanAttribute;
 
 	function appendAttributeValue(append:String):Void {
 		ensureAttributeValue();
-		pendingAttributeValue.append(append);
+		pendingAttributeValue.add(append);
 	}
 
 	//NOTE(az): removed
@@ -235,7 +239,8 @@ import org.jsoup.nodes.BooleanAttribute;
 }
 
 
-/*final static*/ class StartTag extends Tag {
+@:allow(org.jsoup.parser)
+/*final static*/ class TokenStartTag extends TokenTag {
 	function new() {
 		super();
 		attributes = new Attributes();
@@ -243,21 +248,21 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//@Override
-	override function reset():Tag {
+	override function reset():TokenTag {
 		super.reset();
 		attributes = new Attributes();
 		// todo - would prefer these to be null, but need to check Element assertions
 		return this;
 	}
 
-	function nameAttr(name:String, attributes:Attributes):StartTag {
+	function nameAttr(name:String, attributes:Attributes):TokenStartTag {
 		this.tagName = name;
 		this.attributes = attributes;
 		return this;
 	}
 
 	//@Override
-	override public function toString():String {
+	public function toString():String {
 		if (attributes != null && attributes.size() > 0)
 			return "<" + getName() + " " + attributes.toString() + ">";
 		else
@@ -265,30 +270,31 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 }
 
-/*final static*/ class EndTag extends Tag {
+/*final static*/ class TokenEndTag extends TokenTag {
 	function new() {
 		super();
 		type = TokenType.EndTag;
 	}
 
 	//@Override
-	override public function toString() {
+	public function toString() {
 		return "</" + getName() + ">";
 	}
 }
 
-/*final static*/ class Comment extends Token {
+/*final static*/ class TokenComment extends Token {
 	var data:StringBuf = new StringBuf();
 	var bogus:Bool = false;
 
 	//@Override
 	override function reset():Token {
-		reset(data);
+		Token.resetBuf(data);
 		bogus = false;
 		return this;
 	}
 
 	function new() {
+		super();
 		type = TokenType.Comment;
 	}
 
@@ -297,12 +303,13 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//@Override
-	override public function toString():String {
+	public function toString():String {
 		return "<!--" + getData() + "-->";
 	}
 }
 
-/*final static*/ class Character extends Token {
+@:allow(org.jsoup.parser)
+/*final static*/ class TokenCharacter extends Token {
 	private var data:String;
 
 	function new() {
@@ -311,13 +318,13 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//@Override
-	override function reset():String {
+	override function reset():Token {
 		data = null;
 		return this;
 	}
 
 	//NOTE(az): setter
-	function setData(data:String):Character {
+	function setData(data:String):TokenCharacter {
 		this.data = data;
 		return this;
 	}
@@ -328,13 +335,14 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//@Override
-	override public function toString():String {
+	public function toString():String {
 		return getData();
 	}
 }
 
-/*final static*/ class EOF extends Token {
+/*final static*/ class TokenEOF extends Token {
 	function new() {
+		super();
 		type = Token.TokenType.EOF;
 	}
 

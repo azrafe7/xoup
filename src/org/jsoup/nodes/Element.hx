@@ -7,6 +7,7 @@ import de.polygonal.ds.Set;
 import org.jsoup.Exceptions.IllegalArgumentException;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Attributes.Dataset;
+import org.jsoup.parser.Parser;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 import org.jsoup.select.NodeTraversor;
@@ -123,7 +124,7 @@ class Element extends Node {
      * @return this element
      */
 	//NOTE(az): unified with method below, Dynamic?, remember to copy docs
-    public function setAttr(attributeKey:String, attributeValue:Dynamic):Element {
+    override public function setAttr(attributeKey:String, attributeValue:Dynamic):Element {
         if (Std.is(attributeValue, String)) super.setAttr(attributeKey, attributeValue);
 		else if (Std.is(attributeValue, Bool)) attributes.put(attributeKey, attributeValue);
 		else throw "Invalid attributeValue";
@@ -179,7 +180,7 @@ class Element extends Node {
 
     private static function accumulateParents(el:Element, parents:Elements):Void {
         var parent:Element = el.parent();
-        if (parent != null && !parent.getTagName() == "#root") {
+        if (parent != null && !(parent.getTagName() == "#root")) {
             parents.add(parent);
             accumulateParents(parent, parents);
         }
@@ -418,7 +419,7 @@ class Element extends Node {
     public function prepend(html:String):Element {
         Validate.notNull(html);
         
-        List<Node> nodes = Parser.parseFragment(html, this, baseUri());
+        var nodes:List<Node> = Parser.parseFragment(html, this, getBaseUri());
         //addChildren(0, nodes.toArray(new Node[nodes.size()]));
         addChildrenAt(0, nodes.toArray());
         return this;
@@ -1175,7 +1176,7 @@ class Element extends Node {
         return this;
     }
 
-    function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings) {
+    override function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings) {
         if (accum.length > 0 && out.getPrettyPrint() && (tag.formatAsBlock() || (parent() != null && parent().getTag().formatAsBlock()) || out.getOutline()) )
             indent(accum, depth, out);
         
@@ -1194,7 +1195,7 @@ class Element extends Node {
             accum.add(">");
     }
 
-    function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings) {
+    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings) {
         if (!(childNodes.isEmpty() && tag.isSelfClosing())) {
             if (out.getPrettyPrint() && (!childNodes.isEmpty() && (
                     tag.formatAsBlock() || (out.getOutline() && (childNodes.size>1 || (childNodes.size==1 && !(Std.is(childNodes.get(0), TextNode)))))
@@ -1239,13 +1240,13 @@ class Element extends Node {
         return this;
     }
 
-    public function toString():String {
+    override public function toString():String {
         return outerHtml();
     }
 
     //@Override
 	//NOTE(az): equals
-    public function equals(o):Bool {
+    override public function equals(o:Node):Bool {
         if (this == o) return true;
 		return false;
         /*if (o == null || getClass() != o.getClass()) return false;

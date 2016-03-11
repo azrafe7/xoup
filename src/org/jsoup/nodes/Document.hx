@@ -207,7 +207,7 @@ class Document extends Element {
     }
 
     //@Override
-    override public function outerHtml():String {
+    override public function outerHtml(accum:StringBuf = null):String {
         return super.getHtml(); // no outer wrapper tag
     }
 
@@ -346,7 +346,7 @@ class Document extends Element {
                 }
 
                 // Remove obsolete elements
-                select("meta[name=charset]").remove();
+                select("meta[name=charset]").removeMatched();
             } else if (syntax == Syntax.xml) {
                 var node:Node = getChildNodes().get(0);
 
@@ -388,7 +388,7 @@ class Document extends Element {
      * @return the document's current output settings.
      */
 	//NOTE(az): getter
-    public function getOutputSettings():OutputSettings {
+    override public function getOutputSettings():OutputSettings {
         return outputSettings;
     }
 

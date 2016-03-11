@@ -7,6 +7,7 @@ import de.polygonal.ds.Hashable;
 import de.polygonal.ds.List;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.Interfaces.IterableWithLength;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 
@@ -628,7 +629,7 @@ class Node implements Cloneable<Node> implements Hashable {
      */
     //@Override
 	//NOTE(az): `hashCode` is `key` in polygonal
-    var key:Int;
+    public var key:Int;
 	
 	public function hashCode():Int {
         var result = childNodes != null ? childNodes.key : 0;

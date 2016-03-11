@@ -5,12 +5,15 @@ import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.tokens.Token;
+import org.jsoup.parser.tokens.Tokeniser;
 
 //import java.util.ArrayList;
 
 /**
  * @author Jonathan Hedley
  */
+@:allow(org.jsoup.parser)
 /*abstract*/ class TreeBuilder {
     var reader:CharacterReader;
     var tokeniser:Tokeniser;
@@ -20,8 +23,8 @@ import org.jsoup.nodes.Element;
     /*protected*/ var currentToken:Token; // currentToken is used only for error tracking.
     /*protected*/ var errors:ParseErrorList; // null when not tracking errors
 
-    private var start:Token.StartTag = new Token.StartTag(); // start tag to process
-    private var end:Token.EndTag  = new Token.EndTag();
+    private var start:TokenStartTag = new TokenStartTag(); // start tag to process
+    private var end:TokenEndTag  = new TokenEndTag();
 
     function new() {
 		throw "Cannot instantiate this abstract class";
@@ -56,23 +59,23 @@ import org.jsoup.nodes.Element;
             process(token);
             token.reset();
 
-            if (token.type == Token.TokenType.EOF)
+            if (token.type == TokenType.EOF)
                 break;
         }
     }
 
-    /*protected abstract*/ function process(token:Token):Bool;
+    /*protected abstract*/ function process(token:Token):Bool { throw "Abstract"; return false; };
 
-    /*protected*/ function processStartTag(name:String):Bool {
+    /*protected*/ function _processStartTag(name:String):Bool {
         if (currentToken == start) { // don't recycle an in-use token
-            return process(new Token.StartTag().name(name));
+            return process(new TokenStartTag().setName(name));
         }
-        return process(start.reset().name(name));
+        return process(start.reset().setName(name));
     }
 
     public function processStartTag(name:String, attrs:Attributes):Bool {
         if (currentToken == start) { // don't recycle an in-use token
-            return process(new Token.StartTag().nameAttr(name, attrs));
+            return process(new TokenStartTag().nameAttr(name, attrs));
         }
         start.reset();
         start.nameAttr(name, attrs);
@@ -81,9 +84,9 @@ import org.jsoup.nodes.Element;
 
     /*protected*/ function processEndTag(name:String):Bool {
         if (currentToken == end) { // don't recycle an in-use token
-            return process(new Token.EndTag().name(name));
+            return process(new TokenEndTag().setName(name));
         }
-        return process(end.reset().name(name));
+        return process(end.reset().setName(name));
     }
 
 

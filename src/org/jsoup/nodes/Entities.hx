@@ -26,7 +26,7 @@ typedef Character = String;
 @:allow(org.jsoup.nodes.EscapeMode)
 class Entities {
 
-	static inline var MIN_SUPPLEMENTARY_CODE_POINT:CodePoint = 0x10000;
+	public static inline var MIN_SUPPLEMENTARY_CODE_POINT:CodePoint = 0x10000;
 	
     private static var full:Map<String, Character>;
     private static var xhtmlByVal:Map<Character, String>;

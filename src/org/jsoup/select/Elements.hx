@@ -53,8 +53,8 @@ class Elements extends ArrayList<Element> {
      * @return a deep copy
      */
     //@Override
-	override public function clone():Elements {
-        var clone = new Elements(size);
+	override public function clone(assign:Bool = true, copier:Element->Element = null) {
+		var clone = new Elements(size);
 
         for(e in this)
     		clone.add(e.clone());
@@ -410,7 +410,7 @@ class Elements extends ArrayList<Element> {
      * @see Element#empty()
      * @see #empty()
      */
-    public function remove():Elements {
+    public function removeMatched():Elements {
         for (element in this) {
             element.remove();
         }

@@ -4,7 +4,7 @@ package org.jsoup.nodes;
  A data node, for contents of style, script tags etc, where contents should not show in text().
 
  @author Jonathan Hedley, jonathan@hedley.net */
-class DataNode extends Node{
+class DataNode extends Node {
     private static inline var DATA_KEY:String = "data";
 
     /**
@@ -17,7 +17,7 @@ class DataNode extends Node{
         attributes.put(DATA_KEY, data);
     }
 
-    public function nodeName():String {
+    override public function nodeName():String {
         return "#data";
     }
 
@@ -39,11 +39,11 @@ class DataNode extends Node{
         return this;
     }
 
-    function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
+    override function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
         accum.add(getWholeData()); // data is not escaped in return from data nodes, so " in script, style is plain
     }
 
-    function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {}
+    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {}
 
     //@Override
     override public function toString():String {

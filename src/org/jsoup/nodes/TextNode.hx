@@ -30,7 +30,7 @@ class TextNode extends Node {
         this.text = text;
     }
 
-    public function nodeName():String {
+    override public function nodeName():String {
         return "#text";
     }
     
@@ -94,7 +94,7 @@ class TextNode extends Node {
     }
 
 	//NOTE(az): check long bool expr and cast
-    function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
+    override function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
 		if (out.getPrettyPrint() && (
 				(getSiblingIndex() == 0 && Std.is(parentNode, Element) && cast(parentNode, Element).getTag().formatAsBlock() && !isBlank()) 
 				|| (out.getOutline() && siblingNodes().size > 0 && !isBlank()) ))
@@ -107,10 +107,10 @@ class TextNode extends Node {
         Entities._escape(accum, getWholeText(), out, false, normaliseWhite, false);
     }
 
-    function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {}
+    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {}
 
     //@Override
-    public function toString():String {
+    override public function toString():String {
         return outerHtml();
     }
 
@@ -188,7 +188,7 @@ class TextNode extends Node {
 
     //@Override
 	//NOTE(az): equals
-    override public function equals(o):Bool {
+    override public function equals(o:Node):Bool {
         if (this == o) return true;
         return false;
 		
