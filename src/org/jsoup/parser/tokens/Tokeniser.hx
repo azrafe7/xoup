@@ -109,11 +109,11 @@ class Tokeniser {
 	//NOTE(az): removed for now, see above ^^
     /*void emit(char[] chars) {
         emit(String.valueOf(chars));
-    }
-
-    void emit(char c) {
-        emit(String.valueOf(c));
     }*/
+
+    function emitCodePoint(c:CodePoint):Void {
+        emitString(c.toString());
+    }
 
     function getState():TokeniserState {
         return state;
@@ -134,7 +134,7 @@ class Tokeniser {
 
 	//NOTE(az): was char[]; , see method below
     private var charRefHolder:Array<CodePoint> = [0];// new char[1]; // holder to not have to keep creating arrays
-    function consumeCharacterReference(additionalAllowedCharacter:Character, inAttribute:Bool):Array<CodePoint> {
+    function consumeCharacterReference(additionalAllowedCharacter:CodePoint, inAttribute:Bool):Array<CodePoint> {
         if (reader.isEmpty())
             return null;
         if (additionalAllowedCharacter != null && additionalAllowedCharacter == reader.current())

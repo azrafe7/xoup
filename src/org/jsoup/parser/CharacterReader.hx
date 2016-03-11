@@ -20,8 +20,8 @@ import java.util.Locale;
  */
 @:allow(org.jsoup.parser)
 /*final*/ class CharacterReader {
-    static inline var EOF:Int = -1;
-    static inline var nullchar:Int = 0;
+    public static inline var EOF:Int = -1;
+    public static inline var nullchar:Int = 0;
 	
     private static inline var maxCacheLen:Int = 12;
 
@@ -48,11 +48,11 @@ import java.util.Locale;
         return pos >= length;
     }
 
-    function current():CodePoint {
+    function current():Int {
         return pos >= length ? EOF : inputCP[pos];
     }
 
-    function consume():CodePoint {
+    function consume():Int {
         var val:CodePoint = pos >= length ? EOF : inputCP[pos];
         pos++;
         return val;

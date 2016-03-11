@@ -283,8 +283,8 @@ import org.jsoup.nodes.BooleanAttribute;
 }
 
 /*final static*/ class TokenComment extends Token {
-	var data:StringBuf = new StringBuf();
-	var bogus:Bool = false;
+	public var data:StringBuf = new StringBuf();
+	public var bogus:Bool = false;
 
 	//@Override
 	override function reset():Token {
