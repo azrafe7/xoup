@@ -140,11 +140,11 @@ class QueryParser {
         while (!tq.isEmpty()) {
             if (tq.matches("(")) {
                 sq.add("(");
-				sq.add(tq.chompBalanced('(', ')'));
+				sq.add(tq.chompBalanced('('.code, ')'.code));
 				sq.add(")");
 			} else if (tq.matches("[")) {
                 sq.add("["); 
-				sq.add(tq.chompBalanced('[', ']'));
+				sq.add(tq.chompBalanced('['.code, ']'.code));
 				sq.add("]");
             } else if (tq.matchesAny(combinators))
                 break;
