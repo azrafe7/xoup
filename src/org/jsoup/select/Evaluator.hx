@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for tag name
  */
-/*public static final*/ class Tag extends Evaluator {
+/*public static final*/ class EvaluatorTag extends Evaluator {
 	private var tagName:String;
 
 	public function new(tagName:String) {
@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for element id
  */
-/*public static final*/ class Id extends Evaluator {
+/*public static final*/ class EvaluatorId extends Evaluator {
 	private var id:String;
 
 	public function new(id:String) {
@@ -84,7 +84,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for element class
  */
-/*public static final*/ class Class extends Evaluator {
+/*public static final*/ class EvaluatorClass extends Evaluator {
 	private var className:String;
 
 	public function new(className:String) {
@@ -107,7 +107,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for attribute name matching
  */
-/*public static final*/ class Attribute extends Evaluator {
+/*public static final*/ class EvaluatorAttribute extends Evaluator {
 	private var key:String;
 
 	public function new(key:String) {
@@ -130,7 +130,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for attribute name prefix matching
  */
-/*public static final*/ class AttributeStarting extends Evaluator {
+/*public static final*/ class EvaluatorAttributeStarting extends Evaluator {
 	private var keyPrefix:String;
 
 	public function new(keyPrefix:String) {
@@ -158,7 +158,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for attribute name/value matching
  */
-/*public static final*/ class AttributeWithValue extends AttributeKeyPair {
+/*public static final*/ class EvaluatorAttributeWithValue extends EvaluatorAttributeKeyPair {
 	public function new(key:String, value:String) {
 		super(key, value);
 	}
@@ -179,7 +179,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for attribute name != value matching
  */
-/*public static final*/ class AttributeWithValueNot extends AttributeKeyPair {
+/*public static final*/ class EvaluatorAttributeWithValueNot extends EvaluatorAttributeKeyPair {
 	public function new(key:String, value:String) {
 		super(key, value);
 	}
@@ -200,7 +200,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for attribute name/value matching (value prefix)
  */
-/*public static final*/ class AttributeWithValueStarting extends AttributeKeyPair {
+/*public static final*/ class EvaluatorAttributeWithValueStarting extends EvaluatorAttributeKeyPair {
 	public function new(key:String, value:String) {
 		super(key, value);
 	}
@@ -221,7 +221,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for attribute name/value matching (value ending)
  */
-/*public static final*/ class AttributeWithValueEnding extends AttributeKeyPair {
+/*public static final*/ class EvaluatorAttributeWithValueEnding extends EvaluatorAttributeKeyPair {
 	public function new(key:String, value:String) {
 		super(key, value);
 	}
@@ -241,7 +241,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for attribute name/value matching (value containing)
  */
-/*public static final*/ class AttributeWithValueContaining extends AttributeKeyPair {
+/*public static final*/ class EvaluatorAttributeWithValueContaining extends EvaluatorAttributeKeyPair {
 	public function new(key:String, value:String) {
 		super(key, value);
 	}
@@ -261,7 +261,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for attribute name/value matching (value regex matching)
  */
-/*public static final*/ class AttributeWithValueMatching extends Evaluator {
+/*public static final*/ class EvaluatorAttributeWithValueMatching extends Evaluator {
 	var key:String;
 	var pattern:EReg;
 
@@ -286,7 +286,7 @@ import java.util.regex.Pattern;
 /**
  * Abstract evaluator for attribute name/value matching
  */
-/*public abstract static*/ class AttributeKeyPair extends Evaluator {
+/*public abstract static*/ class EvaluatorAttributeKeyPair extends Evaluator {
 	var key:String;
 	var value:String;
 
@@ -306,7 +306,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for any / all element matching
  */
-/*public static final*/ class AllElements extends Evaluator {
+/*public static final*/ class EvaluatorAllElements extends Evaluator {
 
 	//@Override
 	override public function matches(root:Element, element:Element):Bool {
@@ -322,7 +322,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching by sibling index number (e {@literal <} idx)
  */
-/*public static final*/ class IndexLessThan extends IndexEvaluator {
+/*public static final*/ class EvaluatorIndexLessThan extends EvaluatorIndexEvaluator {
 	public function new(index:Int) {
 		super(index);
 	}
@@ -342,7 +342,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching by sibling index number (e {@literal >} idx)
  */
-/*public static final*/ class IndexGreaterThan extends IndexEvaluator {
+/*public static final*/ class EvaluatorIndexGreaterThan extends EvaluatorIndexEvaluator {
 	public function new(index:Int) {
 		super(index);
 	}
@@ -362,7 +362,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching by sibling index number (e = idx)
  */
-/*public static final*/ class IndexEquals extends IndexEvaluator {
+/*public static final*/ class EvaluatorIndexEquals extends EvaluatorIndexEvaluator {
 	public function new(index:Int) {
 		super(index);
 	}
@@ -382,7 +382,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching the last sibling (css :last-child)
  */
-/*public static final*/ class IsLastChild extends Evaluator {
+/*public static final*/ class EvaluatorIsLastChild extends Evaluator {
 	//@Override
 	override public function matches(root:Element, element:Element):Bool {
 		var p:Element = element.parent();
@@ -395,7 +395,7 @@ import java.util.regex.Pattern;
 	}
 }
 
-/*public static final*/ class IsFirstOfType extends IsNthOfType {
+/*public static final*/ class EvaluatorIsFirstOfType extends EvaluatorIsNthOfType {
 	public function new() {
 		super(0,1);
 	}
@@ -406,7 +406,7 @@ import java.util.regex.Pattern;
 	}
 }
 
-/*public static final*/ class IsLastOfType extends IsNthLastOfType {
+/*public static final*/ class EvaluatorIsLastOfType extends EvaluatorIsNthLastOfType {
 	public function new() {
 		super(0,1);
 	}
@@ -418,7 +418,7 @@ import java.util.regex.Pattern;
 }
 
 
-/*public static abstract*/ class CssNthEvaluator extends Evaluator {
+/*public static abstract*/ class EvaluatorCssNthEvaluator extends Evaluator {
 	/*protected final*/ var a:Int;
 	var b:Int;
 	
@@ -462,7 +462,7 @@ import java.util.regex.Pattern;
  * 
  * @see IndexEquals
  */
-/*public static final*/ class IsNthChild extends CssNthEvaluator {
+/*public static final*/ class EvaluatorIsNthChild extends EvaluatorCssNthEvaluator {
 
 	public function new(a:Int, b:Int) {
 		super(a,b);
@@ -483,7 +483,7 @@ import java.util.regex.Pattern;
  * 
  * @see IndexEquals
  */
-/*public static final*/ class IsNthLastChild extends CssNthEvaluator {
+/*public static final*/ class EvaluatorIsNthLastChild extends EvaluatorCssNthEvaluator {
 	public function new(a:Int, b:Int) {
 		super(a,b);
 	}
@@ -503,7 +503,7 @@ import java.util.regex.Pattern;
  * css pseudo class nth-of-type
  * 
  */
-/*public static*/ class IsNthOfType extends CssNthEvaluator {
+/*public static*/ class EvaluatorIsNthOfType extends EvaluatorCssNthEvaluator {
 	public function new(a:Int, b:Int) {
 		super(a,b);
 	}
@@ -524,7 +524,7 @@ import java.util.regex.Pattern;
 	}
 }
 
-/*public static*/ class IsNthLastOfType extends CssNthEvaluator {
+/*public static*/ class EvaluatorIsNthLastOfType extends EvaluatorCssNthEvaluator {
 
 	public function new(a:Int, b:Int) {
 		super(a, b);
@@ -549,7 +549,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching the first sibling (css :first-child)
  */
-/*public static final*/ class IsFirstChild extends Evaluator {
+/*public static final*/ class EvaluatorIsFirstChild extends Evaluator {
 	//@Override
 	override public function matches(root:Element, element:Element):Bool {
 		var p:Element = element.parent();
@@ -567,7 +567,7 @@ import java.util.regex.Pattern;
  * @see <a href="http://www.w3.org/TR/selectors/#root-pseudo">:root selector</a>
  *
  */
-/*public static final*/ class IsRoot extends Evaluator {
+/*public static final*/ class EvaluatorIsRoot extends Evaluator {
 	//@Override
 	override public function matches(root:Element, element:Element):Bool {
 		var r:Element = Std.is(root, Document) ? root.child(0) : root;
@@ -580,7 +580,7 @@ import java.util.regex.Pattern;
 	}
 }
 
-/*public static final*/ class IsOnlyChild extends Evaluator {
+/*public static final*/ class EvaluatorIsOnlyChild extends Evaluator {
 	//@Override
 	override public function matches(root:Element, element:Element):Bool {
 		var p:Element = element.parent();
@@ -593,7 +593,7 @@ import java.util.regex.Pattern;
 	}
 }
 
-/*public static final*/ class IsOnlyOfType extends Evaluator {
+/*public static final*/ class EvaluatorIsOnlyOfType extends Evaluator {
 	//@Override
 	override public function matches(root:Element, element:Element):Bool {
 		var p:Element = element.parent();
@@ -613,7 +613,7 @@ import java.util.regex.Pattern;
 	}
 }
 
-/*public static final*/ class IsEmpty extends Evaluator {
+/*public static final*/ class EvaluatorIsEmpty extends Evaluator {
 	//@Override
 	override public function matches(root:Element, element:Element):Bool {
 		var family:List<Node> = element.getChildNodes();
@@ -635,7 +635,7 @@ import java.util.regex.Pattern;
  *
  * @author ant
  */
-/*public abstract static*/ class IndexEvaluator extends Evaluator {
+/*public abstract static*/ class EvaluatorIndexEvaluator extends Evaluator {
 	var index:Int;
 
 	public function new(index:Int) {
@@ -647,7 +647,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching Element (and its descendants) text
  */
-/*public static final*/ class ContainsText extends Evaluator {
+/*public static final*/ class EvaluatorContainsText extends Evaluator {
 	private var searchText:String;
 
 	public function new(searchText:String) {
@@ -669,7 +669,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching Element's own text
  */
-/*public static final*/ class ContainsOwnText extends Evaluator {
+/*public static final*/ class EvaluatorContainsOwnText extends Evaluator {
 	private var searchText:String;
 
 	public function new(searchText:String) {
@@ -691,7 +691,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching Element (and its descendants) text with regex
  */
-/*public static final*/ class Matches extends Evaluator {
+/*public static final*/ class EvaluatorMatches extends Evaluator {
 	private var pattern:EReg;
 
 	public function new(pattern:EReg) {
@@ -714,7 +714,7 @@ import java.util.regex.Pattern;
 /**
  * Evaluator for matching Element's own text with regex
  */
-/*public static final*/ class MatchesOwn extends Evaluator {
+/*public static final*/ class EvaluatorMatchesOwn extends Evaluator {
 	private var pattern:EReg;
 
 	public function new(pattern:EReg) {

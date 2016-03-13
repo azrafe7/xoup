@@ -8,8 +8,11 @@ import org.jsoup.Exceptions.IllegalArgumentException;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Attributes.Dataset;
 import org.jsoup.parser.Parser;
-import org.jsoup.parser.Tag;
+import org.jsoup.select.Collector;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Evaluator;
+import org.jsoup.select.Evaluator.*;
+import org.jsoup.parser.Tag;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 import org.jsoup.helper.StringUtil;
@@ -38,6 +41,7 @@ import java.util.regex.PatternSyntaxException;
  * 
  * @author Jonathan Hedley, jonathan@hedley.net
  */
+@:access(org.jsoup.select.Evaluator)
 class Element extends Node {
     private var tag:Tag;
 
@@ -256,13 +260,15 @@ class Element extends Node {
      * empty list.
      * @see #data()
      */
+	//NOTE(az): unmodifiable
     public function dataNodes():List<DataNode> {
         var dataNodes = new ArrayList<DataNode>();
         for (node in childNodes) {
             if (Std.is(node, DataNode))
                 dataNodes.add(cast node);
         }
-        return Collections.unmodifiableList(dataNodes);
+        //return Collections.unmodifiableList(dataNodes);
+        return dataNodes;
     }
 
     /**
@@ -633,7 +639,7 @@ class Element extends Node {
         Validate.notEmpty(tagName);
         tagName = tagName.toLowerCase().trim();
 
-        return Collector.collect(new Evaluator.Tag(tagName), this);
+        return Collector.collect(new EvaluatorTag(tagName), this);
     }
 
     /**
@@ -648,7 +654,7 @@ class Element extends Node {
 	 public function getElementById(id:String):Element {
         Validate.notEmpty(id);
         
-        var elements:Elements = Collector.collect(new Evaluator.Id(id), this);
+        var elements:Elements = Collector.collect(new EvaluatorId(id), this);
         if (elements.size > 0)
             return elements.get(0);
         else
@@ -669,7 +675,7 @@ class Element extends Node {
     public function getElementsByClass(className:String):Elements {
         Validate.notEmpty(className);
 
-        return Collector.collect(new Evaluator.Class(className), this);
+        return Collector.collect(new EvaluatorClass(className), this);
     }
 
     /**
@@ -682,7 +688,7 @@ class Element extends Node {
         Validate.notEmpty(key);
         key = key.trim().toLowerCase();
 
-        return Collector.collect(new Evaluator.Attribute(key), this);
+        return Collector.collect(new EvaluatorAttribute(key), this);
     }
 
     /**
@@ -695,7 +701,7 @@ class Element extends Node {
         Validate.notEmpty(keyPrefix);
         keyPrefix = keyPrefix.trim().toLowerCase();
 
-        return Collector.collect(new Evaluator.AttributeStarting(keyPrefix), this);
+        return Collector.collect(new EvaluatorAttributeStarting(keyPrefix), this);
     }
 
     /**
@@ -706,7 +712,7 @@ class Element extends Node {
      * @return elements that have this attribute with this value, empty if none
      */
     public function getElementsByAttributeValue(key:String, value:String):Elements {
-        return Collector.collect(new Evaluator.AttributeWithValue(key, value), this);
+        return Collector.collect(new EvaluatorAttributeWithValue(key, value), this);
     }
 
     /**
@@ -717,7 +723,7 @@ class Element extends Node {
      * @return elements that do not have a matching attribute
      */
     public function getElementsByAttributeValueNot(key:String, value:String):Elements {
-        return Collector.collect(new Evaluator.AttributeWithValueNot(key, value), this);
+        return Collector.collect(new EvaluatorAttributeWithValueNot(key, value), this);
     }
 
     /**
@@ -728,7 +734,7 @@ class Element extends Node {
      * @return elements that have attributes that start with the value prefix
      */
     public function getElementsByAttributeValueStarting(key:String, valuePrefix:String):Elements {
-        return Collector.collect(new Evaluator.AttributeWithValueStarting(key, valuePrefix), this);
+        return Collector.collect(new EvaluatorAttributeWithValueStarting(key, valuePrefix), this);
     }
 
     /**
@@ -739,7 +745,7 @@ class Element extends Node {
      * @return elements that have attributes that end with the value suffix
      */
     public function getElementsByAttributeValueEnding(key:String, valueSuffix:String):Elements {
-        return Collector.collect(new Evaluator.AttributeWithValueEnding(key, valueSuffix), this);
+        return Collector.collect(new EvaluatorAttributeWithValueEnding(key, valueSuffix), this);
     }
 
     /**
@@ -750,7 +756,7 @@ class Element extends Node {
      * @return elements that have attributes containing this text
      */
     public function getElementsByAttributeValueContaining(key:String, match:String):Elements {
-        return Collector.collect(new Evaluator.AttributeWithValueContaining(key, match), this);
+        return Collector.collect(new EvaluatorAttributeWithValueContaining(key, match), this);
     }
     
     /**
@@ -760,7 +766,7 @@ class Element extends Node {
      * @return elements that have attributes matching this regular expression
      */
     public function getElementsByAttributeValueMatchingPattern(key:String, pattern:EReg):Elements {
-        return Collector.collect(new Evaluator.AttributeWithValueMatching(key, pattern), this);
+        return Collector.collect(new EvaluatorAttributeWithValueMatching(key, pattern), this);
         
     }
     
@@ -787,7 +793,7 @@ class Element extends Node {
      * @return elements less than index
      */
     public function getElementsByIndexLessThan(index:Int):Elements {
-        return Collector.collect(new Evaluator.IndexLessThan(index), this);
+        return Collector.collect(new EvaluatorIndexLessThan(index), this);
     }
     
     /**
@@ -796,7 +802,7 @@ class Element extends Node {
      * @return elements greater than index
      */
     public function getElementsByIndexGreaterThan(index:Int):Elements {
-        return Collector.collect(new Evaluator.IndexGreaterThan(index), this);
+        return Collector.collect(new EvaluatorIndexGreaterThan(index), this);
     }
     
     /**
@@ -805,7 +811,7 @@ class Element extends Node {
      * @return elements equal to index
      */
     public function getElementsByIndexEquals(index:Int):Elements {
-        return Collector.collect(new Evaluator.IndexEquals(index), this);
+        return Collector.collect(new EvaluatorIndexEquals(index), this);
     }
     
     /**
@@ -816,7 +822,7 @@ class Element extends Node {
      * @see Element#text()
      */
     public function getElementsContainingText(searchText:String):Elements {
-        return Collector.collect(new Evaluator.ContainsText(searchText), this);
+        return Collector.collect(new EvaluatorContainsText(searchText), this);
     }
     
     /**
@@ -827,7 +833,7 @@ class Element extends Node {
      * @see Element#ownText()
      */
     public function getElementsContainingOwnText(searchText:String):Elements {
-        return Collector.collect(new Evaluator.ContainsOwnText(searchText), this);
+        return Collector.collect(new EvaluatorContainsOwnText(searchText), this);
     }
     
     /**
@@ -837,7 +843,7 @@ class Element extends Node {
      * @see Element#text()
      */
     public function getElementsMatchingTextPattern(pattern:EReg):Elements {
-        return Collector.collect(new Evaluator.Matches(pattern), this);
+        return Collector.collect(new EvaluatorMatches(pattern), this);
     }
     
     /**
@@ -863,7 +869,7 @@ class Element extends Node {
      * @see Element#ownText()
      */
     public function getElementsMatchingOwnTextPattern(pattern:EReg):Elements {
-        return Collector.collect(new Evaluator.MatchesOwnPattern(pattern), this);
+        return Collector.collect(new EvaluatorMatchesOwn(pattern), this);
     }
     
     /**
@@ -888,7 +894,7 @@ class Element extends Node {
      * @return all elements
      */
     public function getAllElements():Elements {
-        return Collector.collect(new Evaluator.AllElements(), this);
+        return Collector.collect(new EvaluatorAllElements(), this);
     }
 
     /**
