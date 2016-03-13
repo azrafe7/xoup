@@ -160,15 +160,15 @@ class StringUtil {
         }
     }
 
-	/*
-    public static boolean in(String needle, String... haystack) {
-        for (String hay : haystack) {
-            if (hay.equals(needle))
+	public static function isAnyOf(needle:String, haystack:Array<String>):Bool {
+        for (hay in haystack) {
+            if (hay == needle)
             return true;
         }
         return false;
     }
 
+	/*
     public static boolean inSorted(String needle, String[] haystack) {
         return Arrays.binarySearch(haystack, needle) >= 0;
     }*/
