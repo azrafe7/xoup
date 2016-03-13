@@ -5,6 +5,7 @@ import de.polygonal.ds.List;
 import org.jsoup.select.Evaluator;
 import org.jsoup.Exceptions.SelectorParseException;
 import org.jsoup.select.CombiningEvaluator;
+import org.jsoup.select.StructuralEvaluator;
 import unifill.CodePoint;
 
 /*import java.util.ArrayList;
