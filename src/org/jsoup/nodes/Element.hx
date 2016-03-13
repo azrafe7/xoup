@@ -16,6 +16,7 @@ import org.jsoup.parser.Tag;
 import org.jsoup.select.NodeTraversor;
 import org.jsoup.select.NodeVisitor;
 import org.jsoup.helper.StringUtil;
+import org.jsoup.select.Selector;
 
 using StringTools;
 

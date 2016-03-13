@@ -169,7 +169,7 @@ class Selector {
     }
 
     // exclude set. package open so that Elements can implement .not() selector.
-    static function filterOut(elements:Collection<Element>, outs:Collection<Element>):Elements {
+    public static function filterOut(elements:Collection<Element>, outs:Collection<Element>):Elements {
         var output = new Elements();
         for (el in elements) {
             var found:Bool = false;

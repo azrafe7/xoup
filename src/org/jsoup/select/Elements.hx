@@ -425,7 +425,7 @@ class Elements extends ArrayList<Element> {
      * @return the filtered list of elements, or an empty list if none match.
      */
     public function select(query:String):Elements {
-        return Selector.select(query, this);
+        return Selector.selectIn(query, this);
     }
 
     /**
@@ -439,7 +439,7 @@ class Elements extends ArrayList<Element> {
      * @return a new elements list that contains only the filtered results
      */
 	public function not(query:String):Elements {
-        var out:Elements = Selector.select(query, this);
+        var out:Elements = Selector.selectIn(query, this);
         return Selector.filterOut(this, out);
     }
     
