@@ -68,7 +68,7 @@ class EntitiesTest {
 		trace(Entities.unescape(unescaped));
     }
     
-    static public function testQuoteReplacements() {
+    public function testQuoteReplacements() {
         var escaped = "&#92; &#36;";
         var unescaped = "\\ $";
         
