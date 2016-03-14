@@ -226,18 +226,12 @@ class StringUtil {
 		its length equals `digits`.
 	**/
 	public static function toHex( n : Int, ?digits : Int ) {
-		#if flash
-			var n : UInt = n;
-			var s : String = untyped n.toString(16);
-			s = s.toUpperCase();
-		#else
-			var s = "";
-			var hexChars = "0123456789abcdef";
-			do {
-				s = hexChars.charAt(n&15) + s;
-				n >>>= 4;
-			} while( n > 0 );
-		#end
+		var s = "";
+		var hexChars = "0123456789abcdef";
+		do {
+			s = hexChars.charAt(n&15) + s;
+			n >>>= 4;
+		} while( n > 0 );
 		#if python
 		if (digits != null && s.length < digits) {
 			var diff = digits - s.length;
