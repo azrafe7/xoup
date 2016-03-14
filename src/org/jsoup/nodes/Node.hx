@@ -49,13 +49,14 @@ class Node implements Cloneable<Node> implements Hashable {
      @param baseUri base URI
      @param attributes attributes (not null, but may be empty)
      */
+	//NOTE(az): conflated (problem with assumption of null?) !!!this might be VERY important!
     function new(baseUri:String = null, attributes:Attributes = null) {
-        Validate.notNull(baseUri);
-        Validate.notNull(attributes);
-        
-        childNodes = EMPTY_NODES;
+        //Validate.notNull(baseUri);
+        //Validate.notNull(attributes);
         this.baseUri = baseUri != null ? baseUri.trim() : "";
         this.attributes = attributes != null ? attributes : new Attributes();
+        
+        childNodes = EMPTY_NODES;
     }
 
     /**
