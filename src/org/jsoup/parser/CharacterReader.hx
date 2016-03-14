@@ -3,7 +3,6 @@ package org.jsoup.parser;
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.NativeArray;
 import de.polygonal.ds.tools.ArrayTools;
-import de.polygonal.ds.tools.NativeArrayTools;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities.Character;
 import org.jsoup.parser.tokens.TokeniserState;
@@ -31,7 +30,7 @@ import java.util.Locale;
     private var length:Int;
     private var pos:Int = 0;
     private var _mark:Int = 0;
-    private var stringCache:NativeArray<String> = NativeArrayTools.alloc(512); // holds reused strings in this doc, to lessen garbage
+    private var stringCache:Array<String> = [for (i in 0...512) null]; // holds reused strings in this doc, to lessen garbage
 
     function new(input:String) {
         Validate.notNull(input);
@@ -380,14 +379,14 @@ import java.util.Locale;
             return val.uSubstr(start, count);
 
         // calculate hash:
-        var hash = 0;
+        var hash:Int = 0;
         var offset = start;
         for (i in 0...count) {
             hash = 31 * hash + val.uCharCodeAt(offset++);
         }
 
         // get from cache
-        var index:Int = hash & cache.length - 1;
+        var index:Int = (hash & cache.length) - 1;
         var cached = cache[index];
 
         if (cached == null) { // miss, add
