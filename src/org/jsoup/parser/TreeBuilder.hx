@@ -26,9 +26,7 @@ import org.jsoup.parser.tokens.Tokeniser;
     private var start:TokenStartTag = new TokenStartTag(); // start tag to process
     private var end:TokenEndTag  = new TokenEndTag();
 
-    function new() {
-		throw "Cannot instantiate this abstract class";
-	}
+    function new() { }
 	
 	/*protected*/ function initialiseParse(input:String, baseUri:String, errors:ParseErrorList ):Void {
         Validate.notNull(input, "String input must not be null");
