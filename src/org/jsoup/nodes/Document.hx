@@ -655,7 +655,7 @@ class CharsetEncoder {
 	}
 	
 	public function canEncode(c:CodePoint):Bool {
-		trace('$charset + canEncode + $c');
+		trace('$charset canEncode "$c"');
 		return true;
 	}
 }

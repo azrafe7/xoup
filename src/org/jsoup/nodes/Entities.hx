@@ -287,7 +287,7 @@ class Entities {
 	var fallback = "FALLBACK";
 
 	static public function byName(name:String):String {
-		if (name == "US-ASCII")
+		if (name == "ASCII" || name == "US-ASCII")
 			return ascii;
 		if (name.startsWith("UTF-")) // covers UTF-8, UTF-16, et al
 			return utf;
