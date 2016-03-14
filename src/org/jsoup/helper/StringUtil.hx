@@ -171,7 +171,7 @@ class StringUtil {
 
 	//NOTE(az): renamed
     public static function isAnyOfSorted(needle:String, haystack:Array<String>):Bool {
-        return ArrayTools.bsearchComparator(haystack, needle, 0, haystack.length, Reflect.compare) >= 0;
+        return ArrayTools.bsearchComparator(haystack, needle, 0, haystack.length - 1, Reflect.compare) >= 0;
     }
 
     /**

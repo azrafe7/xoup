@@ -168,7 +168,7 @@ import java.util.Locale;
         var val:Array<CodePoint> = inputCP;
 
         while (pos < remaining) {
-            if (ArrayTools.bsearchInt(cast chars, val[pos], 0, chars.length) >= 0)
+            if (ArrayTools.bsearchInt(cast chars, val[pos], 0, chars.length - 1) >= 0)
                 break;
             pos++;
         }
@@ -316,7 +316,7 @@ import java.util.Locale;
     }
 
     function matchesAnySorted(seq:Array<CodePoint>):Bool {
-        return !isEmpty() && ArrayTools.bsearchInt(cast seq, inputCP[pos], 0, seq.length) >= 0;
+        return !isEmpty() && ArrayTools.bsearchInt(cast seq, inputCP[pos], 0, seq.length - 1) >= 0;
     }
 
     function matchesLetter():Bool {

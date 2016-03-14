@@ -217,6 +217,12 @@ class Entities {
             var c:CodePoint = xhtmlArray[key];
             xhtmlByVal.set(c.toString(), key);
         }
+		
+		Entities.maps = [
+			EscapeMode.base => baseByVal,
+			EscapeMode.extended => fullByVal,
+			EscapeMode.xhtml => xhtmlByVal
+		];
     }
 
 	//NOTE(az): check loading is done correcty (resources, splitting, etc.)
@@ -269,6 +275,7 @@ class Entities {
 
 	public function getMap():Map<Character, String> {
 		trace(this);
+		trace(Entities.maps.get(this) != null);
 		
 		return Entities.maps.get(this);
 	}
