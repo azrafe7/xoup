@@ -134,7 +134,7 @@ class Tokeniser {
 
 	//NOTE(az): was char[]; , see method below
     private var charRefHolder:Array<CodePoint> = [0];// new char[1]; // holder to not have to keep creating arrays
-    function consumeCharacterReference(additionalAllowedCharacter:CodePoint, inAttribute:Bool):Array<CodePoint> {
+    function consumeCharacterReference(additionalAllowedCharacter:Null<CodePoint>, inAttribute:Bool):Array<CodePoint> {
         if (reader.isEmpty())
             return null;
         if (additionalAllowedCharacter != null && additionalAllowedCharacter == reader.current())
