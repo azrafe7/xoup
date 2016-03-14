@@ -14,7 +14,7 @@ using StringTools;
 @:allow(org.jsoup.parser.HtmlTreeBuilder)
 @:allow(org.jsoup.parser.XmlTreeBuilder)
 class Tag {
-    private static var tags:Map<String, Tag> = new Map<String, Tag>(); // map of known tags
+    private static var tags:Map<String, Tag>; // map of known tags
 
     private var tagName:String;
     private var _isBlock:Bool = true; // block or inline
@@ -227,43 +227,69 @@ class Tag {
 
     // internal static initialisers:
     // prepped from http://www.w3.org/TR/REC-html40/sgml/dtd.html and other sources
-    private static var blockTags:Array<String> = [
+    private static var blockTags:Array<String>;
+	
+	private static var inlineTags:Array<String>;
+	
+	private static var emptyTags:Array<String>;
+	
+    private static var formatAsInlineTags:Array<String>;
+	
+    private static var preserveWhitespaceTags:Array<String>;
+	
+    // todo: I think we just need submit tags, and can scrub listed
+    private static var formListedTags:Array<String>;
+	
+    private static var formSubmitTags:Array<String>;
+	
+
+    static function __init__() {
+		//NOTE(az): init vars used in here
+		
+		tags = new Map<String, Tag>();
+		
+		blockTags = [
             "html", "head", "body", "frameset", "script", "noscript", "style", "meta", "link", "title", "frame",
             "noframes", "section", "nav", "aside", "hgroup", "header", "footer", "p", "h1", "h2", "h3", "h4", "h5", "h6",
             "ul", "ol", "pre", "div", "blockquote", "hr", "address", "figure", "figcaption", "form", "fieldset", "ins",
             "del", "s", "dl", "dt", "dd", "li", "table", "caption", "thead", "tfoot", "tbody", "colgroup", "col", "tr", "th",
             "td", "video", "audio", "canvas", "details", "menu", "plaintext", "template", "article", "main",
             "svg", "math"
-    ];
-	private static var inlineTags:Array<String> = [
+		];
+		
+		inlineTags = [
             "object", "base", "font", "tt", "i", "b", "u", "big", "small", "em", "strong", "dfn", "code", "samp", "kbd",
             "var", "cite", "abbr", "time", "acronym", "mark", "ruby", "rt", "rp", "a", "img", "br", "wbr", "map", "q",
             "sub", "sup", "bdo", "iframe", "embed", "span", "input", "select", "textarea", "label", "button", "optgroup",
             "option", "legend", "datalist", "keygen", "output", "progress", "meter", "area", "param", "source", "track",
             "summary", "command", "device", "area", "basefont", "bgsound", "menuitem", "param", "source", "track",
             "data", "bdi"
-    ];
-	private static var emptyTags:Array<String> = [
+		];
+		
+		emptyTags = [
             "meta", "link", "base", "frame", "img", "br", "wbr", "embed", "hr", "input", "keygen", "col", "command",
             "device", "area", "basefont", "bgsound", "menuitem", "param", "source", "track"
-    ];
-    private static var formatAsInlineTags:Array<String> = [
+		];
+		
+		formatAsInlineTags = [
             "title", "a", "p", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "address", "li", "th", "td", "script", "style",
             "ins", "del", "s"
-    ];
-    private static var preserveWhitespaceTags:Array<String> = [
+		];
+		
+		preserveWhitespaceTags = [
             "pre", "plaintext", "title", "textarea"
             // script is not here as it is a data node, which always preserve whitespace
-    ];
-    // todo: I think we just need submit tags, and can scrub listed
-    private static var formListedTags:Array<String> = [
+		];
+		
+		formListedTags = [
             "button", "fieldset", "input", "keygen", "object", "output", "select", "textarea"
-    ];
-    private static var formSubmitTags:Array<String> = [
+		];
+		
+		formSubmitTags = [
             "input", "keygen", "object", "select", "textarea"
-    ];
-
-    static function __init__() {
+		];
+		
+		
         // creates
         for (tagName in blockTags) {
             var tag = new Tag(tagName);

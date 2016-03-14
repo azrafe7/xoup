@@ -16,9 +16,10 @@ class Tokeniser {
     static var replacementChar = CodePoint.fromInt(0xFFFD); // replaces null character
     
 	//NOTE(az)
-	private static var notCharRefCharsSorted:Array<CodePoint> = ['\t'.code, '\n'.code, '\r'.code, 0xC/*'\f'*/, ' '.code, '<'.code, '&'.code];
+	private static var notCharRefCharsSorted:Array<CodePoint>;
 
     static function __init__() {
+		notCharRefCharsSorted = ['\t'.code, '\n'.code, '\r'.code, 0xC/*'\f'*/, ' '.code, '<'.code, '&'.code];
         notCharRefCharsSorted.sort(Reflect.compare);
     }
 

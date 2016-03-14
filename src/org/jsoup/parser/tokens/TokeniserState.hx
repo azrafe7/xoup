@@ -1331,15 +1331,19 @@ using org.jsoup.InternalTools;
 
 
 	public static inline var nullChar:Int = 0;
-    private static var attributeSingleValueCharsSorted:Array<CodePoint> = ["'".code, '&'.code, nullChar];
-    private static var attributeDoubleValueCharsSorted:Array<CodePoint> = ["'".code, '&'.code, nullChar];
-    private static var attributeNameCharsSorted:Array<CodePoint> = ['\t'.code, '\n'.code, '\r'.code, 0xC/*'\f'*/, ' '.code, '/'.code, '='.code, '>'.code, nullChar, '"'.code, "'".code, '<'.code];
+    private static var attributeSingleValueCharsSorted:Array<CodePoint>;
+    private static var attributeDoubleValueCharsSorted:Array<CodePoint>;
+    private static var attributeNameCharsSorted:Array<CodePoint>;
 
     private static var replacementChar:CodePoint = Tokeniser.replacementChar;
     private static var replacementStr:String = Tokeniser.replacementChar.toString();
     private static inline var eof:Int = CharacterReader.EOF;
 
     static function __init__() {
+		attributeSingleValueCharsSorted = ["'".code, '&'.code, nullChar];
+		attributeDoubleValueCharsSorted = ["'".code, '&'.code, nullChar];
+		attributeNameCharsSorted = ['\t'.code, '\n'.code, '\r'.code, 0xC/*'\f'*/, ' '.code, '/'.code, '='.code, '>'.code, nullChar, '"'.code, "'".code, '<'.code];
+		
         attributeSingleValueCharsSorted.sort(Reflect.compare);
         attributeDoubleValueCharsSorted.sort(Reflect.compare);
         attributeNameCharsSorted.sort(Reflect.compare);
