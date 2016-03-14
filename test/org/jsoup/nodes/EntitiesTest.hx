@@ -43,7 +43,7 @@ class EntitiesTest {
         Assert.equals(text, escapedUtf);
     }
 
-    static public function testUnescape() {
+    public function testUnescape() {
         var text = "Hello &amp;&LT&gt; &reg &angst; &angst &#960; &#960 &#x65B0; there &! &frac34; &copy; &COPY;";
         Assert.equals("Hello &<> ® Å &angst π π 新 there &! ¾ © ©", Entities.unescape(text));
 
