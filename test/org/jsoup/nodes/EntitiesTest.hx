@@ -35,10 +35,10 @@ class EntitiesTest {
         Assert.equals(text, Entities.unescape(escapedUtfMin));
     }
 
-    static public function testEscapeSupplementaryCharacter(){
+    public function testEscapeSupplementaryCharacter() {
         var text = CodePoint.fromInt(135361).toString();
         var escapedAscii = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(base));
-        Assert.equals("&#x210c1;", escapedAscii);
+        Assert.equals("&#x210c1;", escapedAscii.toLowerCase());
         var escapedUtf = Entities.escape(text, new OutputSettings().setCharset("UTF-8").setEscapeMode(base));
         Assert.equals(text, escapedUtf);
     }

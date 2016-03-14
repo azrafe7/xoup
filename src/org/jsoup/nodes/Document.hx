@@ -655,7 +655,13 @@ class CharsetEncoder {
 	}
 	
 	public function canEncode(c:CodePoint):Bool {
-		trace('$charset canEncode "$c"');
-		return true;
+		var encodable = switch (charset) {
+			case Charset.ascii:
+				c < 0x80;
+			default:
+				return true;
+		}
+		trace('$charset canEncode "$c" [${c.toInt()}]: $encodable');
+		return encodable;
 	}
 }

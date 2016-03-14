@@ -147,13 +147,14 @@ class Entities {
 						}
                 }
             } else {
-                var c:String = codePoint.toString();
-                if (encoder.canEncode(codePoint)) // uses fallback encoder for simplicity
-                    accum.add(c);
-                else
+                var cStr:String = codePoint.toString();
+                if (encoder.canEncode(codePoint)) { // uses fallback encoder for simplicity
+                    accum.add(cStr);
+                } else {
                     accum.add("&#x");
 					accum.add(StringTools.hex(codePoint));
 					accum.add(';');
+				}
             }
 			
 			offset += codePoint.toString().uLength();
