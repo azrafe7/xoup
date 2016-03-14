@@ -4,6 +4,8 @@ import de.polygonal.ds.tools.ArrayTools;
 import de.polygonal.ds.Itr;
 import org.jsoup.Exceptions.IllegalArgumentException;
 
+import StringTools;
+
 /*import java.net.MalformedURLException;
 import de.polygonal.ds.Itr;
 import java.net.URL;
@@ -216,4 +218,39 @@ class StringUtil {
 		*/
 		return baseUrl + relUrl;
     }
+	
+	/**
+		Encodes `n` into a hexadecimal representation.
+
+		If `digits` is specified, the resulting String is padded with "0" until
+		its length equals `digits`.
+	**/
+	public static function toHex( n : Int, ?digits : Int ) {
+		#if flash
+			var n : UInt = n;
+			var s : String = untyped n.toString(16);
+			s = s.toUpperCase();
+		#else
+			var s = "";
+			var hexChars = "0123456789abcdef";
+			do {
+				s = hexChars.charAt(n&15) + s;
+				n >>>= 4;
+			} while( n > 0 );
+		#end
+		#if python
+		if (digits != null && s.length < digits) {
+			var diff = digits - s.length;
+			for (_ in 0...diff) {
+				s = "0" + s;
+			}
+		}
+		#else
+		if( digits != null )
+			while( s.length < digits )
+				s = "0"+s;
+		#end
+		return s;
+	}
+	
 }
