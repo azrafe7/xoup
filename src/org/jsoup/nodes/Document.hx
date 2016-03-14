@@ -499,7 +499,11 @@ class OutputSettings implements Cloneable<OutputSettings> {
 		else throw "Invalid charset";
 
 		this._charset = charset;
-		_charsetEncoder = charset.newEncoder();
+		_charsetEncoder = this._charset.newEncoder();
+		
+		trace(this._charset);
+		trace(this._charsetEncoder);
+		
 		return this;
 	}
 
