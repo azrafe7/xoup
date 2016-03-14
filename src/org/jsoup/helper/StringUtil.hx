@@ -1,15 +1,15 @@
 package org.jsoup.helper;
 
+import de.polygonal.ds.tools.ArrayTools;
+import de.polygonal.ds.Itr;
+import org.jsoup.Exceptions.IllegalArgumentException;
+
 /*import java.net.MalformedURLException;
-import de.polygonal.ds.Itr;
-import de.polygonal.ds.Itr;
 import de.polygonal.ds.Itr;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;*/
-import de.polygonal.ds.Itr;
-import org.jsoup.Exceptions.IllegalArgumentException;
 
 /**
  * A minimal String utility class. Designed for internal jsoup use only.
@@ -160,6 +160,7 @@ class StringUtil {
         }
     }
 
+	//NOTE(az): renamed
 	public static function isAnyOf(needle:String, haystack:Array<String>):Bool {
         for (hay in haystack) {
             if (hay == needle)
@@ -168,10 +169,10 @@ class StringUtil {
         return false;
     }
 
-	/*
-    public static boolean inSorted(String needle, String[] haystack) {
-        return Arrays.binarySearch(haystack, needle) >= 0;
-    }*/
+	//NOTE(az): renamed
+    public static function isAnyOfSorted(needle:String, haystack:Array<String>):Bool {
+        return ArrayTools.bsearchComparator(haystack, needle, 0, haystack.length, Reflect.compare) >= 0;
+    }
 
     /**
      * Create a new absolute URL, from a provided existing absolute URL and a relative URL component.
