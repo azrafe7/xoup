@@ -50,7 +50,7 @@ class EntitiesTest {
         Assert.equals("&0987654321; &unknown", Entities.unescape("&0987654321; &unknown"));
     }
 
-    static public function testStrictUnescape() { // for attributes, enforce strict unescaping (must look like &#xxx; , not just &#xxx)
+    public function testStrictUnescape() { // for attributes, enforce strict unescaping (must look like &#xxx; , not just &#xxx)
         var text = "Hello &amp= &amp;";
         Assert.equals("Hello &amp= &", Entities.unescape(text, true));
         Assert.equals("Hello &= &", Entities.unescape(text));
