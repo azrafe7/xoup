@@ -268,7 +268,9 @@ class Entities {
 	var extended = "EXTENDED";
 
 	public function getMap():Map<Character, String> {
-		return Entities.maps[this];
+		trace(this);
+		
+		return Entities.maps.get(this);
 	}
 }
 

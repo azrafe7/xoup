@@ -12,7 +12,7 @@ class EntitiesTest {
 	
 	public function new() {}
 	
-    public function testEscape() {
+    static public function testEscape() {
         var text = "Hello &<> Å å π 新 there ¾ © »";
         var escapedAscii = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(base));
         var escapedAsciiFull = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(extended));
@@ -35,7 +35,7 @@ class EntitiesTest {
         Assert.equals(text, Entities.unescape(escapedUtfMin));
     }
 
-    public function testEscapeSupplementaryCharacter(){
+    static public function testEscapeSupplementaryCharacter(){
         var text = CodePoint.fromInt(135361).toString();
         var escapedAscii = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(base));
         Assert.equals("&#x210c1;", escapedAscii);
@@ -43,14 +43,14 @@ class EntitiesTest {
         Assert.equals(text, escapedUtf);
     }
 
-    public function testUnescape() {
+    static public function testUnescape() {
         var text = "Hello &amp;&LT&gt; &reg &angst; &angst &#960; &#960 &#x65B0; there &! &frac34; &copy; &COPY;";
         Assert.equals("Hello &<> ® Å &angst π π 新 there &! ¾ © ©", Entities.unescape(text));
 
         Assert.equals("&0987654321; &unknown", Entities.unescape("&0987654321; &unknown"));
     }
 
-    public function testStrictUnescape() { // for attributes, enforce strict unescaping (must look like &#xxx; , not just &#xxx)
+    static public function testStrictUnescape() { // for attributes, enforce strict unescaping (must look like &#xxx; , not just &#xxx)
         var text = "Hello &amp= &amp;";
         Assert.equals("Hello &amp= &", Entities.unescape(text, true));
         Assert.equals("Hello &= &", Entities.unescape(text));
@@ -67,14 +67,14 @@ class EntitiesTest {
         Assert.equals("Ü ü & &", Entities.unescape(escaped));
     }
     
-    public function testQuoteReplacements() {
+    static public function testQuoteReplacements() {
         var escaped = "&#92; &#36;";
         var unescaped = "\\ $";
         
         Assert.equals(unescaped, Entities.unescape(escaped));
     }
 
-    public function testLetterDigitEntities() {
+    static public function testLetterDigitEntities() {
         var html = "<p>&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;</p>";
         var doc:Document = Jsoup.parse(html);
         doc.getOutputSettings().setCharset("ascii");
@@ -85,12 +85,12 @@ class EntitiesTest {
         Assert.equals("¹²³¼½¾", p.getHtml());
     }
 
-    public function testNoSpuriousDecodes() {
+    static public function testNoSpuriousDecodes() {
         var string = "http://www.foo.com?a=1&num_rooms=1&children=0&int=VA&b=2";
         Assert.equals(string, Entities.unescape(string));
     }
 
-    public function testEscapesGtInXmlAttributesButNotInHtml() {
+    static public function testEscapesGtInXmlAttributesButNotInHtml() {
         // https://github.com/jhy/jsoup/issues/528 - < is OK in HTML attribute values, but not in XML
 
 
