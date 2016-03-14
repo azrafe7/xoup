@@ -12,7 +12,7 @@ class EntitiesTest {
 	
 	public function new() {}
 	
-    static public function testEscape() {
+    public function testEscape() {
         var text = "Hello &<> Å å π 新 there ¾ © »";
         var escapedAscii = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(base));
         var escapedAsciiFull = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(extended));
@@ -38,7 +38,7 @@ class EntitiesTest {
     public function testEscapeSupplementaryCharacter() {
         var text = CodePoint.fromInt(135361).toString();
         var escapedAscii = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(base));
-        Assert.equals("&#x210c1;", escapedAscii.toLowerCase());
+        Assert.equals("&#x210c1;", escapedAscii);
         var escapedUtf = Entities.escape(text, new OutputSettings().setCharset("UTF-8").setEscapeMode(base));
         Assert.equals(text, escapedUtf);
     }

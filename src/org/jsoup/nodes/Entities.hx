@@ -142,7 +142,7 @@ class Entities {
 						}
                         else {
                             accum.add("&#x");
-							accum.add(StringTools.hex(codePoint));
+							accum.add(StringUtil.toHex(codePoint));
 							accum.add(';');
 						}
                 }
@@ -152,7 +152,7 @@ class Entities {
                     accum.add(cStr);
                 } else {
                     accum.add("&#x");
-					accum.add(StringTools.hex(codePoint));
+					accum.add(StringUtil.toHex(codePoint));
 					accum.add(';');
 				}
             }
