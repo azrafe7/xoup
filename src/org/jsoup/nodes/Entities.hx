@@ -198,14 +198,15 @@ class Entities {
 
 
     // xhtml has restricted entities
-    private static var xhtmlArray = [
+    private static var xhtmlArray:Map<String, CodePoint>;
+
+    static function __init__() {
+		xhtmlArray = [
             "quot" => 0x00022,
             "amp" => 0x00026,
             "lt" => 0x0003C,
             "gt" => 0x0003E
-    ];
-
-    static function __init__() {
+		];
         xhtmlByVal = new Map<Character, String>();
         base = loadEntities("entities-base.properties");  // most common / default
         baseByVal = toCharacterKey(base);

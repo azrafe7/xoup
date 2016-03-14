@@ -80,6 +80,10 @@ import org.jsoup.nodes.BooleanAttribute;
 	function isEOF():Bool {
 		return type == TokenType.EOF;
 	}
+	
+	function toString():String {
+		return '<${tokenType()}>';
+	}
 }
 
 
@@ -262,7 +266,7 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		if (attributes != null && attributes.size() > 0)
 			return "<" + getName() + " " + attributes.toString() + ">";
 		else
@@ -277,11 +281,12 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//@Override
-	public function toString() {
+	override public function toString() {
 		return "</" + getName() + ">";
 	}
 }
 
+@:allow(org.jsoup.parser)
 /*final static*/ class TokenComment extends Token {
 	public var data:StringBuf = new StringBuf();
 	public var bogus:Bool = false;
@@ -303,7 +308,7 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return "<!--" + getData() + "-->";
 	}
 }
@@ -335,7 +340,7 @@ import org.jsoup.nodes.BooleanAttribute;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return getData();
 	}
 }

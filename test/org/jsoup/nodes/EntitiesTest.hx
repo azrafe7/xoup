@@ -1,7 +1,7 @@
 package org.jsoup.nodes;
 
-//import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document.OutputSettings;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode.*;
 import unifill.CodePoint;
 
@@ -9,6 +9,9 @@ import utest.Assert;
 
 
 class EntitiesTest {
+	
+	public function new() {}
+	
     static public function testEscape() {
         var text = "Hello &<> Å å π 新 there ¾ © »";
         var escapedAscii = Entities.escape(text, new OutputSettings().setCharset("ascii").setEscapeMode(base));
@@ -74,12 +77,12 @@ class EntitiesTest {
     static public function testLetterDigitEntities() {
         var html = "<p>&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;</p>";
         var doc:Document = Jsoup.parse(html);
-        doc.outputSettings().charset("ascii");
+        doc.getOutputSettings().setCharset("ascii");
         var p:Element = doc.select("p").first();
-        Assert.equals("&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;", p.html());
-        Assert.equals("¹²³¼½¾", p.text());
-        doc.outputSettings().charset("UTF-8");
-        Assert.equals("¹²³¼½¾", p.html());
+        Assert.equals("&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;", p.getHtml());
+        Assert.equals("¹²³¼½¾", p.getText());
+        doc.getOutputSettings().setCharset("UTF-8");
+        Assert.equals("¹²³¼½¾", p.getHtml());
     }
 
     static public function testNoSpuriousDecodes() {
@@ -95,10 +98,10 @@ class EntitiesTest {
         var doc:Document = Jsoup.parse(docHtml);
         var element:Element = doc.select("a").first();
 
-        doc.outputSettings().escapeMode(base);
+        doc.getOutputSettings().setEscapeMode(base);
         Assert.equals("<a title=\"<p>One</p>\">One</a>", element.outerHtml());
 
-        doc.outputSettings().escapeMode(xhtml);
+        doc.getOutputSettings().setEscapeMode(xhtml);
         Assert.equals("<a title=\"&lt;p>One&lt;/p>\">One</a>", element.outerHtml());
     }
 }

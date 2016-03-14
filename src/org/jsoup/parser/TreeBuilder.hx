@@ -64,16 +64,17 @@ import org.jsoup.parser.tokens.Tokeniser;
         }
     }
 
-    /*protected abstract*/ function process(token:Token):Bool { throw "Abstract"; return false; };
+    /*protected abstract*/ function process(token:Token, state:HtmlTreeBuilderState = null):Bool { throw "Abstract"; return false; };
 
-    /*protected*/ function _processStartTag(name:String):Bool {
+    /*protected*/ function processStartTag(name:String):Bool {
         if (currentToken == start) { // don't recycle an in-use token
             return process(new TokenStartTag().setName(name));
         }
         return process(start.reset().setName(name));
     }
 
-    public function processStartTag(name:String, attrs:Attributes):Bool {
+	//NOTE(az): renamed
+    public function processStartTagWithAttrs(name:String, attrs:Attributes):Bool {
         if (currentToken == start) { // don't recycle an in-use token
             return process(new TokenStartTag().nameAttr(name, attrs));
         }

@@ -495,7 +495,7 @@ class OutputSettings implements Cloneable<OutputSettings> {
 	//NOTE(az): setter, see method below
 	public function setCharset(charset:Dynamic):OutputSettings {
 		if (Std.is(charset, String)) charset = Charset.forName(charset);
-		else if (Std.is(charset, Charset)) { }
+		else if (Std.is(charset, CharsetImpl)) { }
 		else throw "Invalid charset";
 
 		this._charset = charset;
@@ -613,8 +613,10 @@ class OutputSettings implements Cloneable<OutputSettings> {
 	}
 }
 
+typedef CharsetImpl = String;
+
 //NOTE(az): dummy
-@:enum abstract Charset(String) from String to String {
+@:enum abstract Charset(CharsetImpl) from CharsetImpl to CharsetImpl {
 	var ascii = "ASCII";
 	var utf8 = "UTF-8";
 	

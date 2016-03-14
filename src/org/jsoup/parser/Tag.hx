@@ -11,6 +11,8 @@ using StringTools;
  *
  * @author Jonathan Hedley, jonathan@hedley.net
  */
+@:allow(org.jsoup.parser.HtmlTreeBuilder)
+@:allow(org.jsoup.parser.XmlTreeBuilder)
 class Tag {
     private static var tags:Map<String, Tag> = new Map<String, Tag>(); // map of known tags
 

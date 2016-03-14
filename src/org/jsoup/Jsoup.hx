@@ -4,18 +4,20 @@ import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
-import org.jsoup.helper.DataUtil;
-import org.jsoup.helper.HttpConnection;
+//import org.jsoup.helper.DataUtil;
+//import org.jsoup.helper.HttpConnection;
 
-import java.io.File;
+/*import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+*/
 
 /**
  The core public access point to the jsoup functionality.
 
  @author Jonathan Hedley */
+//NOTE(az): leave Connection and File related stuff out for now
 class Jsoup {
 	
     private function new() {}
@@ -28,9 +30,9 @@ class Jsoup {
      before the HTML declares a {@code <base href>} tag.
      @return sane HTML
      */
-    public static function parse(String html, String baseUri):Document {
+    /*public static function parse(html:String, baseUri:String):Document {
         return Parser.parse(html, baseUri);
-    }
+    }*/
 
     /**
      Parse HTML into a Document, using the provided Parser. You can provide an alternate parser, such as a simple XML
@@ -42,8 +44,10 @@ class Jsoup {
      @param parser alternate {@link Parser#xmlParser() parser} to use.
      @return sane HTML
      */
-    public static Document parse(String html, String baseUri, Parser parser) {
-        return parser.parseInput(html, baseUri);
+	//NOTE(az): conflated all parse() into this
+    public static function parse(html:String, baseUri:String = "", parser:Parser = null):Document {
+        if (parser != null) return parser.parseInput(html, baseUri);
+		else return Parser.parse(html, baseUri);
     }
 
     /**
@@ -55,9 +59,9 @@ class Jsoup {
 
      @see #parse(String, String)
      */
-    public static Document parse(String html) {
+    /*public static function parse(html:String):Document {
         return Parser.parse(html, "");
-    }
+    }*/
 
     /**
      * Creates a new {@link Connection} to a URL. Use to fetch and parse a HTML page.
@@ -70,9 +74,10 @@ class Jsoup {
      * @param url URL to connect to. The protocol must be {@code http} or {@code https}.
      * @return the connection. You can add data, cookies, and headers; set the user-agent, referrer, method; and then execute.
      */
-    public static Connection connect(String url) {
+    //NOTE(az): removed
+	/*public static Connection connect(String url) {
         return HttpConnection.connect(url);
-    }
+    }*/
 
     /**
      Parse the contents of a file as HTML.
@@ -85,9 +90,10 @@ class Jsoup {
 
      @throws IOException if the file could not be found, or read, or if the charsetName is invalid.
      */
-    public static Document parse(File in, String charsetName, String baseUri) throws IOException {
+    //NOTE(az): removed for now
+    /*public static Document parse(File in, String charsetName, String baseUri) throws IOException {
         return DataUtil.load(in, charsetName, baseUri);
-    }
+    }*/
 
     /**
      Parse the contents of a file as HTML. The location of the file is used as the base URI to qualify relative URLs.
@@ -100,9 +106,10 @@ class Jsoup {
      @throws IOException if the file could not be found, or read, or if the charsetName is invalid.
      @see #parse(File, String, String)
      */
-    public static Document parse(File in, String charsetName) throws IOException {
+    //NOTE(az): removed for now
+    /*public static Document parse(File in, String charsetName) throws IOException {
         return DataUtil.load(in, charsetName, in.getAbsolutePath());
-    }
+    }*/
 
      /**
      Read an input stream, and parse it to a Document.
@@ -115,9 +122,10 @@ class Jsoup {
 
      @throws IOException if the file could not be found, or read, or if the charsetName is invalid.
      */
-    public static Document parse(InputStream in, String charsetName, String baseUri) throws IOException {
+    //NOTE(az): removed for now
+    /*public static Document parse(InputStream in, String charsetName, String baseUri) throws IOException {
         return DataUtil.load(in, charsetName, baseUri);
-    }
+    }*/
 
     /**
      Read an input stream, and parse it to a Document. You can provide an alternate parser, such as a simple XML
@@ -132,9 +140,10 @@ class Jsoup {
 
      @throws IOException if the file could not be found, or read, or if the charsetName is invalid.
      */
-    public static Document parse(InputStream in, String charsetName, String baseUri, Parser parser) throws IOException {
+    //NOTE(az): removed for now
+    /*public static Document parse(InputStream in, String charsetName, String baseUri, Parser parser) throws IOException {
         return DataUtil.load(in, charsetName, baseUri, parser);
-    }
+    }*/
 
     /**
      Parse a fragment of HTML, with the assumption that it forms the {@code body} of the HTML.
@@ -145,7 +154,8 @@ class Jsoup {
 
      @see Document#body()
      */
-    public static Document parseBodyFragment(String bodyHtml, String baseUri) {
+	//NOTE(az): conflated with below
+    public static function parseBodyFragment(bodyHtml:String, baseUri:String = ""):Document {
         return Parser.parseBodyFragment(bodyHtml, baseUri);
     }
 
@@ -157,9 +167,9 @@ class Jsoup {
 
      @see Document#body()
      */
-    public static Document parseBodyFragment(String bodyHtml) {
+    /*public static function parseBodyFragment(bodyHtml:String):String {
         return Parser.parseBodyFragment(bodyHtml, "");
-    }
+    }*/
 
     /**
      Fetch a URL, and parse it as HTML. Provided for compatibility; in most cases use {@link #connect(String)} instead.
@@ -178,11 +188,12 @@ class Jsoup {
 
      @see #connect(String)
      */
-    public static Document parse(URL url, int timeoutMillis) throws IOException {
+    //NOTE(az): removed for now
+    /*public static Document parse(URL url, int timeoutMillis) throws IOException {
         Connection con = HttpConnection.connect(url);
         con.timeout(timeoutMillis);
         return con.get();
-    }
+    }*/
 
     /**
      Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of permitted
@@ -195,12 +206,12 @@ class Jsoup {
 
      @see Cleaner#clean(Document)
      */
-    public static String clean(String bodyHtml, String baseUri, Whitelist whitelist) {
-        Document dirty = parseBodyFragment(bodyHtml, baseUri);
-        Cleaner cleaner = new Cleaner(whitelist);
-        Document clean = cleaner.clean(dirty);
+    /*public static function clean(bodyHtml:String, whitelist:Whitelist, baseUri:String = ""):String {
+        var dirty:Document = parseBodyFragment(bodyHtml, baseUri);
+        var cleaner:Cleaner = new Cleaner(whitelist);
+        var clean:Document = cleaner.clean(dirty);
         return clean.body().html();
-    }
+    }*/
 
     /**
      Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of permitted
@@ -212,9 +223,9 @@ class Jsoup {
 
      @see Cleaner#clean(Document)
      */
-    public static String clean(String bodyHtml, Whitelist whitelist) {
+    /*public static String clean(String bodyHtml, Whitelist whitelist) {
         return clean(bodyHtml, "", whitelist);
-    }
+    }*/
 
     /**
      * Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of
@@ -228,12 +239,15 @@ class Jsoup {
      * @return safe HTML (body fragment)
      * @see Cleaner#clean(Document)
      */
-    public static String clean(String bodyHtml, String baseUri, Whitelist whitelist, Document.OutputSettings outputSettings) {
-        Document dirty = parseBodyFragment(bodyHtml, baseUri);
-        Cleaner cleaner = new Cleaner(whitelist);
-        Document clean = cleaner.clean(dirty);
-        clean.outputSettings(outputSettings);
-        return clean.body().html();
+	//NOTE(az): conflate with all clean() (changed order of params)
+	public static function clean(bodyHtml:String, whitelist:Whitelist, baseUri:String = "", outputSettings:OutputSettings = null):String {
+        var dirty:Document = parseBodyFragment(bodyHtml, baseUri);
+        var cleaner:Cleaner = new Cleaner(whitelist);
+        var clean:Document = cleaner.clean(dirty);
+		if (outputSettings != null) {
+			clean.setOutputSettings(outputSettings);
+		}
+        return clean.body().getHtml();
     }
 
     /**
@@ -244,9 +258,9 @@ class Jsoup {
      @return true if no tags or attributes were removed; false otherwise
      @see #clean(String, org.jsoup.safety.Whitelist) 
      */
-    public static boolean isValid(String bodyHtml, Whitelist whitelist) {
-        Document dirty = parseBodyFragment(bodyHtml, "");
-        Cleaner cleaner = new Cleaner(whitelist);
+    public static function isValid(bodyHtml:String, whitelist:Whitelist):Bool {
+        var dirty:Document = parseBodyFragment(bodyHtml, "");
+        var cleaner:Cleaner = new Cleaner(whitelist);
         return cleaner.isValid(dirty);
     }
     
