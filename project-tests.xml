@@ -17,6 +17,26 @@
 	<haxelib name="polygonal-ds" />
 	<haxelib name="unifill" />
 	
+	<!-- entities -->
+	<haxeflag name="-resource" value="src/org/jsoup/nodes/entities-base.properties@entities-base.properties" />
+	<haxeflag name="-resource" value="src/org/jsoup/nodes/entities-full.properties@entities-full.properties" />
+
+	<!-- test files -->
+	<haxeflag name="-resource" value="test/resources/htmltests/baidu-cn-home.html@htmltests/baidu-cn-home.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/baidu-variant.html@htmltests/baidu-variant.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/google-ipod.html@htmltests/google-ipod.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/meta-charset-1.html@htmltests/meta-charset-1.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/meta-charset-2.html@htmltests/meta-charset-2.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/meta-charset-3.html@htmltests/meta-charset-3.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/news-com-au-home.html@htmltests/news-com-au-home.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/nyt-article-1.html@htmltests/nyt-article-1.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/smh-biz-article-1.html@htmltests/smh-biz-article-1.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/table-invalid-elements.html@htmltests/table-invalid-elements.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/thumb.jpg@htmltests/thumb.jpg.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/xml-test.xml@htmltests/xml-test.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/yahoo-article-1.html@htmltests/yahoo-article-1.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/yahoo-jp.html@htmltests/yahoo-jp.html" />
+	
 	<assets path="assets" rename="assets" exclude="openfl.svg" />
 	<icon path="assets/openfl.svg" />
 	
