@@ -86,7 +86,7 @@ class EntitiesTest {
         Assert.equals("¹²³¼½¾", p.getHtml());
     }
 
-    static public function testNoSpuriousDecodes() {
+    public function testNoSpuriousDecodes() {
         var string = "http://www.foo.com?a=1&num_rooms=1&children=0&int=VA&b=2";
         Assert.equals(string, Entities.unescape(string));
     }
