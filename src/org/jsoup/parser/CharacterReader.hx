@@ -390,7 +390,7 @@ import java.util.Locale;
         }
 
         // get from cache
-        var index:Int = (hash & cache.length) - 1;
+        var index:Int = hash & cache.length - 1;
         var cached = cache[index];
 
         if (cached == null) { // miss, add
