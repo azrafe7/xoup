@@ -267,7 +267,7 @@ class Document extends Element {
      * @see OutputSettings#charset() 
      */
 	//NOTE(az): getter
-    public function charset():Charset {
+    public function getCharset():Charset {
         return outputSettings.getCharset();
     }
     
@@ -336,12 +336,12 @@ class Document extends Element {
                 var metaCharset:Element = select("meta[charset]").first();
 
                 if (metaCharset != null) {
-                    metaCharset.setAttr("charset", charset().displayName());
+                    metaCharset.setAttr("charset", getCharset().displayName());
                 } else {
                     var head:Element = head();
 
                     if (head != null) {
-                        head.appendElement("meta").setAttr("charset", charset().displayName());
+                        head.appendElement("meta").setAttr("charset", getCharset().displayName());
                     }
                 }
 
@@ -354,7 +354,7 @@ class Document extends Element {
                     var decl:XmlDeclaration = cast node;
 
                     if (decl.getAttr(XmlDeclaration.DECL_KEY) == "xml") {
-                        decl.setAttr("encoding", charset().displayName());
+                        decl.setAttr("encoding", getCharset().displayName());
 
                         var version:String = decl.getAttr("version");
 
@@ -364,14 +364,14 @@ class Document extends Element {
                     } else {
                         decl = new XmlDeclaration("xml", baseUri, false);
                         decl.setAttr("version", "1.0");
-                        decl.setAttr("encoding", charset().displayName());
+                        decl.setAttr("encoding", getCharset().displayName());
 
                         prependChild(decl);
                     }
                 } else {
                     var decl = new XmlDeclaration("xml", baseUri, false);
                     decl.setAttr("version", "1.0");
-                    decl.setAttr("encoding", charset().displayName());
+                    decl.setAttr("encoding", getCharset().displayName());
 
                     prependChild(decl);
                 }
@@ -655,6 +655,9 @@ class CharsetEncoder {
 	}
 	
 	public function canEncode(c:CodePoint):Bool {
+		if (c == 185) {
+			trace("here");
+		}
 		var encodable = switch (charset) {
 			case Charset.ascii:
 				c < 0x80;
