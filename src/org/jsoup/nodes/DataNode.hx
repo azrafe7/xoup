@@ -13,7 +13,7 @@ class DataNode extends Node {
      @param baseUri base URI
      */
     public function new(data:String, baseUri:String) {
-        super(baseUri);
+        super(baseUri, new Attributes());
         attributes.put(DATA_KEY, data);
     }
 

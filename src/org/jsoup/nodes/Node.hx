@@ -50,16 +50,16 @@ class Node implements Cloneable<Node> implements Hashable {
      @param attributes attributes (not null, but may be empty)
      */
 	//NOTE(az): conflated (problem with assumption of null?) !!!this might be VERY important!
-    function new(baseUri:String = null, attributes:Attributes = null) {
+    function new(baseUri:String, attributes:Attributes) {
         //Validate.notNull(baseUri);
         //Validate.notNull(attributes);
-        this.baseUri = baseUri != null ? baseUri.trim() : "";
-        this.attributes = attributes != null ? attributes : new Attributes();
+        this.baseUri = baseUri != null ? baseUri.trim() : null;
+        this.attributes = attributes != null ? attributes : null;
         
         childNodes = EMPTY_NODES;
     }
-
-    /**
+    
+	/**
      Get the node name of this node. Use for debugging purposes and not logic switching (for that, use instanceof).
      @return node name
      */
@@ -674,7 +674,7 @@ class Node implements Cloneable<Node> implements Hashable {
      */
 	 //NOTE(az): mmmhh try/catch
 	 /*protected*/ function doClone(parent:Node):Node {
-        var clone:Node = new Node();
+        var clone:Node = new Node(null, null);
 
         clone.parentNode = parent; // can be null, to create an orphan split
         clone.siblingIndex = parent == null ? 0 : siblingIndex;

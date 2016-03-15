@@ -21,7 +21,7 @@ class DocumentType extends Node {
      * @param baseUri the doctype's base URI
      */
     public function new(name:String, publicId:String, systemId:String, baseUri:String) {
-        super(baseUri);
+        super(baseUri, new Attributes());
 
         setAttr(NAME, name);
         setAttr(PUBLIC_ID, publicId);
