@@ -6,6 +6,8 @@ import org.jsoup.Exceptions.IllegalArgumentException;
 
 import StringTools;
 
+using unifill.Unifill;
+
 /*import java.net.MalformedURLException;
 import de.polygonal.ds.Itr;
 import java.net.URL;
@@ -139,15 +141,12 @@ class StringUtil {
      * @param string string to normalize whitespace within
      * @param stripLeading set to true if you wish to remove any leading whitespace
      */
-	//NOTE(az): codepointat
+	//NOTE(az): using uIterator()
     public static function appendNormalisedWhitespace(accum:StringBuf, string:String, stripLeading:Bool):Void {
         var lastWasWhite = false;
         var reachedNonWhite = false;
 
-        var len = string.length;
-        var c;
-        for (i in 0...len) {
-            c = string.charCodeAt(i);
+        for (c in string.uIterator()) {
             if (isWhitespace(c)) {
                 if ((stripLeading && !reachedNonWhite) || lastWasWhite)
                     continue;
@@ -155,7 +154,7 @@ class StringUtil {
                 lastWasWhite = true;
             }
             else {
-                accum.addChar(c);
+                accum.uAddChar(c);
                 lastWasWhite = false;
                 reachedNonWhite = true;
             }
