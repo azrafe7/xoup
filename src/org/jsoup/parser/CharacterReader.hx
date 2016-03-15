@@ -147,17 +147,21 @@ import java.util.Locale;
         var start:Int = pos;
         var remaining:Int = length;
 
-		//OUTER: 
-		while (pos < remaining) {
-            var gotoOuter = false;
-			for (c in chars) {
-                if (inputCP[pos] == c) {
-					gotoOuter = true;
-                    break;
+		while (true) {
+			//OUTER: 
+			while (pos < remaining) {
+				var gotoOuter = false;
+				for (c in chars) {
+					if (inputCP[pos] == c) {
+						gotoOuter = true;
+						break;
+					}
 				}
-            }
-			if (!gotoOuter) pos++;
-        }
+				if (gotoOuter) break;
+				pos++;
+			}
+			break;
+		}
 
         return pos > start ? cacheString(start, pos-start) : "";
     }
