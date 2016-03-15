@@ -199,10 +199,10 @@ class Entities {
 
 
     // xhtml has restricted entities
-    private static var xhtmlArray:Map<String, CodePoint>;
+    private static var xhtmlMap:Map<String, CodePoint>;
 
     static function __init__() {
-		xhtmlArray = [
+		xhtmlMap = [
             "quot" => 0x00022,
             "amp" => 0x00026,
             "lt" => 0x0003C,
@@ -214,8 +214,8 @@ class Entities {
         full = loadEntities("entities-full.properties"); // extended and overblown.
         fullByVal = toCharacterKey(full);
 
-        for (key in xhtmlArray.keys()) {
-            var c:CodePoint = xhtmlArray[key];
+        for (key in xhtmlMap.keys()) {
+            var c:CodePoint = xhtmlMap[key];
             xhtmlByVal.set(c.toString(), key);
         }
 		
