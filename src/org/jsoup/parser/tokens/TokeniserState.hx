@@ -4,6 +4,7 @@ import org.jsoup.parser.tokens.Token;
 import unifill.CodePoint;
 
 using org.jsoup.InternalTools;
+using unifill.Unifill;
 
 //import java.util.Arrays;
 
@@ -109,7 +110,7 @@ using org.jsoup.InternalTools;
 				if (c == null)
 					t.emitCodePoint('&'.code);
 				else
-					t.emitString(c.toString());
+					t.emitString(c.uToString());
 				t.transition(Data);
 
 			case TokeniserState.Rcdata:
