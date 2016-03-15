@@ -24,7 +24,7 @@ class TextNode extends Node {
      @see #createFromEncoded(String, String)
      */
     public function new(text:String, baseUri:String) {
-		super();
+		super(null, null);
 		
         this.baseUri = baseUri;
         this.text = text;
@@ -62,7 +62,8 @@ class TextNode extends Node {
      @return text
      */
     public function getWholeText():String {
-        return attributes == null ? text : attributes.get(TEXT_KEY);
+		var res = attributes == null ? text : attributes.get(TEXT_KEY);
+        return res;
     }
 
     /**

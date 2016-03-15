@@ -15,7 +15,7 @@ class XmlDeclaration extends Node {
      @param isProcessingInstruction is processing instruction
      */
     public function new(data:String, baseUri:String, isProcessingInstruction:Bool) {
-        super(baseUri);
+        super(baseUri, new Attributes());
         attributes.put(DECL_KEY, data);
         this.isProcessingInstruction = isProcessingInstruction;
     }
