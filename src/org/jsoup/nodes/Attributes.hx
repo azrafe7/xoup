@@ -237,7 +237,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
     }
 }
 
-//NOTE(az): owner to link with parent
+//NOTE(az): owner to link with parent. This seems to just forward operation with attributes prefixed with "data-".
 @:allow(org.jsoup.nodes.Attributes)
 class Dataset /*extends AbstractMap<String, String>*/ {
 
@@ -257,10 +257,10 @@ class Dataset /*extends AbstractMap<String, String>*/ {
 	}*/
 
 	//@Override
-	//NOTE(az): check toString
+	//NOTE(az): check
 	public function put(key:String, value:String):String {
 		var dataKey:String = Attributes.dataPrefix + key;
-		var oldValue:String = owner.hasKey(dataKey) ? owner.attributes.get(dataKey).toString() : null;
+		var oldValue:String = owner.hasKey(dataKey) ? owner.attributes.get(dataKey).getValue() : null;
 		var attr = new Attribute(dataKey, value);
 		owner.attributes.set(dataKey, attr);
 		return oldValue;
