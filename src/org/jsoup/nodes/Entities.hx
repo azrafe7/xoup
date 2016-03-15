@@ -73,6 +73,7 @@ class Entities {
     }
 
     // this method is ugly, and does a lot. but other breakups cause rescanning and stringbuilder generations
+	//NOTE(az): check 'continue' in loop
     public static function _escape(accum:StringBuf, string:String, out:Document.OutputSettings,
                    inAttribute:Bool, normaliseWhite:Bool, stripLeadingWhite:Bool):Void {
 
@@ -93,11 +94,12 @@ class Entities {
 
             if (normaliseWhite) {
                 if (StringUtil.isWhitespace(codePoint)) {
-                    if ((stripLeadingWhite && !reachedNonWhite) || lastWasWhite)
-                        continue;
+                    if ((stripLeadingWhite && !reachedNonWhite) || lastWasWhite) {
+						offset += codePoint.toString().uLength();
+					}
                     accum.add(' ');
                     lastWasWhite = true;
-                    continue;
+					offset += codePoint.toString().uLength();
                 } else {
                     lastWasWhite = false;
                     reachedNonWhite = true;
