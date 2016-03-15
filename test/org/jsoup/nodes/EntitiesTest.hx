@@ -56,8 +56,7 @@ class EntitiesTest {
         Assert.equals("Hello &= &", Entities.unescape(text));
         Assert.equals("Hello &= &", Entities.unescape(text, false));
     }
-
-    
+	
     public function testCaseSensitive() {
         var unescaped = "Ü ü & &";
         Assert.equals("&Uuml; &uuml; &amp; &amp;",
@@ -75,7 +74,16 @@ class EntitiesTest {
         Assert.equals(unescaped, Entities.unescape(escaped));
     }
 
-    static public function testLetterDigitEntities() {
+    public function testLetterDigitEntitiesSimple() {
+        var html = "<p>&sup1;</p>";
+        var doc:Document = Jsoup.parse(html);
+        doc.getOutputSettings().setCharset("ascii");
+		var p:Element = doc.select("p").first();
+        Assert.equals("&sup1;", p.getHtml());
+        Assert.equals("¹", p.getText());
+    }
+
+    public function testLetterDigitEntities() {
         var html = "<p>&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;</p>";
         var doc:Document = Jsoup.parse(html);
         doc.getOutputSettings().setCharset("ascii");
@@ -91,7 +99,7 @@ class EntitiesTest {
         Assert.equals(string, Entities.unescape(string));
     }
 
-    static public function testEscapesGtInXmlAttributesButNotInHtml() {
+    public function testEscapesGtInXmlAttributesButNotInHtml() {
         // https://github.com/jhy/jsoup/issues/528 - < is OK in HTML attribute values, but not in XML
 
 
