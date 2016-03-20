@@ -16,6 +16,8 @@ import org.jsoup.helper.Validate;
 
 using StringTools;
 
+
+
 /*import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.Validate;
 import org.jsoup.parser.Parser;
@@ -30,12 +32,17 @@ import java.util.LinkedList;
 import java.util.List;
 */
 
+interface Copiable<T> {
+	function copyTo(to:T, parent:T):T;
+}
+
+
 /**
  The base, abstract Node model. Elements, Documents, Comments etc are all Node instances.
 
  @author Jonathan Hedley, jonathan@hedley.net */
 @:allow(org.jsoup.nodes.OuterHtmlVisitor)
-class Node implements Cloneable<Node> implements Hashable {
+class Node implements Cloneable<Node> implements Copiable<Node> implements Hashable {
     private static var EMPTY_NODES:List<Node> = new ArrayList<Node>();
     
 	var parentNode:Node = null;
@@ -63,7 +70,7 @@ class Node implements Cloneable<Node> implements Hashable {
      Get the node name of this node. Use for debugging purposes and not logic switching (for that, use instanceof).
      @return node name
      */
-    public function nodeName():String { throw "Not implemented"; };
+    public function nodeName():String { return null; /*throw "Not implemented";*/ };
 
     /**
      * Get an attribute's value by its key.
@@ -589,9 +596,9 @@ class Node implements Cloneable<Node> implements Hashable {
      Get the outer HTML of this node.
      @param accum accumulator to place HTML into
      */
-    /*abstract*/ function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void { throw "Not implemented"; }
+    /*abstract*/ function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void { /*throw "Not implemented";*/ }
 
-	/*abstract*/ function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void { throw "Not implemented"; }
+	/*abstract*/ function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void { /*throw "Not implemented";*/ }
 
     //@Override
     public function toString():String {
@@ -599,7 +606,7 @@ class Node implements Cloneable<Node> implements Hashable {
     }
 
     /*protected*/ function indent(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
-        accum.add("\n".rpad(" ", depth * out.indentAmount()));
+        accum.add("\n".rpad(" ", depth * out.getIndentAmount()));
     }
 
     /**
@@ -647,47 +654,53 @@ class Node implements Cloneable<Node> implements Hashable {
      * @return stand-alone cloned node
      */
     //@Override
-	//NOTE(az): using DLL as LinkedList
+	//NOTE(az): using DLL as LinkedList. Refactored (along with doClone()) into copyTo<T>()
     public function clone():Node {
-        var thisClone:Node = doClone(null); // splits for orphan
+		var clone:Node = copyTo(new Node(null, null), null); // splits for orphan
 
+        return clone;
+    }
+
+	/*
+     * Return a clone of the node using the given parent (which can be null).
+     * Not a deep copy of children.
+     */
+	 //NOTE(az): refactored
+	 /*protected*/ public function copyTo(to:Node, parent:Node):Node {
+		Validate.notNull(to);
+		
+        to.parentNode = parent; // can be null, to create an orphan split
+        to.siblingIndex = parent == null ? 0 : siblingIndex;
+        to.attributes = attributes != null ? attributes.clone() : null;
+        to.baseUri = baseUri;
+        to.childNodes = new ArrayList<Node>();
+		
+		for (child in childNodes) {
+			var childClone = child.clone();
+			to.childNodes.add(childClone);
+			childClone.parentNode = to; // can be null, to create an orphan split
+			childClone.siblingIndex = child.siblingIndex;
+		}
+		
+		/*var clone = to;
+		
         // Queue up nodes that need their children cloned (BFS).
         var nodesToProcess = new Dll<Node>();
-        nodesToProcess.add(thisClone);
+        nodesToProcess.add(clone);
 
         while (!nodesToProcess.isEmpty()) {
             var currParent:Node = nodesToProcess.removeHead();
 
             for (i in 0...currParent.childNodes.size) {
-                var childClone:Node = currParent.childNodes.get(i).doClone(currParent);
+				var child:Node = currParent.childNodes.get(i);
+                var childClone:Node = child.clone();// child.copyTo(new Node(null, null), currParent);
                 currParent.childNodes.set(i, childClone);
                 nodesToProcess.add(childClone);
             }
-        }
+        }*/
 
-        return thisClone;
-    }
-
-    /*
-     * Return a clone of the node using the given parent (which can be null).
-     * Not a deep copy of children.
-     */
-	 //NOTE(az): mmmhh try/catch
-	 /*protected*/ function doClone(parent:Node):Node {
-        var clone:Node = new Node(null, null);
-
-        clone.parentNode = parent; // can be null, to create an orphan split
-        clone.siblingIndex = parent == null ? 0 : siblingIndex;
-        clone.attributes = attributes != null ? attributes.clone() : null;
-        clone.baseUri = baseUri;
-        clone.childNodes = new ArrayList<Node>(childNodes.size);
-
-        for (child in childNodes)
-            clone.childNodes.add(child);
-
-        return clone;
-    }
-
+		return to;
+	}
 }
 
 //NOTE(az): moved out, no implement (relying on structural subtyping)

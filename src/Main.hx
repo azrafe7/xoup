@@ -10,9 +10,15 @@ import org.jsoup.Exceptions;
 import org.jsoup.Interfaces;
 import org.jsoup.helper.Validate;
 //import org.jsoup.nodes.Node;
-import org.jsoup.parser.Tag;
+//import org.jsoup.parser.Tag;
 //import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Attribute;
+//import org.jsoup.nodes.Attribute;
+//import org.jsoup.parser.CharacterReader;
+//import org.jsoup.parser.tokens.Tokeniser;
+//import org.jsoup.parser.tokens.TokeniserState;
+//import org.jsoup.select.Evaluator;
+//import org.jsoup.parser.TokenQueue;
+import org.jsoup.select.QueryParser;
 
 /**
  * 

@@ -19,7 +19,7 @@
     <class path="C:\HaxeToolkit\haxe\openfl\git" />
     <class path="C:\HaxeToolkit\haxe\lime\git" />
     <class path="C:\HaxeToolkit\haxe\utest\1,3,10\src" />
-    <class path="C:\HaxeToolkit\haxe\polygonal-ds\git\src" />
+    <class path="D:\Downloads\Dev\Haxe\polygonal-ds_git\src" />
     <class path="C:\HaxeToolkit\haxe\polygonal-printf\1,0,2-beta" />
     <class path="C:\HaxeToolkit\haxe\unifill\git" />
     <class path="test" />
@@ -34,7 +34,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
     <option enabledebug="False" />
-    <option additional="-swf-version 11.2&#xA;-debug " />
+    <option additional="-resource src/org/jsoup/nodes/entities-base.properties@entities-base.properties&#xA;-resource src/org/jsoup/nodes/entities-full.properties@entities-full.properties&#xA;-resource test/resources/htmltests/baidu-cn-home.html@htmltests/baidu-cn-home.html&#xA;-resource test/resources/htmltests/baidu-variant.html@htmltests/baidu-variant.html&#xA;-resource test/resources/htmltests/google-ipod.html@htmltests/google-ipod.html&#xA;-resource test/resources/htmltests/meta-charset-1.html@htmltests/meta-charset-1.html&#xA;-resource test/resources/htmltests/meta-charset-2.html@htmltests/meta-charset-2.html&#xA;-resource test/resources/htmltests/meta-charset-3.html@htmltests/meta-charset-3.html&#xA;-resource test/resources/htmltests/news-com-au-home.html@htmltests/news-com-au-home.html&#xA;-resource test/resources/htmltests/nyt-article-1.html@htmltests/nyt-article-1.html&#xA;-resource test/resources/htmltests/smh-biz-article-1.html@htmltests/smh-biz-article-1.html&#xA;-resource test/resources/htmltests/table-invalid-elements.html@htmltests/table-invalid-elements.html&#xA;-resource test/resources/htmltests/thumb.jpg@htmltests/thumb.jpg.html&#xA;-resource test/resources/htmltests/xml-test.xml@htmltests/xml-test.html&#xA;-resource test/resources/htmltests/yahoo-article-1.html@htmltests/yahoo-article-1.html&#xA;-resource test/resources/htmltests/yahoo-jp.html@htmltests/yahoo-jp.html&#xA;-swf-version 11.2&#xA;-debug " />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

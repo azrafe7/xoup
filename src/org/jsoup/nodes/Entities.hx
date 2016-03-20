@@ -96,10 +96,12 @@ class Entities {
                 if (StringUtil.isWhitespace(codePoint)) {
                     if ((stripLeadingWhite && !reachedNonWhite) || lastWasWhite) {
 						offset += codePoint.toString().uLength();
+						continue;
 					}
                     accum.add(' ');
                     lastWasWhite = true;
 					offset += codePoint.toString().uLength();
+					continue;
                 } else {
                     lastWasWhite = false;
                     reachedNonWhite = true;

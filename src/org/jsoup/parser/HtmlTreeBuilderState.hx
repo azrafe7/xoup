@@ -664,7 +664,7 @@ using unifill.Unifill;
 									} else if (node == formatEl)
 										break;
 
-									var replacement = new Element(Tag.valueOf(node.nodeName()), tb.getBaseUri());
+									var replacement = new Element(Tag.valueOf(node.nodeName()), tb.getBaseUri(), new Attributes());
 									tb.replaceActiveFormattingElement(node, replacement);
 									tb.replaceOnStack(node, replacement);
 									node = replacement;
@@ -690,7 +690,7 @@ using unifill.Unifill;
 									commonAncestor.appendChild(lastNode);
 								}
 
-								var adopter = new Element(formatEl.getTag(), tb.getBaseUri());
+								var adopter = new Element(formatEl.getTag(), tb.getBaseUri(), new Attributes());
 								adopter.getAttributes().addAll(formatEl.getAttributes());
 								var childNodes:Array<Node> = furthestBlock.getChildNodes().toArray(/*new Node[furthestBlock.childNodeSize()]*/);
 								for (childNode in childNodes) {

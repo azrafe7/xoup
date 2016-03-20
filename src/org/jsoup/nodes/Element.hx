@@ -1,6 +1,7 @@
 package org.jsoup.nodes;
 
 import de.polygonal.ds.ArrayList;
+import de.polygonal.ds.Dll;
 import de.polygonal.ds.List;
 import de.polygonal.ds.ListSet;
 import de.polygonal.ds.Set;
@@ -57,7 +58,7 @@ class Element extends Node {
      * @see #appendChild(Node)
      * @see #appendElement(String)
      */
-	public function new(tag:Tag, baseUri:String, attributes:Attributes = null) {
+	public function new(tag:Tag, baseUri:String, attributes:Attributes) {
         super(baseUri, attributes);
         
         Validate.notNull(tag);    
@@ -358,7 +359,7 @@ class Element extends Node {
      *  {@code parent.appendElement("h1").attr("id", "header").text("Welcome");}
      */
     public function appendElement(tagName:String):Element {
-        var child = new Element(Tag.valueOf(tagName), getBaseUri());
+        var child = new Element(Tag.valueOf(tagName), getBaseUri(), new Attributes());
         appendChild(child);
         return child;
     }
@@ -371,7 +372,7 @@ class Element extends Node {
      *  {@code parent.prependElement("h1").attr("id", "header").text("Welcome");}
      */
     public function prependElement(tagName:String):Element {
-        var child:Element = new Element(Tag.valueOf(tagName), getBaseUri());
+        var child:Element = new Element(Tag.valueOf(tagName), getBaseUri(), new Attributes());
         prependChild(child);
         return child;
     }
@@ -1274,7 +1275,15 @@ class Element extends Node {
 
     //@Override
     override public function clone():Element {
-        var clone:Element = cast super.clone();
-		return clone;
+        return copyTo(new Element(tag, baseUri, null), null);
     }
+	
+	override function copyTo(to:Node, parent:Node):Element {
+		Validate.notNull(to);
+		
+		var out:Element = cast super.copyTo(to, parent);
+		out.tag = tag;
+		
+		return out;
+	}
 }

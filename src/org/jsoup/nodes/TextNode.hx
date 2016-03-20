@@ -208,4 +208,18 @@ class TextNode extends Node {
         result = 31 * result + (text != null ? text.hashCode() : 0);
         return result;
     }*/
+    
+	//@Override
+    override public function clone():TextNode {
+        return copyTo(new TextNode(null, baseUri), null);
+    }
+	
+	override function copyTo(to:Node, parent:Node):TextNode {
+		Validate.notNull(to);
+		
+		var out:TextNode = cast super.copyTo(to, parent);
+		out.text = text;
+		
+		return out;
+	}
 }

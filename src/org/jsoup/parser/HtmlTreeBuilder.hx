@@ -90,7 +90,7 @@ class HtmlTreeBuilder extends TreeBuilder {
             else
                 tokeniser.transition(TokeniserState.Data); // default
 
-            root = new Element(Tag.valueOf("html"), baseUri);
+            root = new Element(Tag.valueOf("html"), baseUri, new Attributes());
             doc.appendChild(root);
             stack.add(root);
             resetInsertionMode();
@@ -207,7 +207,7 @@ class HtmlTreeBuilder extends TreeBuilder {
     }
 
     function _insertStartTag(startTagName:String):Element {
-        var el:Element = new Element(Tag.valueOf(startTagName), baseUri);
+        var el:Element = new Element(Tag.valueOf(startTagName), baseUri, new Attributes());
         insertElement(el);
         return el;
     }
@@ -693,7 +693,9 @@ class HtmlTreeBuilder extends TreeBuilder {
     }
 
     function removeFromActiveFormattingElements(el:Element):Void {
-		var pos = formattingElements.size -1;
+		trace("-------- puppa!");
+		var pos:Int = formattingElements.size -1;
+		trace('$pos of ${formattingElements.size}');
         while (pos >= 0) {
             var next:Element = formattingElements.get(pos);
             if (next == el) {

@@ -37,7 +37,7 @@ class Document extends Element {
      @see #createShell
      */
     public function new(baseUri:String) {
-        super(Tag.valueOf("#root"), baseUri);
+        super(Tag.valueOf("#root"), baseUri, new Attributes());
         this.location = baseUri;
     }
 
@@ -116,7 +116,7 @@ class Document extends Element {
      @return new element
      */
     public function createElement(tagName:String):Element {
-        return new Element(Tag.valueOf(tagName), this.getBaseUri());
+        return new Element(Tag.valueOf(tagName), this.getBaseUri(), new Attributes());
     }
 
     /**
@@ -304,11 +304,19 @@ class Document extends Element {
 
     //@Override
     override public function clone():Document {
-        var clone:Document = cast super.clone();
-        clone.outputSettings = this.outputSettings.clone();
-        return clone;
+        return copyTo(new Document(baseUri), null);
     }
     
+	override function copyTo(to:Node, parent:Node):Document {
+		Validate.notNull(to);
+		
+		var out:Document = cast super.copyTo(to, parent);
+		out.baseUri = baseUri;
+		out.outputSettings = this.outputSettings.clone();
+		
+		return out;
+	}
+
     /**
      * Ensures a meta charset (html) or xml declaration (xml) with the current
      * encoding used. This only applies with
@@ -589,7 +597,7 @@ class OutputSettings implements Cloneable<OutputSettings> {
 	 * @return the current indent amount
 	 */
 	//NOTE(az): getter
-	public function indentAmount():Int {
+	public function getIndentAmount():Int {
 		return _indentAmount;
 	}
 
@@ -613,6 +621,10 @@ class OutputSettings implements Cloneable<OutputSettings> {
 		clone.setCharset(getCharset().name()); // new charset and charset encoder
 		clone.setEscapeMode(getEscapeMode());
 		// indentAmount, prettyPrint are primitives so object.clone() will handle
+		clone.setIndentAmount(getIndentAmount());
+		clone.setPrettyPrint(getPrettyPrint());
+		clone.setOutline(getOutline());
+		clone.setSyntax(getSyntax());
 		return clone;
 	}
 }
