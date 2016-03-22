@@ -589,7 +589,8 @@ class Node implements Cloneable<Node> implements Copiable<Node> implements Hasha
 
     // if this node has no document (or parent), retrieve the default output settings
     function getOutputSettings():Document.OutputSettings {
-        return ownerDocument() != null ? ownerDocument().getOutputSettings() : (new Document("")).getOutputSettings();
+		var ownerDocument = ownerDocument();
+        return ownerDocument != null ? ownerDocument.getOutputSettings() : (new Document("")).getOutputSettings();
     }
 
     /**
@@ -606,7 +607,8 @@ class Node implements Cloneable<Node> implements Copiable<Node> implements Hasha
     }
 
     /*protected*/ function indent(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
-        accum.add("\n".rpad(" ", depth * out.getIndentAmount()));
+        accum.add("\n");
+		accum.add("".rpad(" ", depth * out.getIndentAmount()));
     }
 
     /**
