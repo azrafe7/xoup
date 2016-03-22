@@ -222,7 +222,7 @@ class Node implements Cloneable<Node> implements Copiable<Node> implements Hasha
 	//NOTE(az): getter, unmodifiable
     public function getChildNodes():List<Node> {
         //return Collections.unmodifiableList(childNodes);
-        return cast childNodes.clone(false);
+        return cast childNodes.clone(true);
     }
 
     /**
