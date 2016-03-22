@@ -70,4 +70,9 @@ class XmlDeclaration extends Node {
     override public function toString():String {
         return outerHtml();
     }
+
+	//@Override
+    override public function clone():XmlDeclaration {
+        return cast copyTo(new XmlDeclaration("", baseUri, isProcessingInstruction), null);
+    }
 }

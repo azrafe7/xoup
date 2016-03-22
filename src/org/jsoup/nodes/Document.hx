@@ -308,8 +308,6 @@ class Document extends Element {
     }
     
 	override function copyTo(to:Node, parent:Node):Document {
-		Validate.notNull(to);
-		
 		var out:Document = cast super.copyTo(to, parent);
 		out.baseUri = baseUri;
 		out.outputSettings = this.outputSettings.clone();

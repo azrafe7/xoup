@@ -116,4 +116,16 @@ class FormElement extends Element {
         }
         return cast data;
     }
+	
+	//@Override
+    override public function clone():FormElement {
+        return copyTo(new FormElement(tag, baseUri, null), null);
+    }
+	
+	override function copyTo(to:Node, parent:Node):FormElement{
+		var out:FormElement = cast super.copyTo(to, parent);
+		out.elements = elements.clone();
+		
+		return out;
+	}
 }

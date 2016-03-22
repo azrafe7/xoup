@@ -16,4 +16,8 @@ class BooleanAttribute extends Attribute {
     /*protected*/ override function isBooleanAttribute():Bool {
         return true;
     }
+    
+	override public function clone():BooleanAttribute {
+        return new BooleanAttribute(key);
+	}
 }

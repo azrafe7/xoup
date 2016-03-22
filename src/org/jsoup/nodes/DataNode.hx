@@ -60,4 +60,9 @@ class DataNode extends Node {
         var data:String = Entities.unescape(encodedData);
         return new DataNode(data, baseUri);
     }
+	
+	//@Override
+    override public function clone():DataNode {
+        return cast copyTo(new DataNode(null, baseUri), null);
+    }
 }

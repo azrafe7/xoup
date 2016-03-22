@@ -44,4 +44,9 @@ class Comment extends Node {
     override public function toString():String {
         return outerHtml();
     }
+	
+	//@Override
+    override public function clone():Comment {
+        return cast copyTo(new Comment(null, baseUri), null);
+    }
 }

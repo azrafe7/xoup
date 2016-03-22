@@ -65,4 +65,9 @@ class DocumentType extends Node {
     private function has(attribute:String):Bool {
         return !StringUtil.isBlank(getAttr(attribute));
     }
+	
+	//@Override
+    override public function clone():DocumentType {
+        return cast super.copyTo(new DocumentType("", "", "", baseUri), null);
+    }
 }

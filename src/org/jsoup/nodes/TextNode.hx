@@ -215,8 +215,6 @@ class TextNode extends Node {
     }
 	
 	override function copyTo(to:Node, parent:Node):TextNode {
-		Validate.notNull(to);
-		
 		var out:TextNode = cast super.copyTo(to, parent);
 		out.text = text;
 		
