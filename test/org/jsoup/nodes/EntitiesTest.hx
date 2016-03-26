@@ -64,7 +64,6 @@ class EntitiesTest {
         
         var escaped = "&Uuml; &uuml; &amp; &AMP";
         Assert.equals("Ü ü & &", Entities.unescape(escaped));
-		trace(Entities.unescape(unescaped));
     }
     
     public function testQuoteReplacements() {

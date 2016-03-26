@@ -693,9 +693,7 @@ class HtmlTreeBuilder extends TreeBuilder {
     }
 
     function removeFromActiveFormattingElements(el:Element):Void {
-		trace("-------- puppa!");
 		var pos:Int = formattingElements.size -1;
-		trace('$pos of ${formattingElements.size}');
         while (pos >= 0) {
             var next:Element = formattingElements.get(pos);
             if (next == el) {

@@ -86,10 +86,6 @@ using StringTools;
 	//NOTE(az): the BIG SWITCH!!
 	public function read(t:Tokeniser, r:CharacterReader):Void {
 	
-		if (r.toString().startsWith("checked")) {
-			trace("checked attr");
-		}
-		
 		switch(this) {
 			
 			case TokeniserState.Data:

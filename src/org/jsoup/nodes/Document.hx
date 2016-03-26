@@ -508,9 +508,6 @@ class OutputSettings implements Cloneable<OutputSettings> {
 		this._charset = charset;
 		_charsetEncoder = this._charset.newEncoder();
 		
-		trace(this._charset);
-		trace(this._charsetEncoder);
-		
 		return this;
 	}
 
@@ -666,16 +663,12 @@ class CharsetEncoder {
 	}
 	
 	public function canEncode(c:CodePoint):Bool {
-		if (c == 185) {
-			trace("here");
-		}
 		var encodable = switch (charset) {
 			case Charset.ascii:
 				c < 0x80;
 			default:
 				return true;
 		}
-		trace('$charset canEncode "$c" [${c.toInt()}]: $encodable');
 		return encodable;
 	}
 }
