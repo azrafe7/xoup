@@ -6,6 +6,7 @@ import de.polygonal.ds.List;
 import de.polygonal.ds.ListSet;
 import de.polygonal.ds.Set;
 import org.jsoup.Exceptions.IllegalArgumentException;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Attributes.Dataset;
 import org.jsoup.parser.Parser;
@@ -514,7 +515,7 @@ class Element extends Node {
         if (id().length > 0)
             return "#" + id();
 
-        var selector = new StringBuf();
+        var selector = new StringBuilder();
 		selector.add(getTagName());
         var classes:String = StringUtil.join(getClassNames().iterator(), ".");
         if (classes.length > 0) {
@@ -525,7 +526,7 @@ class Element extends Node {
         if (parent() == null || Std.is(parent(), Document)) // don't add Document to selector, as will always have a html node
             return selector.toString();
 
-        var newSelector = new StringBuf();
+        var newSelector = new StringBuilder();
 		newSelector.add(" > ");
 		newSelector.add(selector);
 		
@@ -910,7 +911,7 @@ class Element extends Node {
      */
 	//NOTE(az): renamed to getText
     public function getText():String {
-        var accum = new StringBuf();
+        var accum = new StringBuilder();
         
 		var nodeVisitor:NodeVisitor = {
             
@@ -947,12 +948,12 @@ class Element extends Node {
      * @see #textNodes()
      */
     public function ownText():String {
-        var sb = new StringBuf();
+        var sb = new StringBuilder();
         _ownText(sb);
         return sb.toString().trim();
     }
 
-    private function _ownText(accum:StringBuf):Void {
+    private function _ownText(accum:StringBuilder):Void {
         for (child in childNodes) {
             if (Std.is(child, TextNode)) {
                 var textNode:TextNode = cast child;
@@ -964,7 +965,7 @@ class Element extends Node {
         }
     }
 
-    private static function appendNormalisedText(accum:StringBuf, textNode:TextNode):Void {
+    private static function appendNormalisedText(accum:StringBuilder, textNode:TextNode):Void {
         var text = textNode.getWholeText();
 
         if (preserveWhitespace(textNode.parentNode))
@@ -973,7 +974,7 @@ class Element extends Node {
             StringUtil.appendNormalisedWhitespace(accum, text, TextNode.lastCharIsWhitespace(accum));
     }
 
-    private static function appendWhitespaceIfBr(element:Element, accum:StringBuf):Void {
+    private static function appendWhitespaceIfBr(element:Element, accum:StringBuilder):Void {
         if (element.getTag().getName() == "br" && !TextNode.lastCharIsWhitespace(accum))
             accum.add(" ");
     }
@@ -1030,7 +1031,7 @@ class Element extends Node {
      * @see #dataNodes()
      */
     public function data():String {
-        var sb = new StringBuf();
+        var sb = new StringBuilder();
 
         for (childNode in childNodes) {
             if (Std.is(childNode, DataNode)) {
@@ -1184,7 +1185,7 @@ class Element extends Node {
         return this;
     }
 
-    override function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings) {
+    override function outerHtmlHead(accum:StringBuilder, depth:Int, out:Document.OutputSettings) {
         if (accum.length > 0 && out.getPrettyPrint() && (tag.formatAsBlock() || (parent() != null && parent().getTag().formatAsBlock()) || out.getOutline()) )
             indent(accum, depth, out);
         
@@ -1203,7 +1204,7 @@ class Element extends Node {
             accum.add(">");
     }
 
-    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings) {
+    override function outerHtmlTail(accum:StringBuilder, depth:Int, out:Document.OutputSettings) {
         if (!(childNodes.isEmpty() && tag.isSelfClosing())) {
             if (out.getPrettyPrint() && (!childNodes.isEmpty() && (
                     tag.formatAsBlock() || (out.getOutline() && (childNodes.size>1 || (childNodes.size==1 && !(Std.is(childNodes.get(0), TextNode)))))
@@ -1225,12 +1226,12 @@ class Element extends Node {
      */
 	//NOTE(az): ren getHtml
     public function getHtml():String {
-        var accum = new StringBuf();
+        var accum = new StringBuilder();
         _html(accum);
         return getOutputSettings().getPrettyPrint() ? accum.toString().trim() : accum.toString();
     }
 
-    private function _html(accum:StringBuf):Void {
+    private function _html(accum:StringBuilder):Void {
         for (node in childNodes)
             node.outerHtml(accum);
     }

@@ -1,5 +1,7 @@
 package org.jsoup.nodes;
 
+import org.jsoup.helper.StringBuilder;
+
 /**
  An XML Declaration.
 
@@ -32,7 +34,7 @@ class XmlDeclaration extends Node {
         var decl:String = attributes.get(DECL_KEY);
         
         if(decl == "xml" && attributes.size() > 1 ) {
-            var sb = new StringBuf(/*decl*/);
+            var sb = new StringBuilder(/*decl*/);
 			sb.add(decl);
             var version:String = attributes.get("version");
             
@@ -57,14 +59,14 @@ class XmlDeclaration extends Node {
         }
     }
     
-    override function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
+    override function outerHtmlHead(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {
         accum.add("<");
 		accum.add(isProcessingInstruction ? "!" : "?");
 		accum.add(getWholeDeclaration());
 		accum.add(">");
     }
 
-    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {}
+    override function outerHtmlTail(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {}
 
     //@Override
     override public function toString():String {

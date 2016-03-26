@@ -1,5 +1,7 @@
 package org.jsoup.nodes;
 
+import org.jsoup.helper.StringBuilder;
+
 /**
  A comment node.
 
@@ -29,7 +31,7 @@ class Comment extends Node {
         return attributes.get(COMMENT_KEY);
     }
 
-    override function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
+    override function outerHtmlHead(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {
         if (out.getPrettyPrint())
             indent(accum, depth, out);
         
@@ -38,7 +40,7 @@ class Comment extends Node {
         accum.add("-->");
     }
 
-    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {}
+    override function outerHtmlTail(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {}
 
     //@Override
     override public function toString():String {

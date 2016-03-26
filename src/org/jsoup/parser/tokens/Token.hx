@@ -1,5 +1,6 @@
 package org.jsoup.parser.tokens;
 
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
@@ -29,11 +30,11 @@ import org.jsoup.nodes.BooleanAttribute;
     /*abstract*/ function reset():Token { throw "Abstract"; };
 
 	//NOTE(az): renamed resetBuf
-    static function resetBuf(sb:StringBuf):Void {
+    static function resetBuf(sb:StringBuilder):Void {
         if (sb != null) {
 			//NOTE(az): recreate
 			//sb.delete(0, sb.length());
-            sb = new StringBuf();
+            sb.reset();
         }
     }
 	
@@ -89,9 +90,9 @@ import org.jsoup.nodes.BooleanAttribute;
 
 @:allow(org.jsoup.parser)
 /*static final*/ class TokenDoctype extends Token {
-	var name:StringBuf = new StringBuf();
-	var publicIdentifier:StringBuf = new StringBuf();
-	var systemIdentifier:StringBuf = new StringBuf();
+	var name:StringBuilder = new StringBuilder();
+	var publicIdentifier:StringBuilder = new StringBuilder();
+	var systemIdentifier:StringBuilder = new StringBuilder();
 	var forceQuirks:Bool = false;
 
 	function new() {
@@ -130,7 +131,7 @@ import org.jsoup.nodes.BooleanAttribute;
 /*static abstract*/ class TokenTag extends Token {
 	/*protected*/ var tagName:String;
 	private var pendingAttributeName:String; // attribute names are generally caught in one hop, not accumulated
-	private var pendingAttributeValue:StringBuf = new StringBuf(); // but values are accumulated, from e.g. & in hrefs
+	private var pendingAttributeValue:StringBuilder = new StringBuilder(); // but values are accumulated, from e.g. & in hrefs
 	private var hasEmptyAttributeValue:Bool = false; // distinguish boolean attribute from empty string value
 	private var hasPendingAttributeValue:Bool = false;
 	var selfClosing:Bool = false;
@@ -288,7 +289,7 @@ import org.jsoup.nodes.BooleanAttribute;
 
 @:allow(org.jsoup.parser)
 /*final static*/ class TokenComment extends Token {
-	public var data:StringBuf = new StringBuf();
+	public var data:StringBuilder = new StringBuilder();
 	public var bogus:Bool = false;
 
 	//@Override

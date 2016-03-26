@@ -3,6 +3,7 @@ package org.jsoup.helper;
 import de.polygonal.ds.tools.ArrayTools;
 import de.polygonal.ds.Itr;
 import org.jsoup.Exceptions.IllegalArgumentException;
+import org.jsoup.helper.StringBuilder;
 
 import StringTools;
 
@@ -49,7 +50,7 @@ class StringUtil {
         if (!strings.hasNext()) // only one, avoid builder
             return start;
 
-        var sb = new StringBuf(/*64*/);
+        var sb = new StringBuilder(/*64*/);
 		sb.add(start);
         while (strings.hasNext()) {
             sb.add(sep);
@@ -71,7 +72,7 @@ class StringUtil {
         if (width < padding.length)
             return padding[width];
 
-        var sb = new StringBuf();
+        var sb = new StringBuilder();
         for (i in 0...width)
             sb.add(' ');
         return sb.toString();
@@ -130,7 +131,7 @@ class StringUtil {
      * @return normalised string
      */
     public static function normaliseWhitespace(string:String):String {
-        var sb = new StringBuf(/*string.length()*/);
+        var sb = new StringBuilder(/*string.length()*/);
         appendNormalisedWhitespace(sb, string, false);
         return sb.toString();
     }
@@ -142,7 +143,7 @@ class StringUtil {
      * @param stripLeading set to true if you wish to remove any leading whitespace
      */
 	//NOTE(az): using uIterator()
-    public static function appendNormalisedWhitespace(accum:StringBuf, string:String, stripLeading:Bool):Void {
+    public static function appendNormalisedWhitespace(accum:StringBuilder, string:String, stripLeading:Bool):Void {
         var lastWasWhite = false;
         var reachedNonWhite = false;
 

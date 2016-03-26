@@ -108,12 +108,6 @@ class DocumentTest {
         var doc:Document = Jsoup.parse("<title>Hello</title> <p>One<p>Two");
         var clone:Document = doc.clone();
 
-		trace(doc.child(0) == clone.child(0));
-		trace(doc.select("p").first() == clone.select("p").first());
-		/*trace(clone.getHtml().split("").map(function (c:String):String {
-			return StringTools.hex(c.charCodeAt(0));
-		}).join(","));*/
-		
         Assert.equals("<html><head><title>Hello</title> </head><body><p>One</p><p>Two</p></body></html>", TextUtil.stripNewlines(clone.getHtml()));
         clone.setTitle("Hello there");
         clone.select("p").first().setText("One more").setAttr("id", "1");
@@ -121,9 +115,9 @@ class DocumentTest {
         Assert.equals("<html><head><title>Hello</title> </head><body><p>One</p><p>Two</p></body></html>", TextUtil.stripNewlines(doc.getHtml()));
     }
 
-    static public function testClonesDeclarations() {
+    public function testClonesDeclarations() {
         var doc:Document = Jsoup.parse("<!DOCTYPE html><html><head><title>Doctype test");
-        var clone:Document = doc.clone();
+		var clone:Document = doc.clone();
 
         Assert.equals(doc.getHtml(), clone.getHtml());
         Assert.equals("<!doctype html><html><head><title>Doctype test</title></head><body></body></html>",
@@ -149,7 +143,7 @@ class DocumentTest {
         Assert.equals("http://www.nytimes.com/2010/07/26/business/global/26bp.html?hp",baseUri);*/
     }
 
-    static public function testHtmlAndXmlSyntax() {
+    public function testHtmlAndXmlSyntax() {
         var h:String = "<!DOCTYPE html><body><img async checked='checked' src='&<>\"'>&lt;&gt;&amp;&quot;<foo />bar";
         var doc:Document = Jsoup.parse(h);
 
@@ -174,7 +168,7 @@ class DocumentTest {
                 "</html>", doc.getHtml());
     }
 
-    static public function testHtmlParseDefaultsToHtmlOutputSyntax() {
+    public function testHtmlParseDefaultsToHtmlOutputSyntax() {
         var doc:Document = Jsoup.parse("x");
         Assert.equals(Syntax.html, doc.getOutputSettings().getSyntax());
     }
@@ -182,11 +176,11 @@ class DocumentTest {
     // Ignored since this test can take awhile to run.
     //@Ignore
 	//NOTE(az): ignored
-    static public function testOverflowClone() {
+    public function testOverflowClone() {
         Assert.warn("ignored (takes a while to run)");
 		
-		/*var openBuf = new StringBuf();
-        var closeBuf = new StringBuf();
+		/*var openBuf = new StringBuilder();
+        var closeBuf = new StringBuilder();
         for (i in 0...100000 >> 1) {
             openBuf.add("<i>");
             closeBuf.add("</i>");
@@ -209,7 +203,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdateUtf8() {
+    public function testMetaCharsetUpdateUtf8() {
         var doc:Document = createHtmlDocument("changeThis");
         doc.setUpdateMetaCharsetElement(true);
         doc.setCharset(Charset.forName(charsetUtf8));
@@ -249,7 +243,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdateNoCharset() {
+    public function testMetaCharsetUpdateNoCharset() {
         var docNoCharset:Document = Document.createShell("");
         docNoCharset.setUpdateMetaCharsetElement(true);
         docNoCharset.setCharset(Charset.forName(charsetUtf8));
@@ -266,7 +260,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdateDisabled() {
+    public function testMetaCharsetUpdateDisabled() {
         var docDisabled:Document = Document.createShell("");
         
         var htmlNoCharset:String = "<html>\n" +
@@ -278,7 +272,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdateDisabledNoChanges() {
+    public function testMetaCharsetUpdateDisabledNoChanges() {
         var doc:Document = createHtmlDocument("dontTouch");
         
         var htmlCharset:String = "<html>\n" +
@@ -300,7 +294,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdateEnabledAfterCharsetChange() {
+    public function testMetaCharsetUpdateEnabledAfterCharsetChange() {
         var doc = createHtmlDocument("dontTouch");
         doc.setCharset(Charset.forName(charsetUtf8));
         
@@ -310,7 +304,7 @@ class DocumentTest {
     }
             
     
-    static public function testMetaCharsetUpdateCleanup() {
+    public function testMetaCharsetUpdateCleanup() {
         var doc:Document = createHtmlDocument("dontTouch");
         doc.setUpdateMetaCharsetElement(true);
         doc.setCharset(Charset.forName(charsetUtf8));
@@ -326,7 +320,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdateXmlUtf8() {
+    public function testMetaCharsetUpdateXmlUtf8() {
         var doc:Document = createXmlDocument("1.0", "changeThis", true);
         doc.setUpdateMetaCharsetElement(true);
         doc.setCharset(Charset.forName(charsetUtf8));
@@ -362,7 +356,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdateXmlNoCharset() {
+    public function testMetaCharsetUpdateXmlNoCharset() {
         var doc:Document = createXmlDocument("1.0", "none", false);
         doc.setUpdateMetaCharsetElement(true);
         doc.setCharset(Charset.forName(charsetUtf8));
@@ -378,7 +372,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdateXmlDisabled() {
+    public function testMetaCharsetUpdateXmlDisabled() {
         var doc:Document = createXmlDocument("none", "none", false);
         
         var xmlNoCharset:String = "<root>\n" +
@@ -388,7 +382,7 @@ class DocumentTest {
     }
 
     
-    static public function testMetaCharsetUpdateXmlDisabledNoChanges() {
+    public function testMetaCharsetUpdateXmlDisabledNoChanges() {
         var doc:Document = createXmlDocument("dontTouch", "dontTouch", true);
         
         var xmlCharset:String = "<?xml version=\"dontTouch\" encoding=\"dontTouch\">\n" +
@@ -403,7 +397,7 @@ class DocumentTest {
     }
     
     
-    static public function testMetaCharsetUpdatedDisabledPerDefault() {
+    public function testMetaCharsetUpdatedDisabledPerDefault() {
         var doc:Document = createHtmlDocument("none");
         Assert.isFalse(doc.getUpdateMetaCharsetElement());
     }

@@ -5,6 +5,7 @@ import unifill.CodePoint;
 
 using org.jsoup.InternalTools;
 using unifill.Unifill;
+using StringTools;
 
 //import java.util.Arrays;
 
@@ -85,6 +86,10 @@ using unifill.Unifill;
 	//NOTE(az): the BIG SWITCH!!
 	public function read(t:Tokeniser, r:CharacterReader):Void {
 	
+		if (r.toString().startsWith("checked")) {
+			trace("checked attr");
+		}
+		
 		switch(this) {
 			
 			case TokeniserState.Data:

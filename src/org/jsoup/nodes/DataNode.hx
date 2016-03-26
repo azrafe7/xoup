@@ -1,5 +1,7 @@
 package org.jsoup.nodes;
 
+import org.jsoup.helper.StringBuilder;
+
 /**
  A data node, for contents of style, script tags etc, where contents should not show in text().
 
@@ -39,11 +41,11 @@ class DataNode extends Node {
         return this;
     }
 
-    override function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
+    override function outerHtmlHead(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {
         accum.add(getWholeData()); // data is not escaped in return from data nodes, so " in script, style is plain
     }
 
-    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {}
+    override function outerHtmlTail(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {}
 
     //@Override
     override public function toString():String {

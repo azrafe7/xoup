@@ -4,6 +4,7 @@ import de.polygonal.ds.List;
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.Cloneable;
 import org.jsoup.Exceptions.IllegalArgumentException;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Document.OutputSettings;
@@ -207,7 +208,7 @@ class Document extends Element {
     }
 
     //@Override
-    override public function outerHtml(accum:StringBuf = null):String {
+    override public function outerHtml(accum:StringBuilder = null):String {
         return super.getHtml(); // no outer wrapper tag
     }
 

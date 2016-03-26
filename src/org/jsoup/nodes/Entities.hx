@@ -1,6 +1,7 @@
 package org.jsoup.nodes;
 
 import org.jsoup.Exceptions.MissingResourceException;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document.CharsetEncoder;
 import org.jsoup.parser.Parser;
@@ -67,14 +68,14 @@ class Entities {
     }
     
     public static function escape(string:String, out:Document.OutputSettings):String {
-        var accum = new StringBuf(/*string.length() * 2*/);
+        var accum = new StringBuilder(/*string.length() * 2*/);
         _escape(accum, string, out, false, false, false);
         return accum.toString();
     }
 
     // this method is ugly, and does a lot. but other breakups cause rescanning and stringbuilder generations
 	//NOTE(az): check 'continue' in loop
-    public static function _escape(accum:StringBuf, string:String, out:Document.OutputSettings,
+    public static function _escape(accum:StringBuilder, string:String, out:Document.OutputSettings,
                    inAttribute:Bool, normaliseWhite:Bool, stripLeadingWhite:Bool):Void {
 
         var lastWasWhite:Bool = false;

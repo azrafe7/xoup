@@ -1,10 +1,13 @@
 package org.jsoup.parser.tokens;
 
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities;
 import org.jsoup.parser.tokens.Token;
 import unifill.CodePoint;
 import unifill.Unifill;
+
+using StringTools;
 
 //import java.util.Arrays;
 
@@ -30,8 +33,8 @@ class Tokeniser {
     private var emitPending:Token; // the token we are about to emit on next read
     private var isEmitPending:Bool = false;
     private var charsString:String = null; // characters pending an emit. Will fall to charsBuilder if more than one
-    private var charsBuilder:StringBuf = new StringBuf(/*1024*/); // buffers characters to output as one token, if more than one emit per read
-    var dataBuffer:StringBuf = new StringBuf(/*1024*/); // buffers data looking for </script>
+    private var charsBuilder:StringBuilder = new StringBuilder(/*1024*/); // buffers characters to output as one token, if more than one emit per read
+    var dataBuffer:StringBuilder = new StringBuilder(/*1024*/); // buffers data looking for </script>
 
     var tagPending:TokenTag; // tag we are building up
     var startPending:TokenStartTag = new TokenStartTag();
@@ -53,15 +56,16 @@ class Tokeniser {
             selfClosingFlagAcknowledged = true;
         }
 
-        while (!isEmitPending)
+        while (!isEmitPending) {
             state.read(this, reader);
-
+		}
+		
         // if emit is pending, a non-character token was found: return any chars in buffer, and leave token for next read:
         if (charsBuilder.length > 0) {
             var str = charsBuilder.toString();
             //NOTE(az): recreate it
 			//charsBuilder.delete(0, charsBuilder.length());
-			charsBuilder = new StringBuf();
+			charsBuilder = new StringBuilder();
             charsString = null;
             return charPending.setData(str);
         } else if (charsString != null) {
@@ -277,7 +281,7 @@ class Tokeniser {
      */
 	//NOTE(az): using Array<CodePoint> here too, check adds
     function unescapeEntities(inAttribute:Bool):String {
-        var builder = new StringBuf();
+        var builder = new StringBuilder();
         while (!reader.isEmpty()) {
             builder.add(reader.consumeTo('&'.code));
             if (reader.matches('&'.code)) {

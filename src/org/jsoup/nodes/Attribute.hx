@@ -2,6 +2,7 @@ package org.jsoup.nodes;
 
 import de.polygonal.ds.Cloneable;
 import de.polygonal.ds.tools.ArrayTools;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
 
 using StringTools;
@@ -80,12 +81,12 @@ class Attribute implements /*Map.Entry<String, String>,*/ Cloneable<Attribute>  
      @return HTML
      */
     public function html():String {
-        var accum = new StringBuf();
+        var accum = new StringBuilder();
         _html(accum, (new Document("")).getOutputSettings());
         return accum.toString();
     }
     
-    /*protected*/ public function _html(accum:StringBuf, out:Document.OutputSettings):Void {
+    /*protected*/ public function _html(accum:StringBuilder, out:Document.OutputSettings):Void {
         accum.add(key);
         if (!shouldCollapseAttribute(out)) {
             accum.add("=\"");

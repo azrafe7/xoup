@@ -1,5 +1,6 @@
 package org.jsoup.nodes;
 
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.Validate;
 
@@ -95,7 +96,7 @@ class TextNode extends Node {
     }
 
 	//NOTE(az): check long bool expr and cast
-    override function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
+    override function outerHtmlHead(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {
 		if (out.getPrettyPrint() && (
 				(getSiblingIndex() == 0 && Std.is(parentNode, Element) && cast(parentNode, Element).getTag().formatAsBlock() && !isBlank()) 
 				|| (out.getOutline() && siblingNodes().size > 0 && !isBlank()) ))
@@ -108,7 +109,7 @@ class TextNode extends Node {
         Entities._escape(accum, getWholeText(), out, false, normaliseWhite, false);
     }
 
-    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {}
+    override function outerHtmlTail(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {}
 
     //@Override
     override public function toString():String {
@@ -136,7 +137,7 @@ class TextNode extends Node {
         return text = ~/^\\s+/.replace(text, "");
     }
 
-    static public function lastCharIsWhitespace(sb:StringBuf):Bool {
+    static public function lastCharIsWhitespace(sb:StringBuilder):Bool {
         return sb.length != 0 && sb.toString().charAt(sb.length - 1) == ' ';
     }
 

@@ -4,6 +4,8 @@ import de.polygonal.ds.List;
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.Cloneable;
 import org.jsoup.Exceptions.IllegalArgumentException;
+import org.jsoup.helper.OrderedMap;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
 
 //import java.util.*;
@@ -27,7 +29,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
     
     /*protected final*/ public static inline var dataPrefix:String = "data-";
     
-    private var attributes:Map<String, Attribute> = null;
+    private var attributes:OrderedMap<String, Attribute> = null;
     // linked hash map to preserve insertion order.
     // null be default as so many elements have no attributes -- saves a good chunk of memory
 
@@ -87,7 +89,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
     public function putAttr(attribute:Attribute) {
         Validate.notNull(attribute);
         if (attributes == null)
-            attributes = new Map<String, Attribute>(/*2*/);
+            attributes = new OrderedMap<String, Attribute>(new Map<String, Attribute>()/*2*/);
         attributes.set(attribute.getKey(), attribute);
     }
 
@@ -130,7 +132,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
         if (incoming.size() == 0)
             return;
         if (attributes == null)
-            attributes = new Map<String, Attribute>(/*incoming.size()*/);
+            attributes = new OrderedMap<String, Attribute>(new Map<String, Attribute>()/*incoming.size()*/);
         for (key in incoming.attributes.keys())
 			attributes.set(key, incoming.attributes.get(key));
     }
@@ -171,12 +173,12 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
      @return HTML
      */
     public function html():String {
-        var accum = new StringBuf();
+        var accum = new StringBuilder();
         _html(accum, (new Document("")).getOutputSettings()); // output settings a bit funky, but this html() seldom used
         return accum.toString();
     }
     
-    public function _html(accum:StringBuf, out:Document.OutputSettings):Void {
+    public function _html(accum:StringBuilder, out:Document.OutputSettings):Void {
         if (attributes == null)
             return;
         
@@ -225,7 +227,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
 
         var clone = new Attributes();
         
-        clone.attributes = new Map<String, Attribute>(/*attributes.size()*/);
+        clone.attributes = new OrderedMap<String, Attribute>(new Map<String, Attribute>()/*attributes.size()*/);
         for (key in attributes.keys())
             clone.attributes.set(key, attributes.get(key).clone());
         return clone;
@@ -247,7 +249,7 @@ class Dataset /*extends AbstractMap<String, String>*/ {
 		this.owner = owner;
 		
 		if (owner.attributes == null)
-			owner.attributes = new Map<String, Attribute>(/*2*/);
+			owner.attributes = new OrderedMap<String, Attribute>(new Map<String, Attribute>()/*2*/);
 	}
 
 	/*@Override

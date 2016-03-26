@@ -1,6 +1,7 @@
 package org.jsoup.parser;
 
 import org.jsoup.Exceptions;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities.Character;
@@ -303,7 +304,7 @@ class TokenQueue {
      * @return unescaped string
      */
     public static function unescape(input:String):String {
-        var out = new StringBuf();
+        var out = new StringBuilder();
         var last:CodePoint = 0;
         for (c in input.uIterator()) {
             if (c == ESC) {

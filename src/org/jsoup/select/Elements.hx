@@ -3,6 +3,7 @@ package org.jsoup.select;
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.ListSet;
 import de.polygonal.ds.Set;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.nodes.FormElement;
 
 import org.jsoup.helper.Validate;
@@ -201,7 +202,7 @@ class Elements extends ArrayList<Element> {
      * @see Element#text()
      */
     public function text():String {
-        var sb = new StringBuf();
+        var sb = new StringBuilder();
         for (element in this) {
             if (sb.length != 0)
                 sb.add(" ");
@@ -226,7 +227,7 @@ class Elements extends ArrayList<Element> {
      */
 	//NOTE(az): renamed to getHtml
     public function getHtml():String {
-        var sb = new StringBuf();
+        var sb = new StringBuilder();
         for (element in this) {
             if (sb.length != 0)
                 sb.add("\n");
@@ -242,7 +243,7 @@ class Elements extends ArrayList<Element> {
      * @see #html()
      */
     public function outerHtml():String {
-        var sb = new StringBuf();
+        var sb = new StringBuilder();
         for (element in this) {
             if (sb.length != 0)
                 sb.add("\n");

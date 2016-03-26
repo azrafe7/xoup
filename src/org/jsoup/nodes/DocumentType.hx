@@ -1,5 +1,6 @@
 package org.jsoup.nodes;
 
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document.OutputSettings.*;
 import org.jsoup.nodes.Document.Syntax;
@@ -34,7 +35,7 @@ class DocumentType extends Node {
     }
 
     //@Override
-    override function outerHtmlHead(accum:StringBuf, depth:Int, out: Document.OutputSettings):Void {
+    override function outerHtmlHead(accum:StringBuilder, depth:Int, out: Document.OutputSettings):Void {
         if (out.getSyntax() == Syntax.html && !has(PUBLIC_ID) && !has(SYSTEM_ID)) {
             // looks like a html5 doctype, go lowercase for aesthetics
             accum.add("<!doctype");
@@ -59,7 +60,7 @@ class DocumentType extends Node {
     }
 
     //@Override
-    override function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
+    override function outerHtmlTail(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {
     }
 
     private function has(attribute:String):Bool {

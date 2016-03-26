@@ -5,6 +5,7 @@ import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.Dll;
 import de.polygonal.ds.Hashable;
 import de.polygonal.ds.List;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.Interfaces.IterableWithLength;
 import org.jsoup.parser.Parser;
@@ -576,8 +577,8 @@ class Node implements Cloneable<Node> implements Copiable<Node> implements Hasha
      Get the outer HTML of this node.
      @return HTML
      */
-    public function outerHtml(accum:StringBuf = null):String {
-        if (accum == null) accum = new StringBuf(/*128*/);
+    public function outerHtml(accum:StringBuilder = null):String {
+        if (accum == null) accum = new StringBuilder(/*128*/);
         new NodeTraversor(new OuterHtmlVisitor(accum, getOutputSettings())).traverse(this);
         return accum.toString();
     }
@@ -597,16 +598,16 @@ class Node implements Cloneable<Node> implements Copiable<Node> implements Hasha
      Get the outer HTML of this node.
      @param accum accumulator to place HTML into
      */
-    /*abstract*/ function outerHtmlHead(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void { /*throw "Not implemented";*/ }
+    /*abstract*/ function outerHtmlHead(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void { /*throw "Not implemented";*/ }
 
-	/*abstract*/ function outerHtmlTail(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void { /*throw "Not implemented";*/ }
+	/*abstract*/ function outerHtmlTail(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void { /*throw "Not implemented";*/ }
 
     //@Override
     public function toString():String {
         return outerHtml();
     }
 
-    /*protected*/ function indent(accum:StringBuf, depth:Int, out:Document.OutputSettings):Void {
+    /*protected*/ function indent(accum:StringBuilder, depth:Int, out:Document.OutputSettings):Void {
         accum.add("\n");
 		accum.add("".rpad(" ", depth * out.getIndentAmount()));
     }
@@ -707,10 +708,10 @@ class Node implements Cloneable<Node> implements Copiable<Node> implements Hasha
 
 //NOTE(az): moved out, no implement (relying on structural subtyping)
 /*private static*/ class OuterHtmlVisitor /*implements NodeVisitor*/ {
-	var accum:StringBuf;
+	var accum:StringBuilder;
 	var out:Document.OutputSettings;
 
-	public function new(accum:StringBuf, out:Document.OutputSettings) {
+	public function new(accum:StringBuilder, out:Document.OutputSettings) {
 		this.accum = accum;
 		this.out = out;
 	}

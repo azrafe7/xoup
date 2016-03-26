@@ -2,6 +2,7 @@ package org.jsoup.select;
 
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.List;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.select.Evaluator;
 import org.jsoup.Exceptions.SelectorParseException;
 import org.jsoup.select.CombiningEvaluator;
@@ -136,7 +137,7 @@ class QueryParser {
     }
 
     private function consumeSubQuery():String {
-        var sq = new StringBuf();
+        var sq = new StringBuilder();
         while (!tq.isEmpty()) {
             if (tq.matches("(")) {
                 sq.add("(");
