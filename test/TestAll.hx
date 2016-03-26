@@ -1,6 +1,6 @@
 package;
 
-//import org.jsoup.nodes.AttributesTest;
+import org.jsoup.nodes.AttributesTest;
 import org.jsoup.nodes.AttributeTest;
 import org.jsoup.nodes.DocumentTest;
 import org.jsoup.nodes.DocumentTypeTest;
@@ -18,7 +18,7 @@ class TestAll {
 		
 		runner.addCase(new EntitiesTest());
 		runner.addCase(new AttributeTest());
-		//runner.addCase(new AttributesTest());
+		runner.addCase(new AttributesTest());
 		runner.addCase(new DocumentTypeTest());
 		runner.addCase(new DocumentTest());
 		

@@ -24,6 +24,7 @@ import org.jsoup.helper.Validate;
  */
 //NOTE(az): check Dataset impl.
 @:allow(org.jsoup.nodes.Dataset)
+@:allow(org.jsoup.nodes.DatasetIterator)
 class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attributes> {
     private static var EMPTY_LIST:List<Attribute> = new ArrayList<Attribute>();
     
@@ -239,17 +240,18 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
     }
 }
 
-//NOTE(az): owner to link with parent. This seems to just forward operation with attributes prefixed with "data-".
+//NOTE(az): this seems to just forward operations with attributes prefixed with "data-".
 @:allow(org.jsoup.nodes.Attributes)
+@:allow(org.jsoup.nodes.DatasetIterator)
 class Dataset /*extends AbstractMap<String, String>*/ {
 
-	var owner:Attributes;
+	var attrs:Attributes;
 	
-	private function new(owner:Attributes) {
-		this.owner = owner;
+	private function new(attrs:Attributes) {
+		this.attrs = attrs;
 		
-		if (owner.attributes == null)
-			owner.attributes = new OrderedMap<String, Attribute>(new Map<String, Attribute>()/*2*/);
+		if (attrs.attributes == null)
+			attrs.attributes = new OrderedMap<String, Attribute>(new Map<String, Attribute>()/*2*/);
 	}
 
 	/*@Override
@@ -262,47 +264,52 @@ class Dataset /*extends AbstractMap<String, String>*/ {
 	//NOTE(az): check
 	public function put(key:String, value:String):String {
 		var dataKey:String = Attributes.dataPrefix + key;
-		var oldValue:String = owner.hasKey(dataKey) ? owner.attributes.get(dataKey).getValue() : null;
+		var oldValue:String = attrs.hasKey(dataKey) ? attrs.attributes.get(dataKey).getValue() : null;
 		var attr = new Attribute(dataKey, value);
-		owner.attributes.set(dataKey, attr);
+		attrs.attributes.set(dataKey, attr);
 		return oldValue;
 	}
 
-	//NOTE(az): need to get back here at some point!
-	/*private class EntrySet extends AbstractSet<Map.Entry<String, String>> {
+	public function get(key:String):String {
+		return attrs.get(Attributes.dataPrefix + key);
+	}
+	
+	public function size():Int {
+		var count = 0;
+		for (item in iterator()) count++;
+		return count;
+	}
+	
+	public function iterator():Iterator<DatasetEntry> {
+		return new DatasetIterator(this);
+	}
+}
 
-		@Override
-		public Iterator<Map.Entry<String, String>> iterator() {
-			return new DatasetIterator();
-		}
+typedef DatasetEntry = Attribute;
 
-	   @Override
-		public int size() {
-			int count = 0;
-			Iterator iter = new DatasetIterator();
-			while (iter.hasNext())
-				count++;
-			return count;
+
+class DatasetIterator {
+	
+	var dataset:Dataset;
+	var keys:Array<String>;
+	
+	public function new(dataset:Dataset) {
+		this.dataset = dataset;
+		this.keys = [for (k in dataset.attrs.attributes.keys()) if (k.indexOf(Attributes.dataPrefix) == 0) k];
+	}
+	
+	public function hasNext():Bool {
+		return keys.length > 0;
+	}
+	
+	public function next():DatasetEntry {
+		var key = keys.shift();
+		return new DatasetEntry(key.substr(Attributes.dataPrefix.length), dataset.attrs.get(key));
+	}
+	
+	public function remove():Void {
+		if (keys.length > 0) {
+			dataset.attrs.remove(keys[0]);
 		}
 	}
-
-	private class DatasetIterator implements Iterator<Map.Entry<String, String>> {
-		private Iterator<Attribute> attrIter = attributes.values().iterator();
-		private Attribute attr;
-		public boolean hasNext() {
-			while (attrIter.hasNext()) {
-				attr = attrIter.next();
-				if (attr.isDataAttribute()) return true;
-			}
-			return false;
-		}
-
-		public Entry<String, String> next() {
-			return new Attribute(attr.getKey().substring(dataPrefix.length()), attr.getValue());
-		}
-
-		public void remove() {
-			attributes.remove(attr.getKey());
-		}
-	}*/
 }
