@@ -5,8 +5,7 @@ import de.polygonal.ds.Itr;
 import org.jsoup.Exceptions.IllegalArgumentException;
 import org.jsoup.helper.StringBuilder;
 
-import StringTools;
-
+using StringTools;
 using unifill.Unifill;
 
 /*import java.net.MalformedURLException;
@@ -200,7 +199,7 @@ class StringUtil {
      * @param relUrl the relative URL to resolve. (If it's already absolute, it will be returned)
      * @return an absolute URL if one was able to be generated, or the empty string if not
      */
-	//NOTE(az): workaround: it simply joins the urls for now
+	//NOTE(az): adapted from James Edwards' snippet at http://www.sitepoint.com/dealing-with-unqualified-href-values-part-2/
     public static function resolve(baseUrl:String, relUrl:String):String {
         /*URL base;
         try {
@@ -216,7 +215,109 @@ class StringUtil {
             return "";
         }
 		*/
-		return baseUrl + relUrl;
+		var path = '';
+        
+		var uprefRegex = ~/^((\.\.\/)+)([^\/].*$)/m;
+		var sameDirRegex = ~/^(\.\/)([^\/]?)/m;
+		
+        //extract the protocol, host and path
+        //and create a location object with the data
+        var parts = baseUrl.replace('//', '/').split('/');
+        var loc:Dynamic<String> = {
+            'protocol' : parts[0],
+            'host' : parts[1]
+            }
+        parts.splice(0, 2);
+        loc.pathname = '/' + parts.join('/');
+
+        //build a base URI from the protocol plus host (which includes port if applicable)
+        var url = loc.protocol + '//' + loc.host;
+
+        //if the input path is relative-from-here
+        //just delete the ./ token to make it relative
+        if (sameDirRegex.match(relUrl))
+        {
+            relUrl = sameDirRegex.replace(relUrl, '$2');
+        }
+
+        //if the input href is already qualified, copy it unchanged
+        if (~/^([a-z]+):\/\//m.match(relUrl))
+        {
+            url = relUrl;
+        }
+
+        //or if the input href begins with a leading slash, then it's base relative
+        //so just add the input href to the base URI
+        else if (relUrl.substr(0, 1) == '/')
+        {
+            url += relUrl;
+        }
+
+        //or if it's an up-reference we need to compute the path
+        else if (uprefRegex.match(relUrl))
+        {
+            //get the last part of the path, minus up-references
+			var lastpath = "";
+			var matches = uprefRegex.match(relUrl);
+			if (matches) {
+				try {
+					var i = 1;
+					while (true) lastpath = uprefRegex.matched(i++);
+				} catch (err:Dynamic){ }
+			}
+
+            //count the number of up-references
+            var references = relUrl.split('../').length - 1;
+
+            //get the path parts and delete the last one (this page or directory)
+            var parts = loc.pathname.split('/');
+            parts = parts.splice(0, parts.length - 1);
+
+            //for each of the up-references, delete the last part of the path
+            for (i in 0...references)
+            {
+                parts = parts.splice(0, parts.length - 1);
+            }
+
+            //now rebuild the path
+            for (i in 0...parts.length)
+            {
+                if (parts[i] != '')
+                {
+                    path += '/' + parts[i];
+                }
+            }
+            path += '/';
+
+            //and add the last part of the path
+            path += lastpath;
+
+            //then add the path and input href to the base URI
+            url += path;
+        }
+
+        //otherwise it's a relative path,
+        else
+        {
+            //calculate the path to this directory
+            path = '';
+            parts = loc.pathname.split('/');
+            parts = parts.splice(0, parts.length - 1);
+            for (i in 0...parts.length)
+            {
+                if (parts[i] != '')
+                {
+                    path += '/' + parts[i];
+                }
+            }
+            path += '/';
+
+            //then add the path and input href to the base URI
+            url += path + relUrl;
+        }
+
+        //return the final uri
+        return url;
     }
 	
 	/**
