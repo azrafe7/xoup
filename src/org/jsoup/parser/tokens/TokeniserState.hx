@@ -1343,7 +1343,7 @@ using StringTools;
 
     static function __init__() {
 		attributeSingleValueCharsSorted = ["'".code, '&'.code, nullChar];
-		attributeDoubleValueCharsSorted = ["'".code, '&'.code, nullChar];
+		attributeDoubleValueCharsSorted = ['"'.code, '&'.code, nullChar];
 		attributeNameCharsSorted = ['\t'.code, '\n'.code, '\r'.code, 0xC/*'\f'*/, ' '.code, '/'.code, '='.code, '>'.code, nullChar, '"'.code, "'".code, '<'.code];
 		
         attributeSingleValueCharsSorted.sort(Reflect.compare);
