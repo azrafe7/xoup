@@ -274,6 +274,10 @@ class Dataset /*extends AbstractMap<String, String>*/ {
 		return attrs.get(Attributes.dataPrefix + key);
 	}
 	
+	public function remove(key:String) {
+		attrs.remove(Attributes.dataPrefix + key);
+	}
+	
 	public function size():Int {
 		var count = 0;
 		for (item in iterator()) count++;
