@@ -16,6 +16,7 @@
 	<haxelib name="utest" />
 	<haxelib name="polygonal-ds" />
 	<haxelib name="unifill" />
+	<haxelib name="hxUri" />
 	
 	<!-- entities -->
 	<haxeflag name="-resource" value="src/org/jsoup/nodes/entities-base.properties@entities-base.properties" />

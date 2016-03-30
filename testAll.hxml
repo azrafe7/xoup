@@ -5,6 +5,7 @@
 -lib utest
 -lib polygonal-ds
 -lib unifill
+-lib hxUri
 
 
 #entities

@@ -5,6 +5,7 @@ import org.jsoup.nodes.AttributeTest;
 import org.jsoup.nodes.DocumentTest;
 import org.jsoup.nodes.DocumentTypeTest;
 import org.jsoup.nodes.EntitiesTest;
+import org.jsoup.nodes.NodeTest;
 
 import utest.Runner;
 import utest.ui.Report;
@@ -21,6 +22,7 @@ class TestAll {
 		runner.addCase(new AttributesTest());
 		runner.addCase(new DocumentTypeTest());
 		runner.addCase(new DocumentTest());
+		runner.addCase(new NodeTest());
 		
 		Report.create(runner);
 		runner.run();
