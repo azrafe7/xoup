@@ -107,15 +107,15 @@ class QueryParser {
         evals.clear();
 
         // for most combinators: change the current eval into an AND of the current eval and the new eval
-        if (combinator == '>')
+        if (combinator == '>'.code)
             currentEval = new CombiningEvaluatorAnd([newEval, new StructuralEvaluatorImmediateParent(currentEval)]);
-        else if (combinator == ' ')
+        else if (combinator == ' '.code)
             currentEval = new CombiningEvaluatorAnd([newEval, new StructuralEvaluatorParent(currentEval)]);
-        else if (combinator == '+')
+        else if (combinator == '+'.code)
             currentEval = new CombiningEvaluatorAnd([newEval, new StructuralEvaluatorImmediatePreviousSibling(currentEval)]);
-        else if (combinator == '~')
+        else if (combinator == '~'.code)
             currentEval = new CombiningEvaluatorAnd([newEval, new StructuralEvaluatorPreviousSibling(currentEval)]);
-        else if (combinator == ',') { // group or.
+        else if (combinator == ','.code) { // group or.
             var or:CombiningEvaluatorOr;
             if (Std.is(currentEval, CombiningEvaluatorOr)) {
                 or = cast currentEval;
@@ -150,7 +150,7 @@ class QueryParser {
             } else if (tq.matchesAny(combinators))
                 break;
             else
-                sq.add(tq.consume());
+                sq.addChar(tq.consume());
         }
         return sq.toString();
     }
