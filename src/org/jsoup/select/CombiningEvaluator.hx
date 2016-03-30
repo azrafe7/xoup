@@ -84,6 +84,7 @@ import java.util.Collection;
 	//NOTE(az): with below
 	function new(evaluators:Iterable<Evaluator> = null) {
 		super();
+		if (evaluators == null) evaluators = [];
 		if (num > 1)
 			this.evaluators.add(new CombiningEvaluatorAnd(evaluators));
 		else // 0 or 1
