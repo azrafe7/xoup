@@ -200,6 +200,7 @@ class StringUtil {
      * @param relUrl the relative URL to resolve. (If it's already absolute, it will be returned)
      * @return an absolute URL if one was able to be generated, or the empty string if not
      */
+	//NOTE(az): !Important: using hxUri (which is a modified port of js-uri)
     public static function resolve(baseUrl:String, relUrl:String):String {
         /*URL base;
         try {
@@ -215,7 +216,8 @@ class StringUtil {
             return "";
         }
 		*/
-        var url = new Uri(relUrl).resolve(baseUrl).toString();
+		var relUri = new Uri(relUrl);
+        var url = (relUri.getScheme() == "" && (baseUrl == null || baseUrl == "")) ? "" : relUri.resolve(baseUrl).toString();
 		
 		//return the final uri
         return url;
