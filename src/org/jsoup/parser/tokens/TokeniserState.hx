@@ -461,7 +461,7 @@ using StringTools;
 				if (r.matchesLetter()) {
 					t.createTagPending(false);
 					t.tagPending.appendTagName(CodePoint.fromInt(r.current()).toString().toLowerCase());
-					t.dataBuffer.add(r.current());
+					t.dataBuffer.addChar(r.current());
 					t.advanceTransition(ScriptDataEscapedEndTagName);
 				} else {
 					t.emitString("</");
@@ -598,7 +598,7 @@ using StringTools;
 						t.transition(Data);
 					case nullChar:
 						t.errorState(cast this);
-						t.tagPending.appendAttributeName(replacementChar);
+						t.tagPending.appendAttributeName(replacementChar.toString());
 					case eof:
 						t.eofError(cast this);
 						t.transition(Data);
@@ -622,7 +622,7 @@ using StringTools;
 						t.transition(Data);
 					case nullChar:
 						t.errorState(cast this);
-						t.tagPending.appendAttributeName(replacementChar);
+						t.tagPending.appendAttributeName(replacementChar.toString());
 						t.transition(AttributeName);
 					case eof:
 						t.eofError(cast this);
@@ -651,7 +651,7 @@ using StringTools;
 						t.transition(AttributeValue_singleQuoted);
 					case nullChar:
 						t.errorState(cast this);
-						t.tagPending.appendAttributeValue(replacementChar);
+						t.tagPending.appendAttributeValue(replacementChar.toString());
 						t.transition(AttributeValue_unquoted);
 					case eof:
 						t.eofError(cast this);
@@ -689,7 +689,7 @@ using StringTools;
 							t.tagPending.appendAttributeValue('&');
 					case nullChar:
 						t.errorState(cast this);
-						t.tagPending.appendAttributeValue(replacementChar);
+						t.tagPending.appendAttributeValue(replacementChar.toString());
 					case eof:
 						t.eofError(cast this);
 						t.transition(Data);
@@ -710,12 +710,12 @@ using StringTools;
 					case '&'.code:
 						var ref:Array<CodePoint> = t.consumeCharacterReference("'".code, true);
 						if (ref != null)
-							t.tagPending.appendAttributeValue(ref.toString());
+							t.tagPending.appendAttributeValue(ref.uToString());
 						else
 							t.tagPending.appendAttributeValue('&');
 					case nullChar:
 						t.errorState(cast this);
-						t.tagPending.appendAttributeValue(replacementChar);
+						t.tagPending.appendAttributeValue(replacementChar.toString());
 					case eof:
 						t.eofError(cast this);
 						t.transition(Data);
@@ -742,7 +742,7 @@ using StringTools;
 						t.transition(Data);
 					case nullChar:
 						t.errorState(cast this);
-						t.tagPending.appendAttributeValue(replacementChar);
+						t.tagPending.appendAttributeValue(replacementChar.toString());
 					case eof:
 						t.eofError(cast this);
 						t.transition(Data);
@@ -821,7 +821,7 @@ using StringTools;
 						t.transition(CommentStartDash);
 					case nullChar:
 						t.errorState(cast this);
-						t.commentPending.data.add(replacementChar);
+						t.commentPending.data.addChar(replacementChar);
 						t.transition(Comment);
 					case '>'.code:
 						t.errorState(cast this);
@@ -832,7 +832,7 @@ using StringTools;
 						t.emitCommentPending();
 						t.transition(Data);
 					default:
-						t.commentPending.data.add(c);
+						t.commentPending.data.addChar(c);
 						t.transition(Comment);
 				}
 			
@@ -843,7 +843,7 @@ using StringTools;
 						t.transition(CommentStartDash);
 					case nullChar:
 						t.errorState(cast this);
-						t.commentPending.data.add(replacementChar);
+						t.commentPending.data.addChar(replacementChar);
 						t.transition(Comment);
 					case '>'.code:
 						t.errorState(cast this);
@@ -854,7 +854,7 @@ using StringTools;
 						t.emitCommentPending();
 						t.transition(Data);
 					default:
-						t.commentPending.data.add(c);
+						t.commentPending.data.addChar(c);
 						t.transition(Comment);
 				}
 			
@@ -866,7 +866,7 @@ using StringTools;
 					case nullChar:
 						t.errorState(cast this);
 						r.advance();
-						t.commentPending.data.add(replacementChar);
+						t.commentPending.data.addChar(replacementChar);
 					case eof:
 						t.eofError(cast this);
 						t.emitCommentPending();
@@ -882,16 +882,16 @@ using StringTools;
 						t.transition(CommentEnd);
 					case nullChar:
 						t.errorState(cast this);
-						t.commentPending.data.add('-'.code);
-						t.commentPending.data.add(replacementChar);
+						t.commentPending.data.addChar('-'.code);
+						t.commentPending.data.addChar(replacementChar);
 						t.transition(Comment);
 					case eof:
 						t.eofError(cast this);
 						t.emitCommentPending();
 						t.transition(Data);
 					default:
-						t.commentPending.data.add('-'.code);
-						t.commentPending.data.add(c);
+						t.commentPending.data.addChar('-'.code);
+						t.commentPending.data.addChar(c);
 						t.transition(Comment);
 				}
 			
@@ -904,14 +904,14 @@ using StringTools;
 					case nullChar:
 						t.errorState(cast this);
 						t.commentPending.data.add("--");
-						t.commentPending.data.add(replacementChar);
+						t.commentPending.data.addChar(replacementChar);
 						t.transition(Comment);
 					case '!'.code:
 						t.errorState(cast this);
 						t.transition(CommentEndBang);
 					case '-'.code:
 						t.errorState(cast this);
-						t.commentPending.data.add('-'.code);
+						t.commentPending.data.addChar('-'.code);
 					case eof:
 						t.eofError(cast this);
 						t.emitCommentPending();
@@ -919,7 +919,7 @@ using StringTools;
 					default:
 						t.errorState(cast this);
 						t.commentPending.data.add("--");
-						t.commentPending.data.add(c);
+						t.commentPending.data.addChar(c);
 						t.transition(Comment);
 				}
 
@@ -935,7 +935,7 @@ using StringTools;
 					case nullChar:
 						t.errorState(cast this);
 						t.commentPending.data.add("--!");
-						t.commentPending.data.add(replacementChar);
+						t.commentPending.data.addChar(replacementChar);
 						t.transition(Comment);
 					case eof:
 						t.eofError(cast this);
@@ -943,7 +943,7 @@ using StringTools;
 						t.transition(Data);
 					default:
 						t.commentPending.data.add("--!");
-						t.commentPending.data.add(c);
+						t.commentPending.data.addChar(c);
 						t.transition(Comment);
 				}
 			
@@ -978,7 +978,7 @@ using StringTools;
 					case nullChar:
 						t.errorState(cast this);
 						t.createDoctypePending();
-						t.doctypePending.name.add(replacementChar);
+						t.doctypePending.name.addChar(replacementChar);
 						t.transition(DoctypeName);
 					case eof:
 						t.eofError(cast this);
@@ -988,7 +988,7 @@ using StringTools;
 						t.transition(Data);
 					default:
 						t.createDoctypePending();
-						t.doctypePending.name.add(c);
+						t.doctypePending.name.addChar(c);
 						t.transition(DoctypeName);
 				}
 			
@@ -1007,14 +1007,14 @@ using StringTools;
 						t.transition(AfterDoctypeName);
 					case nullChar:
 						t.errorState(cast this);
-						t.doctypePending.name.add(replacementChar);
+						t.doctypePending.name.addChar(replacementChar);
 					case eof:
 						t.eofError(cast this);
 						t.doctypePending.forceQuirks = true;
 						t.emitDoctypePending();
 						t.transition(Data);
 					default:
-						t.doctypePending.name.add(c);
+						t.doctypePending.name.addChar(c);
 				}
 			
 			case TokeniserState.AfterDoctypeName:
@@ -1102,7 +1102,7 @@ using StringTools;
 						t.transition(AfterDoctypePublicIdentifier);
 					case nullChar:
 						t.errorState(cast this);
-						t.doctypePending.publicIdentifier.add(replacementChar);
+						t.doctypePending.publicIdentifier.addChar(replacementChar);
 					case '>'.code:
 						t.errorState(cast this);
 						t.doctypePending.forceQuirks = true;
@@ -1114,7 +1114,7 @@ using StringTools;
 						t.emitDoctypePending();
 						t.transition(Data);
 					default:
-						t.doctypePending.publicIdentifier.add(c);
+						t.doctypePending.publicIdentifier.addChar(c);
 				}
 			
 			case TokeniserState.DoctypePublicIdentifier_singleQuoted:
@@ -1124,7 +1124,7 @@ using StringTools;
 						t.transition(AfterDoctypePublicIdentifier);
 					case nullChar:
 						t.errorState(cast this);
-						t.doctypePending.publicIdentifier.add(replacementChar);
+						t.doctypePending.publicIdentifier.addChar(replacementChar);
 					case '>'.code:
 						t.errorState(cast this);
 						t.doctypePending.forceQuirks = true;
@@ -1136,7 +1136,7 @@ using StringTools;
 						t.emitDoctypePending();
 						t.transition(Data);
 					default:
-						t.doctypePending.publicIdentifier.add(c);
+						t.doctypePending.publicIdentifier.addChar(c);
 				}
 			
 			case TokeniserState.AfterDoctypePublicIdentifier:
@@ -1254,7 +1254,7 @@ using StringTools;
 						t.transition(AfterDoctypeSystemIdentifier);
 					case nullChar:
 						t.errorState(cast this);
-						t.doctypePending.systemIdentifier.add(replacementChar);
+						t.doctypePending.systemIdentifier.addChar(replacementChar);
 					case '>'.code:
 						t.errorState(cast this);
 						t.doctypePending.forceQuirks = true;
@@ -1266,7 +1266,7 @@ using StringTools;
 						t.emitDoctypePending();
 						t.transition(Data);
 					default:
-						t.doctypePending.systemIdentifier.add(c);
+						t.doctypePending.systemIdentifier.addChar(c);
 				}
 			
 			case TokeniserState.DoctypeSystemIdentifier_singleQuoted:
@@ -1276,7 +1276,7 @@ using StringTools;
 						t.transition(AfterDoctypeSystemIdentifier);
 					case nullChar:
 						t.errorState(cast this);
-						t.doctypePending.systemIdentifier.add(replacementChar);
+						t.doctypePending.systemIdentifier.addChar(replacementChar);
 					case '>'.code:
 						t.errorState(cast this);
 						t.doctypePending.forceQuirks = true;
@@ -1288,7 +1288,7 @@ using StringTools;
 						t.emitDoctypePending();
 						t.transition(Data);
 					default:
-						t.doctypePending.systemIdentifier.add(c);
+						t.doctypePending.systemIdentifier.addChar(c);
 				}
 				
 			case TokeniserState.AfterDoctypeSystemIdentifier:
@@ -1375,7 +1375,7 @@ using StringTools;
                     t.emitTagPending();
                     t.transition(Data);
                 default:
-                    t.dataBuffer.add(c);
+                    t.dataBuffer.addChar(c);
                     needsExitTransition = true;
             }
         } else {
