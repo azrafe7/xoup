@@ -43,7 +43,7 @@ interface Copiable<T> {
 
  @author Jonathan Hedley, jonathan@hedley.net */
 @:allow(org.jsoup.nodes.OuterHtmlVisitor)
-class Node implements Cloneable<Node> implements Copiable<Node> implements Hashable {
+class Node implements Cloneable<Node> implements Copiable<Node> /*implements Hashable*/ {
     private static var EMPTY_NODES:List<Node> = new ArrayList<Node>();
     
 	var parentNode:Node = null;
@@ -622,6 +622,7 @@ class Node implements Cloneable<Node> implements Copiable<Node> implements Hasha
 	//NOTE(az): this needs to be watched closely (there's an issue on github)
     public function equals(o):Bool {
         if (this == o) return true;
+		if (Std.is(o, Node) && Std.string(this) == Std.string(o)) return true;
 		return false;
         /*if (o == null || getClass() != o.getClass()) return false;
 
@@ -640,13 +641,13 @@ class Node implements Cloneable<Node> implements Copiable<Node> implements Hasha
      */
     //@Override
 	//NOTE(az): `hashCode` is `key` in polygonal
-    public var key:Int;
+    /*public var key:Int;
 	
 	public function hashCode():Int {
         var result = childNodes != null ? childNodes.key : 0;
         result = 31 * result + (attributes != null ? attributes.hashCode() : 0);
         return key = result;
-    }
+    }*/
 
     /**
      * Create a stand-alone, deep copy of this node, and all of its children. The cloned node will have no siblings or

@@ -144,6 +144,7 @@ class Attribute implements /*Map.Entry<String, String>,*/ Cloneable<Attribute>  
 	//NOTE(az): equals
     public function equals(o):Bool {
         if (this == o) return true;
+		if (Std.is(o, Attribute) && Std.string(this) == Std.string(o)) return true;
 		return false;
         /*if (!(o instanceof Attribute)) return false;
 

@@ -192,6 +192,7 @@ class TextNode extends Node {
 	//NOTE(az): equals
     override public function equals(o:Node):Bool {
         if (this == o) return true;
+		if (Std.is(o, TextNode) && Std.string(this) == Std.string(o)) return true;
         return false;
 		
 		/*if (o == null || getClass() != o.getClass()) return false;

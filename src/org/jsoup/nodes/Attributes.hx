@@ -201,6 +201,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
     //NOTE(az): equals
 	public function equals(o):Bool {
         if (this == o) return true;
+		if (Std.is(o, Attributes) && Std.string(this) == Std.string(o)) return true;
         return false;
 		/*if (!(o instanceof Attributes)) return false;
         
@@ -214,12 +215,12 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
      * @return calculated hashcode
      */
     //@Override
-	var key:Int;
+	//var key:Int;
 	
 	//NOTE(az): is this needed?
-    public function hashCode():Int {
+    /*public function hashCode():Int {
         return key = (attributes != null ? 1 : 0);
-    }
+    }*/
 
     //@Override
     public function clone():Attributes {

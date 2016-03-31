@@ -1257,6 +1257,7 @@ class Element extends Node {
 	//NOTE(az): equals
     override public function equals(o:Node):Bool {
         if (this == o) return true;
+		if (Std.is(o, Element) && Std.string(this) == Std.string(o)) return true;
 		return false;
         /*if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
@@ -1268,11 +1269,11 @@ class Element extends Node {
 
     //@Override
 	//NOTE(az): `hashCode` is `key` in polygonal
-	override public function hashCode():Int {
+	/*override public function hashCode():Int {
         var result = super.hashCode();
         result = 31 * result + (tag != null ? tag.hashCode() : 0);
         return result;
-    }
+    }*/
 
     //@Override
     override public function clone():Element {

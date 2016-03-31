@@ -191,16 +191,16 @@ class DocumentTest {
 		Assert.notNull(clone);*/
     }
 
-    /*public function testDocumentsWithSameContentAreEqual() {
+    public function testDocumentsWithSameContentAreEqual() {
         var docA:Document = Jsoup.parse("<div/>One");
         var docB:Document = Jsoup.parse("<div/>One");
         var docC:Document = Jsoup.parse("<div/>Two");
 
-        Assert.equals(docA, docB);
+        Assert.isTrue(docA.equals(docB));
         Assert.isFalse(docA.equals(docC));
-        Assert.equals(docA.hashCode(), docB.hashCode());
-        Assert.isFalse(docA.hashCode() == docC.hashCode());
-    }*/
+        Assert.isTrue(docA.equals(docB));
+        Assert.isFalse(docA.equals(docC));
+    }
     
     
     public function testMetaCharsetUpdateUtf8() {

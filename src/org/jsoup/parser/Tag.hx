@@ -203,7 +203,7 @@ class Tag {
 
     //@Override
 	//NOTE(az): `hashCode` is `key` in polygonal, check how to hash string
-    var key:Int;
+    /*var key:Int;
 	
 	public function hashCode():Int {
         //var result = tagName.hashCode();
@@ -218,7 +218,7 @@ class Tag {
         result = 31 * result + (_formList ? 1 : 0);
         result = 31 * result + (_formSubmit ? 1 : 0);
         return key = result;
-    }
+    }*/
 
     //@Override
     public function toString():String {
