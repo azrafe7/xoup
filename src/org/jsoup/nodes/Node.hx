@@ -112,7 +112,7 @@ class Node implements Cloneable<Node> implements Copiable<Node> /*implements Has
      * @param attributeValue The attribute value.
      * @return this (for chaining)
      */
-    public function setAttr(attributeKey:String, attributeValue:String):Node {
+    public function setAttr(attributeKey:String, attributeValue:Dynamic):Node {
         attributes.put(attributeKey, attributeValue);
         return this;
     }
