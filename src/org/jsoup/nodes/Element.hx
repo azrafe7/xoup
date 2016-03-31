@@ -48,7 +48,7 @@ import java.util.regex.PatternSyntaxException;
 class Element extends Node {
     private var tag:Tag;
 
-    private static var classSplit:EReg = ~/\s+/;
+    private static var classSplit:EReg = ~/\s+/g;
 
     /**
      * Create a new, standalone Element. (Standalone in that is has no parent.)
