@@ -361,7 +361,7 @@ class Node implements Cloneable<Node> implements Copiable<Node> /*implements Has
     public function wrap(html:String):Node {
         Validate.notEmpty(html);
 
-        var context = Std.is(parent(), Element) ? cast parent() : null;
+        var context:Element = Std.is(parent(), Element) ? cast parent() : null;
         var wrapChildren:List<Node> = Parser.parseFragment(html, context, getBaseUri());
         var wrapNode:Node = wrapChildren.get(0);
         if (wrapNode == null || !(Std.is(wrapNode, Element))) // nothing to wrap with; noop
@@ -370,6 +370,8 @@ class Node implements Cloneable<Node> implements Copiable<Node> /*implements Has
         var wrap:Element = cast wrapNode;
         var deepest:Element = getDeepChild(wrap);
         parentNode.replaceChild(this, wrap);
+		//NOTE(az): !! Important: remove 0th-child from wrapChildren
+		wrapChildren.removeAt(0);
         deepest.addChildren([this]);
 
         // remainder (unbalanced wrap, like <div></div><p></p> -- The <p> is remainder
