@@ -95,4 +95,13 @@ class StringBuilderImpl {
 	public function new(?buf:StringBuf = null) {
 		this.sb = (buf != null) ? buf : new StringBuf();
 	}
+	
+	/**
+		We also define toString here to ensure we always get a pretty string
+		when tracing or calling Std.string. This tends not to happen when
+		toString is only in the abstract.
+	**/
+	public function toString() : String {
+		return this.sb.toString();
+	}
 }
