@@ -52,7 +52,7 @@ import java.util.Locale;
     }
 
     function consume():Int {
-        var val:CodePoint = pos >= length ? EOF : inputCP[pos];
+        var val:Int = pos >= length ? EOF : inputCP[pos];
         pos++;
         return val;
     }
