@@ -11,6 +11,7 @@ import org.jsoup.nodes.FormElementTest;
 import org.jsoup.nodes.NodeTest;
 import org.jsoup.nodes.TextNodeTest;
 import org.jsoup.select.ElementsTest;
+import org.jsoup.select.SelectorTest;
 
 import utest.Runner;
 import utest.ui.Report;
@@ -32,7 +33,9 @@ class TestAll {
 		runner.addCase(new TextNodeTest());
 		runner.addCase(new FormElementTest());
 		runner.addCase(new StringUtilTest());
+		
 		runner.addCase(new ElementsTest());
+		runner.addCase(new SelectorTest());
 		
 		Report.create(runner);
 		runner.run();
