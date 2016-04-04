@@ -1,5 +1,6 @@
 package;
 
+import org.jsoup.helper.StringUtilTest;
 import org.jsoup.nodes.AttributesTest;
 import org.jsoup.nodes.AttributeTest;
 import org.jsoup.nodes.DocumentTest;
@@ -29,6 +30,7 @@ class TestAll {
 		runner.addCase(new ElementTest());
 		runner.addCase(new TextNodeTest());
 		runner.addCase(new FormElementTest());
+		runner.addCase(new StringUtilTest());
 		
 		Report.create(runner);
 		runner.run();
