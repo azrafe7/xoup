@@ -1,5 +1,6 @@
 package org.jsoup.nodes;
 
+import de.polygonal.ds.List;
 import de.polygonal.ds.ArrayList;
 import org.jsoup.Connection;
 import org.jsoup.helper.HttpConnection;
@@ -82,7 +83,7 @@ class FormElement extends Element {
      * @return a list of key vals
      */
     public function formData():List<Connection.KeyVal> {
-        var data = new ArrayList<Connection.KeyVal>();
+        var data = new ArrayList<KeyVal>();
 
         // iterate the form control elements and accumulate their values
         for (el in elements) {

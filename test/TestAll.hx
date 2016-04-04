@@ -6,7 +6,9 @@ import org.jsoup.nodes.DocumentTest;
 import org.jsoup.nodes.DocumentTypeTest;
 import org.jsoup.nodes.ElementTest;
 import org.jsoup.nodes.EntitiesTest;
+import org.jsoup.nodes.FormElementTest;
 import org.jsoup.nodes.NodeTest;
+import org.jsoup.nodes.TextNodeTest;
 
 import utest.Runner;
 import utest.ui.Report;
@@ -25,6 +27,8 @@ class TestAll {
 		runner.addCase(new DocumentTest());
 		runner.addCase(new NodeTest());
 		runner.addCase(new ElementTest());
+		runner.addCase(new TextNodeTest());
+		runner.addCase(new FormElementTest());
 		
 		Report.create(runner);
 		runner.run();
