@@ -29,7 +29,7 @@ class KeyVal implements Connection.KeyVal {
 		return _key;
 	}
 	
-	public function setKey(key:String):KeyVal{
+	public function setKey(key:String):KeyVal {
 		_key = key;
 		return this;
 	}
@@ -38,8 +38,12 @@ class KeyVal implements Connection.KeyVal {
 		return _val;
 	}
 	
-	public function setValue(val:String):KeyVal{
+	public function setValue(val:String):KeyVal {
 		_val = val;
 		return this;
+	}
+	
+	public function toString():String {
+		return '$_key=$_val';
 	}
 }

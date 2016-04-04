@@ -41,5 +41,7 @@ interface KeyVal {
 	 */
 	//NOTE(az): getter
 	function getValue():String;
+	
+	function toString():String;
 }
 
