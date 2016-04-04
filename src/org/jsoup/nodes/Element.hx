@@ -517,7 +517,7 @@ class Element extends Node {
 
         var selector = new StringBuilder();
 		selector.add(getTagName());
-        var classes:String = StringUtil.join(getClassNames().iterator(), ".");
+        var classes:String = StringUtil.join(getClassNames(), ".");
         if (classes.length > 0) {
             selector.add('.');
 			selector.add(classes);
@@ -1078,7 +1078,7 @@ class Element extends Node {
 	//NOTE(az): setter
     public function setClassNames(classNames:Set<String>):Element {
         Validate.notNull(classNames);
-        attributes.put("class", StringUtil.join(classNames.iterator(), " "));
+        attributes.put("class", StringUtil.join(classNames, " "));
         return this;
     }
 

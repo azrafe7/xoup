@@ -42,19 +42,20 @@ class StringUtil {
      * @return joined string
      */
 	//NOTE(az): toString with Std.string
-    public static function join<T>(strings:Itr<T>, sep:String) {
-        if (!strings.hasNext())
+    public static function join<T>(strings:Iterable<T>, sep:String) {
+		var it = strings.iterator();
+        if (!it.hasNext())
             return "";
 
-        var start = Std.string(strings.next());
-        if (!strings.hasNext()) // only one, avoid builder
+        var start = Std.string(it.next());
+        if (!it.hasNext()) // only one, avoid builder
             return start;
 
         var sb = new StringBuilder(/*64*/);
 		sb.add(start);
-        while (strings.hasNext()) {
+        while (it.hasNext()) {
             sb.add(sep);
-            sb.add(Std.string(strings.next()));
+            sb.add(Std.string(it.next()));
         }
         return sb.toString();
     }

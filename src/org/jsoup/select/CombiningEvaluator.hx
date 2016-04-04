@@ -72,7 +72,7 @@ import java.util.Collection;
 
 	//@Override
 	public function toString():String {
-		return StringUtil.join(evaluators.iterator(), " ");
+		return StringUtil.join(evaluators, " ");
 	}
 }
 
