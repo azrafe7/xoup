@@ -10,6 +10,7 @@ import org.jsoup.nodes.EntitiesTest;
 import org.jsoup.nodes.FormElementTest;
 import org.jsoup.nodes.NodeTest;
 import org.jsoup.nodes.TextNodeTest;
+import org.jsoup.select.ElementsTest;
 
 import utest.Runner;
 import utest.ui.Report;
@@ -31,6 +32,7 @@ class TestAll {
 		runner.addCase(new TextNodeTest());
 		runner.addCase(new FormElementTest());
 		runner.addCase(new StringUtilTest());
+		runner.addCase(new ElementsTest());
 		
 		Report.create(runner);
 		runner.run();
