@@ -40,7 +40,7 @@ class TokenQueue {
     }
     
     private function remainingLength():Int {
-        return queue.length - pos;
+        return queue.uLength() - pos;
     }
 
     /**
@@ -65,7 +65,7 @@ class TokenQueue {
      */
     public function addFirstSeq(seq:String):Void {
         // not very performant, but an edge case
-        queue = seq + queue.substring(pos);
+        queue = seq + queue.uSubstring(pos);
         pos = 0;
     }
 
@@ -77,7 +77,7 @@ class TokenQueue {
 	//NOTE(az): no regionMatches
     public function matches(seq:String):Bool {
         //return queue.regionMatches(true, pos, seq, 0, seq.length);
-		var thisRegion = queue.substr(pos, seq.length).toLowerCase();
+		var thisRegion = queue.uSubstr(pos, seq.uLength()).toLowerCase();
 		var otherRegion = seq.toLowerCase();
         return thisRegion == otherRegion;
     }
@@ -89,7 +89,7 @@ class TokenQueue {
      */
 	//NOTE(az): using substring
     public function matchesCS(seq:String):Bool {
-        return queue.substring(pos).startsWith(seq);
+        return queue.uSubstring(pos).startsWith(seq);
     }
     
 
@@ -120,7 +120,7 @@ class TokenQueue {
     public function matchesStartTag():Bool {
         var isLetter = ~/[a-zA-Z]/;
 		// micro opt for matching "<x"
-        return (remainingLength() >= 2 && queue.uCharCodeAt(pos) == '<'.code && isLetter.match(queue.charAt(pos + 1)));
+        return (remainingLength() >= 2 && queue.uCharCodeAt(pos) == '<'.code && isLetter.match(queue.uCharAt(pos + 1)));
     }
 
     /**
@@ -131,7 +131,7 @@ class TokenQueue {
      */
     public function matchChomp(seq:String):Bool {
         if (matches(seq)) {
-            pos += seq.length;
+            pos += seq.uLength();
             return true;
         } else {
             return false;
@@ -143,7 +143,7 @@ class TokenQueue {
      @return if starts with whitespace
      */
     public function matchesWhitespace():Bool {
-        return !isEmpty() && StringUtil.isWhitespace(queue.charCodeAt(pos));
+        return !isEmpty() && StringUtil.isWhitespace(queue.uCharCodeAt(pos));
     }
 
     /**
@@ -152,7 +152,7 @@ class TokenQueue {
      */
     public function matchesWord():Bool {
 		var letterOrDigit = ~/[a-zA-Z0-9]/;
-        return !isEmpty() && letterOrDigit.match(queue.charAt(pos));
+        return !isEmpty() && letterOrDigit.match(queue.uCharAt(pos));
     }
 
     /**
@@ -167,7 +167,7 @@ class TokenQueue {
      * @return first character on queue.
      */
     public function consume():Int {
-        return queue.charCodeAt(pos++);
+        return queue.uCharCodeAt(pos++);
     }
 
     /**
@@ -180,7 +180,7 @@ class TokenQueue {
     public function consumeSeq(seq:String):Void {
         if (!matches(seq))
             throw new IllegalStateException("Queue did not match expected sequence");
-        var len:Int = seq.length;
+        var len:Int = seq.uLength();
         if (len > remainingLength())
             throw new IllegalStateException("Queue not long enough to consume sequence");
         
@@ -193,10 +193,10 @@ class TokenQueue {
      * @return The matched data consumed from queue.
      */
     public function consumeTo(seq:String):String {
-        var offset = queue.indexOf(seq, pos);
+        var offset = queue.uIndexOf(seq, pos);
         if (offset != -1) {
-            var consumed = queue.substring(pos, offset);
-            pos += consumed.length;
+            var consumed = queue.uSubstring(pos, offset);
+            pos += consumed.uLength();
             return consumed;
         } else {
             return remainder();
@@ -205,18 +205,18 @@ class TokenQueue {
     
     public function consumeToIgnoreCase(seq:String):String {
         var start:Int = pos;
-        var first:String = seq.substring(0, 1);
+        var first:String = seq.uSubstring(0, 1);
         var canScan:Bool = first.toLowerCase() == (first.toUpperCase()); // if first is not cased, use index of
         while (!isEmpty()) {
             if (matches(seq))
                 break;
             
             if (canScan) {
-                var skip:Int = queue.indexOf(first, pos) - pos;
+                var skip:Int = queue.uIndexOf(first, pos) - pos;
                 if (skip == 0) // this char is the skip char, but not match, so force advance of pos
                     pos++;
                 else if (skip < 0) // no chance of finding, grab to end
-                    pos = queue.length;
+                    pos = queue.uLength();
                 else
                     pos += skip;
             }
@@ -224,7 +224,7 @@ class TokenQueue {
                 pos++;
         }
 
-        return queue.substring(start, pos);
+        return queue.uSubstring(start, pos);
     }
 
     /**
@@ -240,7 +240,7 @@ class TokenQueue {
             pos++;
         }
 
-        return queue.substring(start, pos);
+        return queue.uSubstring(start, pos);
     }
 
     /**
@@ -295,7 +295,7 @@ class TokenQueue {
                 end = pos; // don't include the outer match pair in the return
             last = c;
         } while (depth > 0);
-        return (end >= 0) ? queue.substring(start, end) : "";
+        return (end >= 0) ? queue.uSubstring(start, end) : "";
     }
     
     /**
@@ -339,7 +339,7 @@ class TokenQueue {
         var start:Int = pos;
         while (matchesWord())
             pos++;
-        return queue.substring(start, pos);
+        return queue.uSubstring(start, pos);
     }
     
     /**
@@ -352,7 +352,7 @@ class TokenQueue {
         while (!isEmpty() && (matchesWord() || matchesAny([':', '_', '-'])))
             pos++;
         
-        return queue.substring(start, pos);
+        return queue.uSubstring(start, pos);
     }
     
     /**
@@ -365,7 +365,7 @@ class TokenQueue {
         while (!isEmpty() && (matchesWord() || matchesAny(['|', '_', '-'])))
             pos++;
         
-        return queue.substring(start, pos);
+        return queue.uSubstring(start, pos);
     }
 
     /**
@@ -378,7 +378,7 @@ class TokenQueue {
         while (!isEmpty() && (matchesWord() || matchesAny(['-', '_'])))
             pos++;
 
-        return queue.substring(start, pos);
+        return queue.uSubstring(start, pos);
     }
 
     /**
@@ -390,7 +390,7 @@ class TokenQueue {
         while (!isEmpty() && (matchesWord() || matchesAny(['-', '_', ':'])))
             pos++;
         
-        return queue.substring(start, pos);
+        return queue.uSubstring(start, pos);
     }
 
     /**
@@ -398,13 +398,13 @@ class TokenQueue {
      @return remained of queue.
      */
     public function remainder():String {
-        var remainder:String = queue.substring(pos, queue.length);
-        pos = queue.length;
+        var remainder:String = queue.uSubstring(pos, queue.uLength());
+        pos = queue.uLength();
         return remainder;
     }
     
     //@Override
     public function toString():String {
-        return queue.substring(pos);
+        return queue.uSubstring(pos);
     }
 }
