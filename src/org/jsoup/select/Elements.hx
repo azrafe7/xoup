@@ -1,6 +1,7 @@
 package org.jsoup.select;
 
 import de.polygonal.ds.ArrayList;
+import de.polygonal.ds.List;
 import de.polygonal.ds.ListSet;
 import de.polygonal.ds.Set;
 import org.jsoup.helper.StringBuilder;
@@ -411,6 +412,7 @@ class Elements extends ArrayList<Element> {
      * @see Element#empty()
      * @see #empty()
      */
+	//NOTE(az): renamed from remove()
     public function removeMatched():Elements {
         for (element in this) {
             element.remove();
