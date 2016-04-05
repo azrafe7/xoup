@@ -11,6 +11,8 @@ class StructuralEvaluator extends Evaluator {
 	public function new() {
 		super();
 	}
+	
+	override public function toString():String { return "StructuralEvaluator base"; }
 }
 
 /*static*/ class StructuralEvaluatorRoot extends Evaluator {
@@ -34,7 +36,7 @@ class StructuralEvaluator extends Evaluator {
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':has($evaluator)';
 	}
 }
@@ -50,7 +52,7 @@ class StructuralEvaluator extends Evaluator {
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':not$evaluator';
 	}
 }
@@ -77,7 +79,7 @@ class StructuralEvaluator extends Evaluator {
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':parent$evaluator';
 	}
 }
@@ -97,7 +99,7 @@ class StructuralEvaluator extends Evaluator {
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':ImmediateParent$evaluator';
 	}
 }
@@ -124,7 +126,7 @@ class StructuralEvaluator extends Evaluator {
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':prev*$evaluator';
 	}
 }
@@ -144,7 +146,7 @@ class StructuralEvaluator extends Evaluator {
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':prev$evaluator';
 	}
 }

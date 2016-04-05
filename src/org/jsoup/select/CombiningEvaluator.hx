@@ -47,6 +47,7 @@ import java.util.Collection;
         num = evaluators.size;
     }
 
+	override public function toString():String { return "CombiningEvaluator base"; }
 }
 
 
@@ -71,7 +72,7 @@ import java.util.Collection;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return StringUtil.join(evaluators, " ");
 	}
 }
@@ -114,7 +115,7 @@ import java.util.Collection;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':or$evaluators';
 	}
 }

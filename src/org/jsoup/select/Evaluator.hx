@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
      */
     public /*abstract*/ function matches(root:Element, element:Element):Bool { throw "Abstract"; }
 
+	public function toString():String { return "Evaluator base"; }
 }
 
 /**
@@ -53,7 +54,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '$tagName';
 	}
 }
@@ -75,7 +76,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '#$id';
 	}
 
@@ -98,7 +99,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '.$className';
 	}
 
@@ -121,7 +122,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '[$key]';
 	}
 
@@ -149,7 +150,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '[^$keyPrefix]';
 	}
 
@@ -170,7 +171,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '[$key=$value]';
 	}
 
@@ -191,7 +192,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '[$key!=$value]';
 	}
 
@@ -212,7 +213,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '[$key^=$value]';
 	}
 
@@ -232,7 +233,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '[$key$$=$value]';
 	}
 
@@ -252,7 +253,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '[$key*=$value]';
 	}
 
@@ -277,7 +278,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return '[$key~=$pattern]';
 	}
 
@@ -314,7 +315,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return "*";
 	}
 }
@@ -333,7 +334,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':lt($index)';
 	}
 
@@ -353,7 +354,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':gt($index)';
 	}
 
@@ -373,7 +374,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':eq($index)';
 	}
 
@@ -390,7 +391,7 @@ import java.util.regex.Pattern;
 	}
 	
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ":last-child";
 	}
 }
@@ -444,7 +445,7 @@ import java.util.regex.Pattern;
 	}
 	
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		if (a == 0)
 			return ':${getPseudoClass()}($b)';
 		if (b == 0)
@@ -557,7 +558,7 @@ import java.util.regex.Pattern;
 	}
 	
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ":first-child";
 	}
 }
@@ -575,7 +576,7 @@ import java.util.regex.Pattern;
 	}
 	
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ":root";
 	}
 }
@@ -588,7 +589,7 @@ import java.util.regex.Pattern;
 	}
 	
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ":only-child";
 	}
 }
@@ -608,7 +609,7 @@ import java.util.regex.Pattern;
 	}
 	
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ":only-of-type";
 	}
 }
@@ -625,7 +626,7 @@ import java.util.regex.Pattern;
 	}
 	
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ":empty";
 	}
 }
@@ -661,7 +662,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':contains($searchText';
 	}
 }
@@ -683,7 +684,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':containsOwn($searchText';
 	}
 }
@@ -706,7 +707,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':matches($pattern';
 	}
 }
@@ -729,7 +730,7 @@ import java.util.regex.Pattern;
 	}
 
 	//@Override
-	public function toString():String {
+	override public function toString():String {
 		return ':matchesOwn($pattern)';
 	}
 }
