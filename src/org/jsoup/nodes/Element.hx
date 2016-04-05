@@ -528,7 +528,7 @@ class Element extends Node {
 
         var newSelector = new StringBuilder();
 		newSelector.add(" > ");
-		newSelector.add(selector);
+		newSelector.add(selector.toString());
 		
         if (parent().select(newSelector.toString()).size > 1)
             newSelector.add(':nth-child(${elementSiblingIndex() + 1})');
