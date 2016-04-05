@@ -309,10 +309,10 @@ class TokenQueue {
         for (c in input.uIterator()) {
             if (c == ESC) {
                 if (last != 0 && last == ESC)
-                    out.add(c);
+                    out.uAddChar(c);
             }
             else 
-                out.add(c);
+                out.uAddChar(c);
             last = c;
         }
         return out.toString();
