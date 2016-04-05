@@ -96,8 +96,8 @@ class QueryParser {
         if (evals.size == 1) {
             rootEval = currentEval = evals.get(0);
             // make sure OR (,) has precedence:
-            if (Std.is(rootEval, CombiningEvaluatorOr) && combinator != ',') {
-                currentEval = cast (currentEval, (CombiningEvaluatorOr)).rightMostEvaluator();
+            if (Std.is(rootEval, CombiningEvaluatorOr) && combinator != ','.code) {
+                currentEval = cast(currentEval, (CombiningEvaluatorOr)).rightMostEvaluator();
                 replaceRightMost = true;
             }
         }
