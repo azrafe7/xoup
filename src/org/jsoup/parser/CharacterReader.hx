@@ -101,7 +101,9 @@ import java.util.Locale;
 	//NOTE(az): renamed, and using String
     function nextIndexOfSeq(seq:String):Int {
         // doesn't handle scanning for surrogates
-        return input.uIndexOf(seq, pos);
+        var offset = input.uIndexOf(seq, pos);
+		if (offset >= 0) offset -= pos;
+		return offset;
 		
 		/*char startChar = seq.charAt(0);
         for (int offset = pos; offset < length; offset++) {
