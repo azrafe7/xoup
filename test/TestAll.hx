@@ -11,6 +11,7 @@ import org.jsoup.nodes.EntitiesTest;
 import org.jsoup.nodes.FormElementTest;
 import org.jsoup.nodes.NodeTest;
 import org.jsoup.nodes.TextNodeTest;
+import org.jsoup.parser.AttributeParseTest;
 import org.jsoup.select.CssTest;
 import org.jsoup.select.ElementsTest;
 import org.jsoup.select.QueryParserTest;
@@ -37,11 +38,13 @@ class TestAll {
 		runner.addCase(new TextNodeTest());
 		runner.addCase(new FormElementTest());
 		runner.addCase(new StringUtilTest());
-		
+
 		runner.addCase(new ElementsTest());
 		runner.addCase(new SelectorTest());
 		runner.addCase(new CssTest());
 		runner.addCase(new QueryParserTest());
+
+		runner.addCase(new AttributeParseTest());
 		
 		var report = new PrintReport(runner);
 		runner.run();
