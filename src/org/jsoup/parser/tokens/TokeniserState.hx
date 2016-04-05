@@ -684,7 +684,7 @@ using StringTools;
 					case '&'.code:
 						var ref:Array<CodePoint> = t.consumeCharacterReference('"'.code, true);
 						if (ref != null)
-							t.tagPending.appendAttributeValue(ref.toString());
+							t.tagPending.appendAttributeValue(ref.uToString());
 						else
 							t.tagPending.appendAttributeValue('&');
 					case nullChar:
@@ -734,7 +734,7 @@ using StringTools;
 					case '&'.code:
 						var ref:Array<CodePoint> = t.consumeCharacterReference('>'.code, true);
 						if (ref != null)
-							t.tagPending.appendAttributeValue(ref.toString());
+							t.tagPending.appendAttributeValue(ref.uToString());
 						else
 							t.tagPending.appendAttributeValue('&');
 					case '>'.code:
