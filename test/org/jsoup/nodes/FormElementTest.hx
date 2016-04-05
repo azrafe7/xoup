@@ -47,12 +47,12 @@ class FormElementTest {
         var data:List<Connection.KeyVal> = form.formData();
 
         Assert.equals(6, data.size);
-        Assert.equals("one=two", data.get(0)/* .toString() */);
-        Assert.equals("three=four", data.get(1)/* .toString() */);
-        Assert.equals("three=five", data.get(2)/* .toString() */);
-        Assert.equals("six=seven", data.get(3)/* .toString() */);
-        Assert.equals("seven=on", data.get(4)/* .toString() */); // set
-        Assert.equals("eight=on", data.get(5)/* .toString() */); // default
+        Assert.equals("one=two", data.get(0).toString());
+        Assert.equals("three=four", data.get(1).toString());
+        Assert.equals("three=five", data.get(2).toString());
+        Assert.equals("six=seven", data.get(3).toString());
+        Assert.equals("seven=on", data.get(4).toString()); // set
+        Assert.equals("eight=on", data.get(5).toString()); // default
         // nine should not appear, not checked checkbox
         // ten should not appear, disabled
     }
