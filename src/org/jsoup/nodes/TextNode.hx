@@ -165,7 +165,7 @@ class TextNode extends Node {
 
     //@Override
     //NOTE(az): setter
-    override public function setAttr(attributeKey:String, attributeValue:String):Node {
+    override public function setAttr(attributeKey:String, attributeValue:Dynamic):Node {
         ensureAttributes();
         return super.setAttr(attributeKey, attributeValue);
     }
