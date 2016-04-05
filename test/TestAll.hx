@@ -1,5 +1,6 @@
 package;
 
+import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.StringUtilTest;
 import org.jsoup.nodes.AttributesTest;
 import org.jsoup.nodes.AttributeTest;
@@ -10,8 +11,11 @@ import org.jsoup.nodes.EntitiesTest;
 import org.jsoup.nodes.FormElementTest;
 import org.jsoup.nodes.NodeTest;
 import org.jsoup.nodes.TextNodeTest;
+import org.jsoup.select.CssTest;
 import org.jsoup.select.ElementsTest;
+import org.jsoup.select.QueryParserTest;
 import org.jsoup.select.SelectorTest;
+import utest.ui.text.PrintReport;
 
 import utest.Runner;
 import utest.ui.Report;
@@ -36,8 +40,10 @@ class TestAll {
 		
 		runner.addCase(new ElementsTest());
 		runner.addCase(new SelectorTest());
+		runner.addCase(new CssTest());
+		runner.addCase(new QueryParserTest());
 		
-		Report.create(runner);
+		var report = new PrintReport(runner);
 		runner.run();
 		
 		#if flash
