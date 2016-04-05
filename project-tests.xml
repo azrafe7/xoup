@@ -33,8 +33,8 @@
 	<haxeflag name="-resource" value="test/resources/htmltests/nyt-article-1.html@htmltests/nyt-article-1.html" />
 	<haxeflag name="-resource" value="test/resources/htmltests/smh-biz-article-1.html@htmltests/smh-biz-article-1.html" />
 	<haxeflag name="-resource" value="test/resources/htmltests/table-invalid-elements.html@htmltests/table-invalid-elements.html" />
-	<haxeflag name="-resource" value="test/resources/htmltests/thumb.jpg@htmltests/thumb.jpg.html" />
-	<haxeflag name="-resource" value="test/resources/htmltests/xml-test.xml@htmltests/xml-test.html" />
+	<haxeflag name="-resource" value="test/resources/htmltests/thumb.jpg@htmltests/thumb.jpg" />
+	<haxeflag name="-resource" value="test/resources/htmltests/xml-test.xml@htmltests/xml-test.xml" />
 	<haxeflag name="-resource" value="test/resources/htmltests/yahoo-article-1.html@htmltests/yahoo-article-1.html" />
 	<haxeflag name="-resource" value="test/resources/htmltests/yahoo-jp.html@htmltests/yahoo-jp.html" />
 	

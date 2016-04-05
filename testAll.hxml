@@ -23,7 +23,7 @@
 -resource test/resources/htmltests/nyt-article-1.html@htmltests/nyt-article-1.html
 -resource test/resources/htmltests/smh-biz-article-1.html@htmltests/smh-biz-article-1.html
 -resource test/resources/htmltests/table-invalid-elements.html@htmltests/table-invalid-elements.html
--resource test/resources/htmltests/thumb.jpg@htmltests/thumb.jpg.html
--resource test/resources/htmltests/xml-test.xml@htmltests/xml-test.html
+-resource test/resources/htmltests/thumb.jpg@htmltests/thumb.jpg
+-resource test/resources/htmltests/xml-test.xml@htmltests/xml-test.xml
 -resource test/resources/htmltests/yahoo-article-1.html@htmltests/yahoo-article-1.html
 -resource test/resources/htmltests/yahoo-jp.html@htmltests/yahoo-jp.html
