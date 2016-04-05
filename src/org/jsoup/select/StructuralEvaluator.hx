@@ -19,6 +19,8 @@ class StructuralEvaluator extends Evaluator {
 	override public function matches(root:Element, element:Element):Bool {
 		return root == element;
 	}
+	
+	override public function toString():String { return "StructuralEvaluatorRoot"; }
 }
 
 /*static*/ class StructuralEvaluatorHas extends StructuralEvaluator {
