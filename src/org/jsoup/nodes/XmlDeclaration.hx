@@ -33,7 +33,7 @@ class XmlDeclaration extends Node {
     public function getWholeDeclaration():String {
         var decl:String = attributes.get(DECL_KEY);
         
-        if(decl == "xml" && attributes.size() > 1 ) {
+        if(decl == "xml" && attributes.size > 1 ) {
             var sb = new StringBuilder(/*decl*/);
 			sb.add(decl);
             var version:String = attributes.get("version");

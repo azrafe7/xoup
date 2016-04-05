@@ -268,7 +268,7 @@ import org.jsoup.nodes.BooleanAttribute;
 
 	//@Override
 	override public function toString():String {
-		if (attributes != null && attributes.size() > 0)
+		if (attributes != null && attributes.size > 0)
 			return "<" + getName() + " " + attributes.toString() + ">";
 		else
 			return "<" + getName() + ">";

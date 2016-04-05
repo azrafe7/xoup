@@ -119,7 +119,8 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
      @return size
      */
     //NOTE(az): siz3
-	public function size():Int {
+	public var size(get, never):Int;
+	function get_size():Int {
         if (attributes == null)
             return 0;
         return [for (k in attributes.keys()) k].length;
@@ -130,7 +131,7 @@ class Attributes /*implements Iterable<Attribute>*/ implements Cloneable<Attribu
      @param incoming attributes to add to these attributes.
      */
     public function addAll(incoming:Attributes) {
-        if (incoming.size() == 0)
+        if (incoming.size == 0)
             return;
         if (attributes == null)
             attributes = new OrderedMap<String, Attribute>(new Map<String, Attribute>()/*incoming.size()*/);
@@ -279,7 +280,8 @@ class Dataset /*extends AbstractMap<String, String>*/ {
 		attrs.remove(Attributes.dataPrefix + key);
 	}
 	
-	public function size():Int {
+	public var size(get, never):Int;
+	function get_size():Int {
 		var count = 0;
 		for (item in iterator()) count++;
 		return count;
