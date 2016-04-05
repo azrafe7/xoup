@@ -29,13 +29,49 @@ class Entities {
 
 	public static inline var MIN_SUPPLEMENTARY_CODE_POINT:CodePoint = 0x10000;
 	
-    private static var full:Map<String, Character>;
-    private static var xhtmlByVal:Map<Character, String>;
-    private static var base:Map<String, Character>;
-    private static var baseByVal:Map<Character, String>;
-    private static var fullByVal:Map<Character, String>;
+	static var inited:Bool = false;
 	
-	static var maps:Map<EscapeMode, Map<Character, String>>;
+	static var _full:Map<String, Character>;
+    static var full(get, null):Map<String, Character>;
+	static function get_full():Map<String, Character> {
+		if (!inited) init();
+		return _full;
+	}
+	
+	static var _xhtmlByVal:Map<Character, String>;
+    static var xhtmlByVal(get, null):Map<Character, String>;
+	static function get_xhtmlByVal():Map<Character, String> {
+		if (!inited) init();
+		return _xhtmlByVal;
+	}
+	
+    static var _base:Map<String, Character>;
+	static var base(get, null):Map<String, Character>;
+	static function get_base():Map<String, Character> {
+		if (!inited) init();
+		return _base;
+	}
+	
+    static var _baseByVal:Map<Character, String>;
+	static var baseByVal(get, null):Map<Character, String>;
+	static function get_baseByVal():Map<Character, String> {
+		if (!inited) init();
+		return _baseByVal;
+	}
+	
+    static var _fullByVal:Map<Character, String>;
+	static var fullByVal:Map<Character, String>;
+	static function get_fullByVal():Map<Character, String> {
+		if (!inited) init();
+		return _fullByVal;
+	}
+	
+	static var _maps:Map<EscapeMode, Map<Character, String>>;
+	static var maps(get, null):Map<EscapeMode, Map<Character, String>>;
+	static function get_maps():Map<EscapeMode, Map<Character, String>> {
+		if (!inited) init();
+		return _maps;
+	}
 
     function new() {}
 
@@ -206,28 +242,30 @@ class Entities {
     // xhtml has restricted entities
     private static var xhtmlMap:Map<String, CodePoint>;
 
-    static function __init__() {
+    static function init() {
+		inited = true;
+		
 		xhtmlMap = [
             "quot" => 0x00022,
             "amp" => 0x00026,
             "lt" => 0x0003C,
             "gt" => 0x0003E
 		];
-        xhtmlByVal = new Map<Character, String>();
-        base = loadEntities("entities-base.properties");  // most common / default
-        baseByVal = toCharacterKey(base);
-        full = loadEntities("entities-full.properties"); // extended and overblown.
-        fullByVal = toCharacterKey(full);
+        _xhtmlByVal = new Map<Character, String>();
+        _base = loadEntities("entities-base.properties");  // most common / default
+        _baseByVal = toCharacterKey(base);
+        _full = loadEntities("entities-full.properties"); // extended and overblown.
+        _fullByVal = toCharacterKey(full);
 
         for (key in xhtmlMap.keys()) {
             var c:CodePoint = xhtmlMap[key];
             xhtmlByVal.set(c.toString(), key);
         }
 		
-		Entities.maps = [
-			EscapeMode.base => baseByVal,
-			EscapeMode.extended => fullByVal,
-			EscapeMode.xhtml => xhtmlByVal
+		Entities._maps = [
+			EscapeMode.base => _baseByVal,
+			EscapeMode.extended => _fullByVal,
+			EscapeMode.xhtml => _xhtmlByVal
 		];
     }
 
