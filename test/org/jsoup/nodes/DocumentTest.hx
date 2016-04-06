@@ -2,11 +2,11 @@ package org.jsoup.nodes;
 
 import de.polygonal.ds.Dll;
 import haxe.Resource;
+import org.jsoup.integration.ParseTest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document.Charset;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.TextUtil;
-//import org.jsoup.integration.ParseTest;
 import org.jsoup.nodes.Document.Syntax;
 
 import utest.Assert;
@@ -65,9 +65,7 @@ class DocumentTest {
     }
 
     public function testOutputEncoding() {
-        Assert.warn("not passing");
-		
-		/*var doc:Document = Jsoup.parse("<p title=π>π & < > </p>");
+		var doc:Document = Jsoup.parse("<p title=π>π & < > </p>");
         // default is utf-8
         Assert.equals("<p title=\"π\">π &amp; &lt; &gt; </p>", doc.body().getHtml());
         Assert.equals("UTF-8", doc.getOutputSettings().getCharset().name());
@@ -77,7 +75,7 @@ class DocumentTest {
         Assert.equals("<p title=\"&#x3c0;\">&#x3c0; &amp; &lt; &gt; </p>", doc.body().getHtml());
 
         doc.getOutputSettings().setEscapeMode(EscapeMode.extended);
-        Assert.equals("<p title=\"&pi;\">&pi; &amp; &lt; &gt; </p>", doc.body().getHtml());*/
+        Assert.equals("<p title=\"&pi;\">&pi; &amp; &lt; &gt; </p>", doc.body().getHtml());
     }
 
     public function testXhtmlReferences() {
@@ -124,23 +122,19 @@ class DocumentTest {
                 TextUtil.stripNewlines(clone.getHtml()));
     }
     
-    
-	//NOTE(az): skipped. needs DataUtil (not ported)
 	public function testLocation() {
-		Assert.warn("skipped (needs DataUtil)");
-		
-		/*var input:String = Resource.getString("htmltests/yahoo-jp.html");
-        var doc:Document = Jsoup.parse(input, "UTF-8", "http://www.yahoo.co.jp/index.html");
-        var location:String = doc.location();
+		var input:String = ParseTest.getFile("htmltests/yahoo-jp.html");
+        var doc:Document = Jsoup.parse(input, /*"UTF-8",*/ "http://www.yahoo.co.jp/index.html");
+        var location:String = doc.getLocation();
         var baseUri = doc.getBaseUri();
         Assert.equals("http://www.yahoo.co.jp/index.html",location);
         Assert.equals("http://www.yahoo.co.jp/_ylh=X3oDMTB0NWxnaGxsBF9TAzIwNzcyOTYyNjUEdGlkAzEyBHRtcGwDZ2Ex/",baseUri);
-        input = Resource.getString("htmltests/nyt-article-1.html");
-        doc = Jsoup.parse(input, null, "http://www.nytimes.com/2010/07/26/business/global/26bp.html?hp");
-        location = doc.location();
+        input = ParseTest.getFile("htmltests/nyt-article-1.html");
+        doc = Jsoup.parse(input, /*null,*/ "http://www.nytimes.com/2010/07/26/business/global/26bp.html?hp");
+        location = doc.getLocation();
         baseUri = doc.getBaseUri();
         Assert.equals("http://www.nytimes.com/2010/07/26/business/global/26bp.html?hp",location);
-        Assert.equals("http://www.nytimes.com/2010/07/26/business/global/26bp.html?hp",baseUri);*/
+        Assert.equals("http://www.nytimes.com/2010/07/26/business/global/26bp.html?hp",baseUri);
     }
 
     public function testHtmlAndXmlSyntax() {
@@ -177,7 +171,7 @@ class DocumentTest {
     //@Ignore
 	//NOTE(az): ignored
     public function testOverflowClone() {
-        Assert.warn("ignored (takes a while to run)");
+        Assert.warn("fix pending (clone is currently recursive!)");
 		
 		/*var openBuf = new StringBuilder();
         var closeBuf = new StringBuilder();
@@ -427,10 +421,9 @@ class DocumentTest {
         return doc;
     }
 
-    //NOTE(az): skipped. needs DataUtil
+    //NOTE(az): not faithful to original test
     public function testShiftJisRoundtrip() {
-        Assert.warn("skipped (needs DataUtil)");
-		/*var input:String =
+		var input:String =
                 "<html>"
                         +   "<head>"
                         +     "<meta http-equiv=\"content-type\" content=\"text/html; charset=Shift_JIS\" />"
@@ -439,16 +432,16 @@ class DocumentTest {
                         +     "before&nbsp;after"
                         +   "</body>"
                         + "</html>";
-        InputStream is = new ByteArrayInputStream(input.getBytes(Charset.forName("ASCII")));
+        /*InputStream is = new ByteArrayInputStream(input.getBytes(Charset.forName("ASCII")));*/
 
-        Document doc = Jsoup.parse(is, null, "http://example.com");
-        doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+        var doc = Jsoup.parse(input, /*null,*/ "http://example.com");
+        doc.getOutputSettings().setEscapeMode(Entities.EscapeMode.xhtml);
 
-        String output = new String(doc.html().getBytes(doc.outputSettings().charset()), doc.outputSettings().charset());
+		doc.setCharset("ASCII");
+        var output = doc.getHtml();
 
-        Assert.isFalse("Should not have contained a '?'.", output.contains("?"));
-        Assert.isTrue("Should have contained a '&#xa0;' or a '&nbsp;'.",
-                output.contains("&#xa0;") || output.contains("&nbsp;"));
-		*/
+        Assert.isFalse(output.indexOf("?") >= 0, "Should not have contained a '?'.");
+        Assert.isTrue(output.indexOf("&#xa0;") >= 0 || output.indexOf("&nbsp;") >= 0, 
+					  "Should have contained a '&#xa0;' or a '&nbsp;'.");
     }
 }

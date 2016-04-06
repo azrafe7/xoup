@@ -133,9 +133,6 @@ class SelectorTest {
     }
 
     public function testByAttributeRegex() {
-	#if js
-		Assert.warn("js doesn't support regexp inline modifiers (f.e.: (?i))"); 
-	#end
         var doc = Jsoup.parse("<p><img src=foo.png id=1><img src=bar.jpg id=2><img src=qux.JPEG id=3><img src=old.gif><img></p>");
         var imgs = doc.select("img[src~=(?i)\\.(png|jpe?g)]");
         Assert.equals(3, imgs.size);
@@ -482,9 +479,6 @@ class SelectorTest {
     }
 
     public function testNestedHas() {
-	#if js
-		Assert.warn("js doesn't support regexp inline modifiers (f.e.: (?i))"); 
-	#end
         var doc = Jsoup.parse("<div><p><span>One</span></p></div> <div><p>Two</p></div>");
         var divs = doc.select("div:has(p:has(span))");
         Assert.equals(1, divs.size);
@@ -548,9 +542,6 @@ class SelectorTest {
     }
 
     public function testMatches() {
-	#if js
-		Assert.warn("js doesn't support regexp inline modifiers (f.e.: (?i))"); 
-	#end
         var doc = Jsoup.parse("<p id=1>The <i>Rain</i></p> <p id=2>There are 99 bottles.</p> <p id=3>Harder (this)</p> <p id=4>Rain</p>");
 
         var p1 = doc.select("p:matches(The rain)"); // no match, case sensitive
@@ -578,9 +569,6 @@ class SelectorTest {
     }
 
     public function testMatchesOwn() {
-	#if js
-		Assert.warn("js doesn't support regexp inline modifiers (f.e.: (?i))"); 
-	#end
         var doc = Jsoup.parse("<p id=1>Hello <b>there</b> now</p>");
 
         var p1 = doc.select("p:matchesOwn((?i)hello now)");

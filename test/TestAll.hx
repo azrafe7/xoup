@@ -40,6 +40,7 @@ class TestAll {
 		addNodesTests();
 		addSelectTests();
 		addParserTests();
+		
 		addParseTests();
 		
 		var report = new PrintReport(runner);
