@@ -176,7 +176,7 @@ class HtmlTreeBuilder extends TreeBuilder {
         return fragmentParsing;
     }
 
-    function error(state:Int):Void {
+    function error(state:HtmlTreeBuilderState):Void {
         if (errors.canAddError())
             errors.add(new ParseError(reader.getPos(), 'Unexpected token [${currentToken.tokenType()}] when in state [$state]'));
     }

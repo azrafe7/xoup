@@ -19,7 +19,7 @@ using unifill.Unifill;
  * The Tree Builder's current state. Each state embodies the processing for the state, and transitions to other states.
  */
 //NOTE(az): using an enum abstract
-@:enum abstract HtmlTreeBuilderState(Int) to Int {
+@:enum abstract HtmlTreeBuilderState(Int) {
     var Initial = 0;
 	var BeforeHtml = 1;
 	var BeforeHead = 2;
@@ -44,6 +44,34 @@ using unifill.Unifill;
 	var AfterAfterFrameset = 21;
 	var ForeignContent = 22;
 	
+	@:to function toString():String {
+		return switch (cast this) {
+			case Initial: "Initial";
+			case BeforeHtml: "BeforeHtml";
+			case BeforeHead: "BeforeHead";
+			case InHead: "InHead";
+			case InHeadNoscript: "InHeadNoscript";
+			case AfterHead: "AfterHead";
+			case InBody: "InBody";
+			case Text: "Text";
+			case InTable: "InTable";
+			case InTableText: "InTableText";
+			case InCaption: "InCaption";
+			case InColumnGroup: "InColumnGroup";
+			case InTableBody: "InTableBody";
+			case InRow: "InRow";
+			case InCell: "InCell";
+			case InSelect: "InSelect";
+			case InSelectInTable: "InSelectInTable";
+			case AfterBody: "AfterBody";
+			case InFrameset: "InFrameset";
+			case AfterFrameset: "AfterFrameset";
+			case AfterAfterBody: "AfterAfterBody";
+			case AfterAfterFrameset: "AfterAfterFrameset";
+			case ForeignContent: "ForeignContent";
+		}
+	}
+
 	
 	//NOTE(az): the BIG SWITCH!!
 	public function process(t:Token, tb:HtmlTreeBuilder):Bool {
@@ -78,7 +106,7 @@ using unifill.Unifill;
 				}
 				
 				if (t.isDoctype()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else if (t.isComment()) {
 					tb.insertComment(t.asComment());
@@ -90,7 +118,7 @@ using unifill.Unifill;
 				} else if (t.isEndTag() && (StringUtil.isAnyOf(t.asEndTag().getName(), ["head", "body", "html", "br"]))) {
 					return anythingElse(t, tb);
 				} else if (t.isEndTag()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else {
 					return anythingElse(t, tb);
@@ -103,7 +131,7 @@ using unifill.Unifill;
 				} else if (t.isComment()) {
 					tb.insertComment(t.asComment());
 				} else if (t.isDoctype()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else if (t.isStartTag() && t.asStartTag().getName() == ("html")) {
 					return InBody.process(t, tb); // does not transition
@@ -115,7 +143,7 @@ using unifill.Unifill;
 					tb.processStartTag("head");
 					return tb.process(t);
 				} else if (t.isEndTag()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else {
 					tb.processStartTag("head");
@@ -138,7 +166,7 @@ using unifill.Unifill;
 						tb.insertComment(t.asComment());
 						/*break;*/
 					case Doctype:
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					case StartTag:
 						var start:TokenStartTag = t.asStartTag();
@@ -169,7 +197,7 @@ using unifill.Unifill;
 							tb.transition(Text);
 							tb.insertStartTag(start);
 						} else if (name == ("head")) {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						} else {
 							return anythingElse(t, tb);
@@ -184,7 +212,7 @@ using unifill.Unifill;
 						} else if (StringUtil.isAnyOf(name, ["body", "html", "br"])) {
 							return anythingElse(t, tb);
 						} else {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						}
 						/*break;*/
@@ -195,13 +223,13 @@ using unifill.Unifill;
 			
 			case HtmlTreeBuilderState.InHeadNoscript:
 				var anythingElse = function(t:Token, tb:HtmlTreeBuilder):Bool {
-					tb.error(this);
+					tb.error(cast this);
 					tb.insertCharacter(new TokenCharacter().setData(t.toString()));
 					return true;
 				}
 				
 				if (t.isDoctype()) {
-					tb.error(this);
+					tb.error(cast this);
 				} else if (t.isStartTag() && t.asStartTag().getName() == ("html")) {
 					return tb.process(t, InBody);
 				} else if (t.isEndTag() && t.asEndTag().getName() == ("noscript")) {
@@ -213,7 +241,7 @@ using unifill.Unifill;
 				} else if (t.isEndTag() && t.asEndTag().getName() == ("br")) {
 					return anythingElse(t, tb);
 				} else if ((t.isStartTag() && StringUtil.isAnyOf(t.asStartTag().getName(), ["head", "noscript"])) || t.isEndTag()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else {
 					return anythingElse(t, tb);
@@ -232,7 +260,7 @@ using unifill.Unifill;
 				} else if (t.isComment()) {
 					tb.insertComment(t.asComment());
 				} else if (t.isDoctype()) {
-					tb.error(this);
+					tb.error(cast this);
 				} else if (t.isStartTag()) {
 					var startTag:TokenStartTag = t.asStartTag();
 					var name:String = startTag.getName();
@@ -246,13 +274,13 @@ using unifill.Unifill;
 						tb.insertStartTag(startTag);
 						tb.transition(InFrameset);
 					} else if (StringUtil.isAnyOf(name, ["base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "title"])) {
-						tb.error(this);
+						tb.error(cast this);
 						var head:Element = tb.getHeadElement();
 						tb.push(head);
 						tb.process(t, InHead);
 						tb.removeFromStack(head);
 					} else if (name == ("head")) {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					} else {
 						anythingElse(t, tb);
@@ -261,7 +289,7 @@ using unifill.Unifill;
 					if (StringUtil.isAnyOf(t.asEndTag().getName(), ["body", "html"])) {
 						anythingElse(t, tb);
 					} else {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					}
 				} else {
@@ -279,12 +307,12 @@ using unifill.Unifill;
 						if (node.nodeName() == (name)) {
 							tb.generateImpliedEndTags(name);
 							if (!(name == (tb.currentElement().nodeName())))
-								tb.error(this);
+								tb.error(cast this);
 							tb.popStackToClose(name);
 							break;
 						} else {
 							if (tb.isSpecial(node)) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							}
 						}
@@ -298,7 +326,7 @@ using unifill.Unifill;
 						var c:TokenCharacter = t.asCharacter();
 						if (c.getData() == (nullString)) {
 							// todo confirm that check
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						} else if (tb.getFramesetOk() && isWhitespace(c)) { // don't check if whitespace if frames already closed
 							tb.reconstructFormattingElements();
@@ -315,7 +343,7 @@ using unifill.Unifill;
 						/*break;*/
 					}
 					case TokenType.Doctype: {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					}
 					case TokenType.StartTag:
@@ -323,7 +351,7 @@ using unifill.Unifill;
 						var name:String = startTag.getName();
 						if (name == ("a")) {
 							if (tb.getActiveFormattingElement("a") != null) {
-								tb.error(this);
+								tb.error(cast this);
 								tb.processEndTag("a");
 
 								// still on stack?
@@ -368,7 +396,7 @@ using unifill.Unifill;
 							}
 							tb.insertStartTag(startTag);
 						} else if (name == ("html")) {
-							tb.error(this);
+							tb.error(cast this);
 							// merge attributes onto real html
 							var html:Element = tb.getStack().get(0);
 							for (attribute in startTag.getAttributes()) {
@@ -378,7 +406,7 @@ using unifill.Unifill;
 						} else if (StringUtil.isAnyOfSorted(name, Constants.InBodyStartToHead)) {
 							return tb.process(t, InHead);
 						} else if (name == ("body")) {
-							tb.error(this);
+							tb.error(cast this);
 							var stack:ArrayList<Element> = tb.getStack();
 							if (stack.size == 1 || (stack.size > 2 && !(stack.get(1).nodeName() == ("body")))) {
 								// only in fragment case
@@ -392,7 +420,7 @@ using unifill.Unifill;
 								}
 							}
 						} else if (name == ("frameset")) {
-							tb.error(this);
+							tb.error(cast this);
 							var stack:ArrayList<Element> = tb.getStack();
 							if (stack.size == 1 || (stack.size > 2 && !(stack.get(1).nodeName() == ("body")))) {
 								// only in fragment case
@@ -414,7 +442,7 @@ using unifill.Unifill;
 								tb.processEndTag("p");
 							}
 							if (StringUtil.isAnyOfSorted(tb.currentElement().nodeName(), Constants.Headings)) {
-								tb.error(this);
+								tb.error(cast this);
 								tb.pop();
 							}
 							tb.insertStartTag(startTag);
@@ -427,7 +455,7 @@ using unifill.Unifill;
 							tb.setFramesetOk(false);
 						} else if (name == ("form")) {
 							if (tb.getFormElement() != null) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							}
 							if (tb.inButtonScope("p")) {
@@ -461,7 +489,7 @@ using unifill.Unifill;
 						} else if (name == ("button")) {
 							if (tb.inButtonScope("button")) {
 								// close and reprocess
-								tb.error(this);
+								tb.error(cast this);
 								tb.processEndTag("button");
 								tb.process(startTag);
 							} else {
@@ -476,7 +504,7 @@ using unifill.Unifill;
 						} else if (name == ("nobr")) {
 							tb.reconstructFormattingElements();
 							if (tb.inScopeSingle("nobr")) {
-								tb.error(this);
+								tb.error(cast this);
 								tb.processEndTag("nobr");
 								tb.reconstructFormattingElements();
 							}
@@ -514,7 +542,7 @@ using unifill.Unifill;
 								tb.insertStartTag(startTag);
 						} else if (name == ("isindex")) {
 							// how much do we care about the early 90s?
-							tb.error(this);
+							tb.error(cast this);
 							if (tb.getFormElement() != null)
 								return false;
 
@@ -583,7 +611,7 @@ using unifill.Unifill;
 							if (tb.inScopeSingle("ruby")) {
 								tb.generateImpliedEndTags();
 								if (!(tb.currentElement().nodeName() == ("ruby"))) {
-									tb.error(this);
+									tb.error(cast this);
 									tb.popStackToBefore("ruby"); // i.e. close up to but not include name
 								}
 								tb.insertStartTag(startTag);
@@ -599,7 +627,7 @@ using unifill.Unifill;
 							tb.insertStartTag(startTag);
 							tb.tokeniser.acknowledgeSelfClosingFlag();
 						} else if (StringUtil.isAnyOfSorted(name, Constants.InBodyStartDrop)) {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						} else {
 							tb.reconstructFormattingElements();
@@ -617,14 +645,14 @@ using unifill.Unifill;
 								if (formatEl == null)
 									return anyOtherEndTag(t, tb);
 								else if (!tb.onStack(formatEl)) {
-									tb.error(this);
+									tb.error(cast this);
 									tb.removeFromActiveFormattingElements(formatEl);
 									return true;
 								} else if (!tb.inScopeSingle(formatEl.nodeName())) {
-									tb.error(this);
+									tb.error(cast this);
 									return false;
 								} else if (tb.currentElement() != formatEl)
-									tb.error(this);
+									tb.error(cast this);
 
 								var furthestBlock:Element = null;
 								var commonAncestor:Element = null;
@@ -705,12 +733,12 @@ using unifill.Unifill;
 						} else if (StringUtil.isAnyOfSorted(name, Constants.InBodyEndClosers)) {
 							if (!tb.inScopeSingle(name)) {
 								// nothing to close
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								tb.generateImpliedEndTags();
 								if (!(tb.currentElement().nodeName() == (name)))
-									tb.error(this);
+									tb.error(cast this);
 								tb.popStackToClose(name);
 							}
 						} else if (name == ("span")) {
@@ -718,17 +746,17 @@ using unifill.Unifill;
 							return anyOtherEndTag(t, tb);
 						} else if (name == ("li")) {
 							if (!tb.inListItemScope(name)) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								tb.generateImpliedEndTags(name);
 								if (!(tb.currentElement().nodeName() == (name)))
-									tb.error(this);
+									tb.error(cast this);
 								tb.popStackToClose(name);
 							}
 						} else if (name == ("body")) {
 							if (!tb.inScopeSingle("body")) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								// todo: error if stack contains something not dd, dt, li, optgroup, option, p, rp, rt, tbody, td, tfoot, th, thead, tr, body, html
@@ -742,44 +770,44 @@ using unifill.Unifill;
 							var currentForm:Element = tb.getFormElement();
 							tb.setFormElement(null);
 							if (currentForm == null || !tb.inScopeSingle(name)) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								tb.generateImpliedEndTags();
 								if (!(tb.currentElement().nodeName() == (name)))
-									tb.error(this);
+									tb.error(cast this);
 								// remove currentForm from stack. will shift anything under up.
 								tb.removeFromStack(currentForm);
 							}
 						} else if (name == ("p")) {
 							if (!tb.inButtonScope(name)) {
-								tb.error(this);
+								tb.error(cast this);
 								tb.processStartTag(name); // if no p to close, creates an empty <p></p>
 								return tb.process(endTag);
 							} else {
 								tb.generateImpliedEndTags(name);
 								if (!(tb.currentElement().nodeName() == (name)))
-									tb.error(this);
+									tb.error(cast this);
 								tb.popStackToClose(name);
 							}
 						} else if (StringUtil.isAnyOfSorted(name, Constants.DdDt)) {
 							if (!tb.inScopeSingle(name)) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								tb.generateImpliedEndTags(name);
 								if (!(tb.currentElement().nodeName() == (name)))
-									tb.error(this);
+									tb.error(cast this);
 								tb.popStackToClose(name);
 							}
 						} else if (StringUtil.isAnyOfSorted(name, Constants.Headings)) {
 							if (!tb.inScope(Constants.Headings)) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								tb.generateImpliedEndTags(name);
 								if (!(tb.currentElement().nodeName() == (name)))
-									tb.error(this);
+									tb.error(cast this);
 								tb.popStackToCloseAny(Constants.Headings);
 							}
 						} else if (name == ("sarcasm")) {
@@ -788,17 +816,17 @@ using unifill.Unifill;
 						} else if (StringUtil.isAnyOfSorted(name, Constants.InBodyStartApplets)) {
 							if (!tb.inScopeSingle("name")) {
 								if (!tb.inScopeSingle(name)) {
-									tb.error(this);
+									tb.error(cast this);
 									return false;
 								}
 								tb.generateImpliedEndTags();
 								if (!(tb.currentElement().nodeName() == (name)))
-									tb.error(this);
+									tb.error(cast this);
 								tb.popStackToClose(name);
 								tb.clearFormattingElementsToLastMarker();
 							}
 						} else if (name == ("br")) {
-							tb.error(this);
+							tb.error(cast this);
 							tb.processStartTag("br");
 							return false;
 						} else {
@@ -818,7 +846,7 @@ using unifill.Unifill;
 				if (t.isCharacter()) {
 					tb.insertCharacter(t.asCharacter());
 				} else if (t.isEOF()) {
-					tb.error(this);
+					tb.error(cast this);
 					// if current node is script: already started
 					tb.pop();
 					tb.transition(tb.getOriginalState());
@@ -832,7 +860,7 @@ using unifill.Unifill;
     
 			case HtmlTreeBuilderState.InTable:
 				var anythingElse = function(t:Token, tb:HtmlTreeBuilder):Bool {
-					tb.error(this);
+					tb.error(cast this);
 					var processed:Bool;
 					if (StringUtil.isAnyOf(tb.currentElement().nodeName(), ["table", "tbody", "tfoot", "thead", "tr"])) {
 						tb.setFosterInserts(true);
@@ -852,7 +880,7 @@ using unifill.Unifill;
 					tb.insertComment(t.asComment());
 					return true;
 				} else if (t.isDoctype()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else if (t.isStartTag()) {
 					var startTag:TokenStartTag = t.asStartTag();
@@ -877,7 +905,7 @@ using unifill.Unifill;
 						tb.processStartTag("tbody");
 						return tb.process(t);
 					} else if (name == ("table")) {
-						tb.error(this);
+						tb.error(cast this);
 						var processed:Bool = tb.processEndTag("table");
 						if (processed) // only ignored if in fragment
 							return tb.process(t);
@@ -890,7 +918,7 @@ using unifill.Unifill;
 							tb.insertEmpty(startTag);
 						}
 					} else if (name == ("form")) {
-						tb.error(this);
+						tb.error(cast this);
 						if (tb.getFormElement() != null)
 							return false;
 						else {
@@ -906,7 +934,7 @@ using unifill.Unifill;
 
 					if (name == ("table")) {
 						if (!tb.inTableScope(name)) {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						} else {
 							tb.popStackToClose("table");
@@ -914,7 +942,7 @@ using unifill.Unifill;
 						tb.resetInsertionMode();
 					} else if (StringUtil.isAnyOf(name,
 							["body", "caption", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"])) {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					} else {
 						return anythingElse(t, tb);
@@ -922,7 +950,7 @@ using unifill.Unifill;
 					return true; // todo: as above todo
 				} else if (t.isEOF()) {
 					if (tb.currentElement().nodeName() == ("html"))
-						tb.error(this);
+						tb.error(cast this);
 					return true; // stops parsing
 				}
 				return anythingElse(t, tb);
@@ -932,7 +960,7 @@ using unifill.Unifill;
 					case TokenType.Character:
 						var c:TokenCharacter = t.asCharacter();
 						if (c.getData() == (nullString)) {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						} else {
 							tb.getPendingTableCharacters().add(c.getData());
@@ -944,7 +972,7 @@ using unifill.Unifill;
 							for (character in tb.getPendingTableCharacters()) {
 								if (!_isWhitespace(character)) {
 									// InTable anything else section:
-									tb.error(this);
+									tb.error(cast this);
 									if (StringUtil.isAnyOf(tb.currentElement().nodeName(), ["table", "tbody", "tfoot", "thead", "tr"])) {
 										tb.setFosterInserts(true);
 										tb.process(new TokenCharacter().setData(character), InBody);
@@ -967,12 +995,12 @@ using unifill.Unifill;
 					var endTag:TokenEndTag = t.asEndTag();
 					var name:String = endTag.getName();
 					if (!tb.inTableScope(name)) {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					} else {
 						tb.generateImpliedEndTags();
 						if (!(tb.currentElement().nodeName() == ("caption")))
-							tb.error(this);
+							tb.error(cast this);
 						tb.popStackToClose("caption");
 						tb.clearFormattingElementsToLastMarker();
 						tb.transition(InTable);
@@ -982,13 +1010,13 @@ using unifill.Unifill;
 								["caption", "col", "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr"]) ||
 								t.isEndTag() && t.asEndTag().getName() == ("table"))
 						) {
-					tb.error(this);
+					tb.error(cast this);
 					var processed:Bool = tb.processEndTag("caption");
 					if (processed)
 						return tb.process(t);
 				} else if (t.isEndTag() && StringUtil.isAnyOf(t.asEndTag().getName(),
 						["body", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"])) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else {
 					return tb.process(t, InBody);
@@ -1012,7 +1040,7 @@ using unifill.Unifill;
 						tb.insertComment(t.asComment());
 						/*break;*/
 					case TokenType.Doctype:
-						tb.error(this);
+						tb.error(cast this);
 						/*break;*/
 					case TokenType.StartTag:
 						var startTag:TokenStartTag = t.asStartTag();
@@ -1029,7 +1057,7 @@ using unifill.Unifill;
 						var name = endTag.getName();
 						if (name == ("colgroup")) {
 							if (tb.currentElement().nodeName() == ("html")) { // frag case
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								tb.pop();
@@ -1052,7 +1080,7 @@ using unifill.Unifill;
 				var exitTableBody = function(t:Token, tb:HtmlTreeBuilder):Bool {
 					if (!(tb.inTableScope("tbody") || tb.inTableScope("thead") || tb.inScopeSingle("tfoot"))) {
 						// frag case
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					}
 					tb.clearStackToTableBodyContext();
@@ -1073,7 +1101,7 @@ using unifill.Unifill;
 							tb.insertStartTag(startTag);
 							tb.transition(InRow);
 						} else if (StringUtil.isAnyOf(name, ["th", "td"])) {
-							tb.error(this);
+							tb.error(cast this);
 							tb.processStartTag("tr");
 							return tb.process(startTag);
 						} else if (StringUtil.isAnyOf(name, ["caption", "col", "colgroup", "tbody", "tfoot", "thead"])) {
@@ -1086,7 +1114,7 @@ using unifill.Unifill;
 						var name = endTag.getName();
 						if (StringUtil.isAnyOf(name, ["tbody", "tfoot", "thead"])) {
 							if (!tb.inTableScope(name)) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								tb.clearStackToTableBodyContext();
@@ -1096,7 +1124,7 @@ using unifill.Unifill;
 						} else if (name == ("table")) {
 							return exitTableBody(t, tb);
 						} else if (StringUtil.isAnyOf(name, ["body", "caption", "col", "colgroup", "html", "td", "th", "tr"])) {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						} else
 							return anythingElse(t, tb);
@@ -1139,7 +1167,7 @@ using unifill.Unifill;
 
 					if (name == ("tr")) {
 						if (!tb.inTableScope(name)) {
-							tb.error(this); // frag
+							tb.error(cast this); // frag
 							return false;
 						}
 						tb.clearStackToTableRowContext();
@@ -1149,13 +1177,13 @@ using unifill.Unifill;
 						return handleMissingTr(t, tb);
 					} else if (StringUtil.isAnyOf(name, ["tbody", "tfoot", "thead"])) {
 						if (!tb.inTableScope(name)) {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						}
 						tb.processEndTag("tr");
 						return tb.process(t);
 					} else if (StringUtil.isAnyOf(name, ["body", "caption", "col", "colgroup", "html", "td", "th"])) {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					} else {
 						return anythingElse(t, tb);
@@ -1183,22 +1211,22 @@ using unifill.Unifill;
 
 					if (StringUtil.isAnyOf(name, ["td", "th"])) {
 						if (!tb.inTableScope(name)) {
-							tb.error(this);
+							tb.error(cast this);
 							tb.transition(InRow); // might not be in scope if empty: <td /> and processing fake end tag
 							return false;
 						}
 						tb.generateImpliedEndTags();
 						if (!(tb.currentElement().nodeName() == (name)))
-							tb.error(this);
+							tb.error(cast this);
 						tb.popStackToClose(name);
 						tb.clearFormattingElementsToLastMarker();
 						tb.transition(InRow);
 					} else if (StringUtil.isAnyOf(name, ["body", "caption", "col", "colgroup", "html"])) {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					} else if (StringUtil.isAnyOf(name, ["table", "tbody", "tfoot", "thead", "tr"])) {
 						if (!tb.inTableScope(name)) {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						}
 						closeCell(tb);
@@ -1210,7 +1238,7 @@ using unifill.Unifill;
 						StringUtil.isAnyOf(t.asStartTag().getName(),
 								["caption", "col", "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr"])) {
 					if (!(tb.inTableScope("td") || tb.inTableScope("th"))) {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					}
 					closeCell(tb);
@@ -1222,7 +1250,7 @@ using unifill.Unifill;
 			
 			case HtmlTreeBuilderState.InSelect:
 				var anythingElse = function(t:Token, tb:HtmlTreeBuilder):Bool {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				}
 				
@@ -1230,7 +1258,7 @@ using unifill.Unifill;
 					case TokenType.Character:
 						var c:TokenCharacter = t.asCharacter();
 						if (c.getData() == (nullString)) {
-							tb.error(this);
+							tb.error(cast this);
 							return false;
 						} else {
 							tb.insertCharacter(c);
@@ -1240,7 +1268,7 @@ using unifill.Unifill;
 						tb.insertComment(t.asComment());
 						/*break;*/
 					case TokenType.Doctype:
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					case TokenType.StartTag:
 						var start:TokenStartTag = t.asStartTag();
@@ -1257,10 +1285,10 @@ using unifill.Unifill;
 								tb.processEndTag("optgroup");
 							tb.insertStartTag(start);
 						} else if (name == ("select")) {
-							tb.error(this);
+							tb.error(cast this);
 							return tb.processEndTag("select");
 						} else if (StringUtil.isAnyOf(name, ["input", "keygen", "textarea"])) {
-							tb.error(this);
+							tb.error(cast this);
 							if (!tb.inSelectScope("select"))
 								return false; // frag
 							tb.processEndTag("select");
@@ -1280,15 +1308,15 @@ using unifill.Unifill;
 							if (tb.currentElement().nodeName() == ("optgroup"))
 								tb.pop();
 							else
-								tb.error(this);
+								tb.error(cast this);
 						} else if (name == ("option")) {
 							if (tb.currentElement().nodeName() == ("option"))
 								tb.pop();
 							else
-								tb.error(this);
+								tb.error(cast this);
 						} else if (name == ("select")) {
 							if (!tb.inSelectScope(name)) {
-								tb.error(this);
+								tb.error(cast this);
 								return false;
 							} else {
 								tb.popStackToClose(name);
@@ -1299,7 +1327,7 @@ using unifill.Unifill;
 						/*break;*/
 					case TokenType.EOF:
 						if (!(tb.currentElement().nodeName() == ("html")))
-							tb.error(this);
+							tb.error(cast this);
 						/*break;*/
 					default:
 						return anythingElse(t, tb);
@@ -1308,11 +1336,11 @@ using unifill.Unifill;
 			
 			case HtmlTreeBuilderState.InSelectInTable:
 				if (t.isStartTag() && StringUtil.isAnyOf(t.asStartTag().getName(), ["caption", "table", "tbody", "tfoot", "thead", "tr", "td", "th"])) {
-					tb.error(this);
+					tb.error(cast this);
 					tb.processEndTag("select");
 					return tb.process(t);
 				} else if (t.isEndTag() && StringUtil.isAnyOf(t.asEndTag().getName(), ["caption", "table", "tbody", "tfoot", "thead", "tr", "td", "th"])) {
-					tb.error(this);
+					tb.error(cast this);
 					if (tb.inTableScope(t.asEndTag().getName())) {
 						tb.processEndTag("select");
 						return (tb.process(t));
@@ -1328,13 +1356,13 @@ using unifill.Unifill;
 				} else if (t.isComment()) {
 					tb.insertComment(t.asComment()); // into html node
 				} else if (t.isDoctype()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else if (t.isStartTag() && t.asStartTag().getName() == ("html")) {
 					return tb.process(t, InBody);
 				} else if (t.isEndTag() && t.asEndTag().getName() == ("html")) {
 					if (tb.isFragmentParsing()) {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					} else {
 						tb.transition(AfterAfterBody);
@@ -1342,7 +1370,7 @@ using unifill.Unifill;
 				} else if (t.isEOF()) {
 					// chillax! we're done
 				} else {
-					tb.error(this);
+					tb.error(cast this);
 					tb.transition(InBody);
 					return tb.process(t);
 				}
@@ -1354,7 +1382,7 @@ using unifill.Unifill;
 				} else if (t.isComment()) {
 					tb.insertComment(t.asComment());
 				} else if (t.isDoctype()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else if (t.isStartTag()) {
 					var start:TokenStartTag = t.asStartTag();
@@ -1368,12 +1396,12 @@ using unifill.Unifill;
 					} else if (name == ("noframes")) {
 						return tb.process(start, InHead);
 					} else {
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					}
 				} else if (t.isEndTag() && t.asEndTag().getName() == ("frameset")) {
 					if (tb.currentElement().nodeName() == ("html")) { // frag
-						tb.error(this);
+						tb.error(cast this);
 						return false;
 					} else {
 						tb.pop();
@@ -1383,11 +1411,11 @@ using unifill.Unifill;
 					}
 				} else if (t.isEOF()) {
 					if (!(tb.currentElement().nodeName() == ("html"))) {
-						tb.error(this);
+						tb.error(cast this);
 						return true;
 					}
 				} else {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				}
 				return true;
@@ -1398,7 +1426,7 @@ using unifill.Unifill;
 				} else if (t.isComment()) {
 					tb.insertComment(t.asComment());
 				} else if (t.isDoctype()) {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				} else if (t.isStartTag() && t.asStartTag().getName() == ("html")) {
 					return tb.process(t, InBody);
@@ -1409,7 +1437,7 @@ using unifill.Unifill;
 				} else if (t.isEOF()) {
 					// cool your heels, we're complete
 				} else {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				}
 				return true;
@@ -1422,7 +1450,7 @@ using unifill.Unifill;
 				} else if (t.isEOF()) {
 					// nice work chuck
 				} else {
-					tb.error(this);
+					tb.error(cast this);
 					tb.transition(InBody);
 					return tb.process(t);
 				}
@@ -1438,7 +1466,7 @@ using unifill.Unifill;
 				} else if (t.isStartTag() && t.asStartTag().getName() == ("noframes")) {
 					return tb.process(t, InHead);
 				} else {
-					tb.error(this);
+					tb.error(cast this);
 					return false;
 				}
 				return true;

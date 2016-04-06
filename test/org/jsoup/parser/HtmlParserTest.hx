@@ -6,6 +6,7 @@ import haxe.Timer;
 import org.jsoup.helper.StringBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Entities.EscapeMode;
+import org.jsoup.parser.tokens.Token.TokenDoctype;
 import org.jsoup.TextUtil;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.integration.ParseTest;
@@ -701,8 +702,8 @@ class HtmlParserTest {
         var errors:List<ParseError> = parser.getErrors();
         Assert.equals(5, errors.size);
         Assert.equals("20: Attributes incorrectly present on end tag", errors.get(0).toString());
-        Assert.equals("35: Unexpected token [Doctype] when in state [InBody]", errors.get(1).toString());
-        Assert.equals("36: Invalid character reference: invalid named referenece 'arrgh'", errors.get(2).toString());
+		Assert.equals('35: Unexpected token [${new TokenDoctype().tokenType()}] when in state [${HtmlTreeBuilderState.InBody}]', errors.get(1).toString());
+        Assert.equals("36: Invalid character reference: invalid named reference 'arrgh'", errors.get(2).toString());
         Assert.equals("50: Self closing flag not acknowledged", errors.get(3).toString());
         Assert.equals("61: Unexpectedly reached end of file (EOF) in input state [TagName]", errors.get(4).toString());
     }
@@ -715,8 +716,8 @@ class HtmlParserTest {
         var errors:List<ParseError> = parser.getErrors();
         Assert.equals(3, errors.size);
         Assert.equals("20: Attributes incorrectly present on end tag", errors.get(0).toString());
-        Assert.equals("35: Unexpected token [Doctype] when in state [InBody]", errors.get(1).toString());
-        Assert.equals("36: Invalid character reference: invalid named referenece 'arrgh'", errors.get(2).toString());
+		Assert.equals('35: Unexpected token [${new TokenDoctype().tokenType()}] when in state [${HtmlTreeBuilderState.InBody}]', errors.get(1).toString());
+        Assert.equals("36: Invalid character reference: invalid named reference 'arrgh'", errors.get(2).toString());
     }
 
     public function testNoErrorsByDefault() {

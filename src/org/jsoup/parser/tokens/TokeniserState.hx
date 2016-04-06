@@ -13,7 +13,7 @@ using StringTools;
  * States and transition activations for the TokeniserState.
  */
 //NOTE(az): using an enum abstract
-@:enum abstract TokeniserState(Int) to Int {
+@:enum abstract TokeniserState(Int) {
 	var Data                                    = 0;
 	var CharacterReferenceInData                = 1;
 	var Rcdata                                  = 2;
@@ -82,7 +82,78 @@ using StringTools;
 	var BogusDoctype                            = 65;
 	var CdataSection                            = 66;
 	
-
+	@:to function toString():String {
+		return switch (cast this) {
+			case Data                                    : "Data";
+			case CharacterReferenceInData                : "CharacterReferenceInData";
+			case Rcdata                                  : "Rcdata";
+			case CharacterReferenceInRcdata              : "CharacterReferenceInRcdata";
+			case Rawtext                                 : "Rawtext";
+			case ScriptData                              : "ScriptData";
+			case PLAINTEXT                               : "PLAINTEXT";
+			case TagOpen                                 : "TagOpen";
+			case EndTagOpen                              : "EndTagOpen";
+			case TagName                                 : "TagName";
+			case RcdataLessthanSign                      : "RcdataLessthanSign";
+			case RCDATAEndTagOpen                        : "RCDATAEndTagOpen";
+			case RCDATAEndTagName                        : "RCDATAEndTagName";
+			case RawtextLessthanSign                     : "RawtextLessthanSign";
+			case RawtextEndTagOpen                       : "RawtextEndTagOpen";
+			case RawtextEndTagName                       : "RawtextEndTagName";
+			case ScriptDataLessthanSign                  : "ScriptDataLessthanSign";
+			case ScriptDataEndTagOpen                    : "ScriptDataEndTagOpen";
+			case ScriptDataEndTagName                    : "ScriptDataEndTagName";
+			case ScriptDataEscapeStart                   : "ScriptDataEscapeStart";
+			case ScriptDataEscapeStartDash               : "ScriptDataEscapeStartDash";
+			case ScriptDataEscaped                       : "ScriptDataEscaped";
+			case ScriptDataEscapedDash                   : "ScriptDataEscapedDash";
+			case ScriptDataEscapedDashDash               : "ScriptDataEscapedDashDash";
+			case ScriptDataEscapedLessthanSign           : "ScriptDataEscapedLessthanSign";
+			case ScriptDataEscapedEndTagOpen             : "ScriptDataEscapedEndTagOpen";
+			case ScriptDataEscapedEndTagName             : "ScriptDataEscapedEndTagName";
+			case ScriptDataDoubleEscapeStart             : "ScriptDataDoubleEscapeStart";
+			case ScriptDataDoubleEscaped                 : "ScriptDataDoubleEscaped";
+			case ScriptDataDoubleEscapedDash             : "ScriptDataDoubleEscapedDash";
+			case ScriptDataDoubleEscapedDashDash         : "ScriptDataDoubleEscapedDashDash";
+			case ScriptDataDoubleEscapedLessthanSign     : "ScriptDataDoubleEscapedLessthanSign";
+			case ScriptDataDoubleEscapeEnd               : "ScriptDataDoubleEscapeEnd";
+			case BeforeAttributeName                     : "BeforeAttributeName";
+			case AttributeName                           : "AttributeName";
+			case AfterAttributeName                      : "AfterAttributeName";
+			case BeforeAttributeValue                    : "BeforeAttributeValue";
+			case AttributeValue_doubleQuoted             : "AttributeValue_doubleQuoted";
+			case AttributeValue_singleQuoted             : "AttributeValue_singleQuoted";
+			case AttributeValue_unquoted                 : "AttributeValue_unquoted";
+			case AfterAttributeValue_quoted              : "AfterAttributeValue_quoted";
+			case SelfClosingStartTag                     : "SelfClosingStartTag";
+			case BogusComment                            : "BogusComment";
+			case MarkupDeclarationOpen                   : "MarkupDeclarationOpen";
+			case CommentStart                            : "CommentStart";
+			case CommentStartDash                        : "CommentStartDash";
+			case Comment                                 : "Comment";
+			case CommentEndDash                          : "CommentEndDash";
+			case CommentEnd                              : "CommentEnd";
+			case CommentEndBang                          : "CommentEndBang";
+			case Doctype                                 : "Doctype";
+			case BeforeDoctypeName                       : "BeforeDoctypeName";
+			case DoctypeName                             : "DoctypeName";
+			case AfterDoctypeName                        : "AfterDoctypeName";
+			case AfterDoctypePublicKeyword               : "AfterDoctypePublicKeyword";
+			case BeforeDoctypePublicIdentifier           : "BeforeDoctypePublicIdentifier";
+			case DoctypePublicIdentifier_doubleQuoted    : "DoctypePublicIdentifier_doubleQuoted";
+			case DoctypePublicIdentifier_singleQuoted    : "DoctypePublicIdentifier_singleQuoted";
+			case AfterDoctypePublicIdentifier            : "AfterDoctypePublicIdentifier";
+			case BetweenDoctypePublicAndSystemIdentifiers: "BetweenDoctypePublicAndSystemIdentifiers";
+			case AfterDoctypeSystemKeyword               : "AfterDoctypeSystemKeyword";
+			case BeforeDoctypeSystemIdentifier           : "BeforeDoctypeSystemIdentifier";
+			case DoctypeSystemIdentifier_doubleQuoted    : "DoctypeSystemIdentifier_doubleQuoted";
+			case DoctypeSystemIdentifier_singleQuoted    : "DoctypeSystemIdentifier_singleQuoted";
+			case AfterDoctypeSystemIdentifier            : "AfterDoctypeSystemIdentifier";
+			case BogusDoctype                            : "BogusDoctype";
+			case CdataSection                            : "CdataSection";
+		}
+	}
+	
 	//NOTE(az): the BIG SWITCH!!
 	public function read(t:Tokeniser, r:CharacterReader):Void {
 	
