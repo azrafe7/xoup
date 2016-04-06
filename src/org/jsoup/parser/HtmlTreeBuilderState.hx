@@ -1533,7 +1533,7 @@ private /*static final*/ class Constants {
 	private static var InBodyStartApplets = ["applet", "marquee", "object"];
 	private static var InBodyStartEmptyFormatters = ["area", "br", "embed", "img", "keygen", "wbr"];
 	private static var InBodyStartMedia = ["param", "source", "track"];
-	private static var InBodyStartInputAttribs = ["name", "action", "prompt"];
+	private static var InBodyStartInputAttribs = ["action", "name", "prompt"];
 	private static var InBodyStartOptions = ["optgroup", "option"];
 	private static var InBodyStartRuby = ["rp", "rt"];
 	private static var InBodyStartDrop = ["caption", "col", "colgroup", "frame", "head", "tbody", "td", "tfoot", "th", "thead", "tr"];
