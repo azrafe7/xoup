@@ -132,22 +132,22 @@ class Entities {
             if (normaliseWhite) {
                 if (StringUtil.isWhitespace(codePoint)) {
                     if ((stripLeadingWhite && !reachedNonWhite) || lastWasWhite) {
-						offset += codePoint.toString().uLength();
+						offset++;
 						continue;
 					}
                     accum.add(' ');
                     lastWasWhite = true;
-					offset += codePoint.toString().uLength();
+					offset++;
 					continue;
                 } else {
                     lastWasWhite = false;
                     reachedNonWhite = true;
                 }
             }
+			var codePointStr = codePoint.toString();
             // surrogate pairs, split implementation for efficiency on single char common case (saves creating strings, char[]):
             if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
                 var c:Int = codePoint;
-				var cpStr = codePoint.toString();
                 // html specific and required escapes:
                 switch (c) {
                     case '&'.code:
@@ -167,18 +167,18 @@ class Entities {
                         if (!inAttribute)
                             accum.add("&gt;");
                         else
-                            accum.add(cpStr);
+                            accum.add(codePointStr);
                     case '"'.code:
                         if (inAttribute)
                             accum.add("&quot;");
                         else
-                            accum.add(cpStr);
+                            accum.add(codePointStr);
                     default:
                         if (canEncode(coreCharset, c, encoder))
-                            accum.add(cpStr);
-                        else if (map.exists(cpStr)) {
+                            accum.add(codePointStr);
+                        else if (map.exists(codePointStr)) {
                             accum.add('&');
-							accum.add(map.get(cpStr));
+							accum.add(map.get(codePointStr));
 							accum.add(';');
 						}
                         else {
@@ -188,17 +188,22 @@ class Entities {
 						}
                 }
             } else {
-                var cStr:String = codePoint.toString();
                 if (encoder.canEncode(codePoint)) { // uses fallback encoder for simplicity
-                    accum.add(cStr);
-                } else {
+                    accum.add(codePointStr);
+				}
+				else if (map.exists(codePointStr)) {
+					accum.add('&');
+					accum.add(map.get(codePointStr));
+					accum.add(';');
+                } 
+				else {
                     accum.add("&#x");
 					accum.add(StringUtil.toHex(codePoint));
 					accum.add(';');
 				}
             }
 			
-			offset += codePoint.toString().uLength();
+			offset += codePointStr.uLength();
         }
     }
 
