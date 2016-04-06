@@ -21,7 +21,7 @@ import org.jsoup.select.CssTest;
 import org.jsoup.select.ElementsTest;
 import org.jsoup.select.QueryParserTest;
 import org.jsoup.select.SelectorTest;
-//import org.jsoup.parser.HtmlParserTest;
+import org.jsoup.parser.HtmlParserTest;
 import utest.TestFixture;
 import utest.ui.text.PrintReport;
 
@@ -79,7 +79,7 @@ class TestAll {
 		runner.addCase(new TokenQueueTest());
 		runner.addCase(new XmlTreeBuilderTest());
 		runner.addCase(new CharacterReaderTest());
-		//runner.addCase(new HtmlParserTest());
+		runner.addCase(new HtmlParserTest());
 	}
 
 	static function addParseTests() {
