@@ -17,10 +17,10 @@ import org.jsoup.nodes.BooleanAttribute;
     private function new() {
     }
     
-    function tokenType():String {
+    public function tokenType():String {
         //NOTE(az): using Type here
 		//return this.getClass().getSimpleName();
-		return Type.getClassName(Type.getClass(this));
+		return Type.getClassName(Type.getClass(this)).split(".").pop();
     }
 
     /**
