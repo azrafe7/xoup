@@ -263,8 +263,13 @@ class QueryParser {
             else if (cq.matchChomp("*="))
                 evals.add(new EvaluatorAttributeWithValueContaining(key, cq.remainder()));
 
-            else if (cq.matchChomp("~="))
-                evals.add(new EvaluatorAttributeWithValueMatching(key, new EReg(cq.remainder(), ""))); // NOTE(az): Pattern
+            else if (cq.matchChomp("~=")) {
+			#if (js)
+				evals.add(new EvaluatorAttributeWithValueMatching(key, InternalTools.jsRegexpHack(cq.remainder()))); // NOTE(az): Pattern
+			#else
+				evals.add(new EvaluatorAttributeWithValueMatching(key, new EReg(cq.remainder(), ""))); // NOTE(az): Pattern
+			#end
+			}
             else
                 throw new SelectorParseException('Could not parse attribute query "$query": unexpected token at "${cq.remainder()}"');
         }
@@ -360,10 +365,16 @@ class QueryParser {
         var regex:String = tq.chompBalanced('('.code, ')'.code); // don't unescape, as regex bits will be escaped
         Validate.notEmpty(regex, ":matches(regex) query must not be empty");
 
+	#if (js)
+		var ereg = InternalTools.jsRegexpHack(regex);
+	#else
+		var ereg = new EReg(regex, "");
+	#end
+		
         if (own)
-            evals.add(new EvaluatorMatchesOwn(new EReg(regex, "")));
+            evals.add(new EvaluatorMatchesOwn(ereg));
         else
-			evals.add(new EvaluatorMatches(new EReg(regex, "")));
+			evals.add(new EvaluatorMatches(ereg));
     }
 
     // :not(selector)

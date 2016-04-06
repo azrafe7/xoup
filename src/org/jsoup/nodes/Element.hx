@@ -770,7 +770,6 @@ class Element extends Node {
      */
     public function getElementsByAttributeValueMatchingPattern(key:String, pattern:EReg):Elements {
         return Collector.collect(new EvaluatorAttributeWithValueMatching(key, pattern), this);
-        
     }
     
     /**
@@ -858,7 +857,11 @@ class Element extends Node {
     public function getElementsMatchingText(regex:String):Elements {
         var pattern;
         try {
-            pattern = new EReg(regex, "");
+		#if (js)
+			pattern = InternalTools.jsRegexpHack(regex);
+		#else
+			pattern = new EReg(regex, "");
+		#end
         } catch (e:Dynamic) {
             throw new IllegalArgumentException("Pattern syntax error: " + regex + ". " + e);
         }
