@@ -173,10 +173,9 @@ import java.util.Locale;
     function consumeToAnySorted(chars:Array<CodePoint>):String {
         var start = pos;
         var remaining = length;
-        var val:Array<CodePoint> = inputCP;
 
         while (pos < remaining) {
-            if (ArrayTools.bsearchInt(cast chars, val[pos], 0, chars.length - 1) >= 0)
+            if (ArrayTools.bsearchInt(cast chars, inputCP[pos], 0, chars.length - 1) >= 0)
                 break;
             pos++;
         }
@@ -188,10 +187,9 @@ import java.util.Locale;
         // &, <, null
         var start = pos;
         var remaining = length;
-        var val:Array<CodePoint> = inputCP;
 
         while (pos < remaining) {
-            var c = val[pos];
+            var c = inputCP[pos];
             if (c == '&'.code || c == '<'.code || c == TokeniserState.nullChar)
                 break;
             pos++;
@@ -205,10 +203,9 @@ import java.util.Locale;
         // '\t', '\n', '\r', '\f', ' ', '/', '>', nullChar
         var start = pos;
         var remaining = length;
-        var val:Array<CodePoint> = inputCP;
 
         while (pos < remaining) {
-            var c:CodePoint = val[pos];
+            var c:CodePoint = inputCP[pos];
             if (c == '\t'.code || c == '\n'.code || c == '\r'.code || c == 0xC/*'\f'.code*/ || c == ' '.code || c == '/'.code || c == '>'.code || c == TokeniserState.nullChar)
                 break;
             pos++;
