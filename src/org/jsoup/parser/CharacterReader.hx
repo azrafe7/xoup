@@ -3,6 +3,7 @@ package org.jsoup.parser;
 import de.polygonal.ds.ArrayList;
 import de.polygonal.ds.NativeArray;
 import de.polygonal.ds.tools.ArrayTools;
+import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities.Character;
 import org.jsoup.parser.tokens.TokeniserState;
@@ -35,7 +36,8 @@ import java.util.Locale;
     function new(input:String) {
         Validate.notNull(input);
 		this.input = input;
-		this.inputCP = [for (u in input.uSplit("")) u.uCodePointAt(0)];
+		this.inputCP = [];
+		for (u in input.uIterator()) inputCP.push(u);
         this.length = this.inputCP.length;
     }
 
@@ -377,6 +379,11 @@ import java.util.Locale;
      * some more duplicates.
      */
     private function cacheString(start:Int, count:Int):String {
+		var sb = new StringBuilder();
+		for (i in start...start + count) sb.uAddChar(inputCP[i]);
+		return sb.toString();
+		
+		/*
         var val = input;
         var cache = stringCache;
 
@@ -406,7 +413,7 @@ import java.util.Locale;
                 cached = val.uSubstr(start, count);
             }
         }
-        return cached;
+        return cached;*/
     }
 
     /**
