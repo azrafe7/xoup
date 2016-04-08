@@ -217,11 +217,21 @@ class StringUtil {
             return "";
         }
 		*/
-		var relUri = new Uri(relUrl);
-        var url = (relUri.getScheme() == "" && (baseUrl == null || baseUrl == "")) ? "" : relUri.resolve(baseUrl).toString();
 		
-		//return the final uri
-        return url;
+
+		var base = new Uri(baseUrl);
+		var rel = new Uri(relUrl);
+		var abs:Uri;
+		if (base == "") {
+			abs = rel;
+		} else {
+			abs = rel.resolve(base);
+		}
+		
+		//NOTE(az): enforce lowercase scheme
+		abs.setScheme(abs.getScheme().toLowerCase());
+		
+		return (abs.getScheme() != "") ? abs.toString() : "";
     }
 	
 	/**
