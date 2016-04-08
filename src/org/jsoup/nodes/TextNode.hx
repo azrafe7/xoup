@@ -134,7 +134,7 @@ class TextNode extends Node {
 
 	//NOTE(az): recheck
     static function stripLeadingWhitespace(text:String):String {
-        return text = ~/^\\s+/.replace(text, "");
+        return text = ~/^\s+/m.replace(text, "");
     }
 
     static public function lastCharIsWhitespace(sb:StringBuilder):Bool {
