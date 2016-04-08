@@ -135,9 +135,9 @@ class Cleaner {
 			var destText = new TextNode(sourceText.getWholeText(), source.getBaseUri());
 			destination.appendChild(destText);
 		} else if (Std.is(source, DataNode) && owner.whitelist.isSafeTag(source.parent().nodeName())) {
-		  var sourceData:DataNode = cast source;
-		  var destData = new DataNode(sourceData.getWholeData(), source.getBaseUri());
-		  destination.appendChild(destData);
+			var sourceData:DataNode = cast source;
+			var destData = new DataNode(sourceData.getWholeData(), source.getBaseUri());
+			destination.appendChild(destData);
 		} else { // else, we don't care about comments, xml proc instructions, etc
 			numDiscarded++;
 		}

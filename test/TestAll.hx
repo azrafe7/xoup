@@ -17,6 +17,7 @@ import org.jsoup.parser.CharacterReaderTest;
 import org.jsoup.parser.TagTest;
 import org.jsoup.parser.TokenQueueTest;
 import org.jsoup.parser.XmlTreeBuilderTest;
+import org.jsoup.safety.CleanerTest;
 import org.jsoup.select.CssTest;
 import org.jsoup.select.ElementsTest;
 import org.jsoup.select.QueryParserTest;
@@ -40,6 +41,7 @@ class TestAll {
 		addNodesTests();
 		addSelectTests();
 		addParserTests();
+		addCleanerTests();
 		
 		addParseTests();
 		
@@ -83,6 +85,10 @@ class TestAll {
 		runner.addCase(new HtmlParserTest());
 	}
 
+	static function addCleanerTests() {
+		runner.addCase(new CleanerTest());
+	}
+	
 	static function addParseTests() {
 		runner.addCase(new ParseTest());
 	}
