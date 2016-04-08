@@ -514,7 +514,7 @@ class Whitelist {
                 if (protocols.exists(tag)) {
                     var attrProts:Map<AttributeKey, Set<Protocol>> = protocols.get(tag);
                     // ok if not defined protocol; otherwise test
-                    return !attrProts.exists(key) || testValidProtocol(el, attr, attrProts.get(key));
+                    return (!attrProts.exists(key) || testValidProtocol(el, attr, attrProts.get(key)));
                 } else { // attribute found, no protocols defined, so OK
                     return true;
                 }
@@ -534,7 +534,7 @@ class Whitelist {
             attr.setValue(value);
         
         for (protocol in protocols) {
-            var prot:String = protocol.toString();
+            var prot:String = protocol/*.toString()*/;
 
             if (prot == ("#")) { // allows anchor links
                 if (isValidAnchor(value)) {
@@ -554,7 +554,7 @@ class Whitelist {
     }
 
     private function isValidAnchor(value:String):Bool {
-        return value.startsWith("#") && !(~/.*\\s.*/.match(value));
+        return value.startsWith("#") && !(~/.*\s.*/.match(value));
     }
 
     function getEnforcedAttributes(tagName:String):Attributes {
@@ -563,7 +563,7 @@ class Whitelist {
         if (enforcedAttributes.exists(tag)) {
             var keyVals:Map<AttributeKey, AttributeValue> = enforcedAttributes.get(tag);
             for (key in keyVals.keys()) {
-                attrs.put(key.toString(), keyVals[key].toString());
+                attrs.put(key/*.toString()*/, keyVals[key]/*.toString()*/);
             }
         }
         return attrs;
@@ -575,9 +575,9 @@ class Whitelist {
 // named types for config. All just hold strings, but here for my sanity.
 
 @:allow(org.jsoup.safety.Whitelist)
-/*static*/ class TagName extends TypedValue {
+/*static*/ abstract TagName(TypedValue) from String to String {
 	function new(value:String) {
-		super(value);
+		this = new TypedValue(value);
 	}
 
 	static function valueOf(value:String):TagName {
@@ -586,9 +586,9 @@ class Whitelist {
 }
 
 @:allow(org.jsoup.safety.Whitelist)
-/*static*/ class AttributeKey extends TypedValue {
+/*static*/ abstract AttributeKey(TypedValue) from String to String {
 	function new(value:String) {
-		super(value);
+		this = new TypedValue(value);
 	}
 
 	static function valueOf(value:String):AttributeKey {
@@ -597,9 +597,9 @@ class Whitelist {
 }
 
 @:allow(org.jsoup.safety.Whitelist)
-/*static*/ class AttributeValue extends TypedValue {
+/*static*/ abstract AttributeValue(TypedValue) from String to String {
 	function new(value:String) {
-		super(value);
+		this = new TypedValue(value);
 	}
 
 	static function valueOf(value:String):AttributeValue {
@@ -608,9 +608,9 @@ class Whitelist {
 }
 
 @:allow(org.jsoup.safety.Whitelist)
-/*static*/ class Protocol extends TypedValue {
+/*static*/ abstract Protocol(TypedValue) from String to String {
 	function new(value:String) {
-		super(value);
+		this = new TypedValue(value);
 	}
 
 	static function valueOf(value:String):Protocol {
@@ -619,12 +619,12 @@ class Whitelist {
 }
 
 @:allow(org.jsoup.safety.Whitelist)
-/*abstract static*/ class TypedValue {
-	private var value:String;
+/*abstract static*/ abstract TypedValue(String) from String to String {
+	//private var value:String;
 
-	function new(value:String) {
+	public function new(value:String) {
 		Validate.notNull(value);
-		this.value = value;
+		this = value;
 	}
 
 	//@Override
@@ -650,7 +650,7 @@ class Whitelist {
 	}*/
 
 	//@Override
-	public function toString():String {
+	/*public function toString():String {
 		return value;
-	}
+	}*/
 }
