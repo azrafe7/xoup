@@ -23,9 +23,12 @@ import org.jsoup.select.ElementsTest;
 import org.jsoup.select.QueryParserTest;
 import org.jsoup.select.SelectorTest;
 import org.jsoup.parser.HtmlParserTest;
+
+import org.jsoup.examples.HtmlToPlainText;
+import org.jsoup.examples.ListLinks;
+
 import utest.TestFixture;
 import utest.ui.text.PrintReport;
-
 import utest.Runner;
 import utest.ui.Report;
 
@@ -37,6 +40,8 @@ class TestAll {
 	
 	static public function main():Void {
 		
+		// tests
+		
 		addHelperTests();
 		addNodesTests();
 		addSelectTests();
@@ -47,6 +52,18 @@ class TestAll {
 		
 		var report = new PrintReport(runner);
 		runner.run();
+		
+		
+		// examples
+		/*
+		var html = ParseTest.getFile("htmltests/google-ipod.html");
+		var baseUri = "https://www.google.com/search?q=ipod";
+		
+		var selector = "table[id=mbEnd]";
+		HtmlToPlainText.process(html, baseUri, selector);
+		
+		ListLinks.process(html, baseUri);
+		*/
 		
 	#if flash
 		flash.system.System.exit(1);
