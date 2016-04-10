@@ -6,8 +6,8 @@ import org.jsoup.Exceptions.IllegalArgumentException;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.*;
-import org.jsoup.parser.tokens.Token;
-import org.jsoup.parser.tokens.TokeniserState;
+import org.jsoup.parser.Token;
+import org.jsoup.parser.TokeniserState;
 import org.jsoup.select.Elements;
 
 /*mport java.util.ArrayList;

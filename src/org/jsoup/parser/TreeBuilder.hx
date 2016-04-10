@@ -5,8 +5,8 @@ import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.parser.tokens.Token;
-import org.jsoup.parser.tokens.Tokeniser;
+import org.jsoup.parser.Token;
+import org.jsoup.parser.Tokeniser;
 
 //import java.util.ArrayList;
 

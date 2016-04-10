@@ -4,8 +4,8 @@ import de.polygonal.ds.List;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.*;
 import org.jsoup.nodes.Document.Syntax;
-import org.jsoup.parser.tokens.Token;
-import org.jsoup.parser.tokens.Token.TokenType;
+import org.jsoup.parser.Token;
+import org.jsoup.parser.Token.TokenType;
 
 using StringTools;
 

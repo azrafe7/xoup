@@ -1,4 +1,5 @@
 package org.jsoup.parser;
+import org.jsoup.parser.Token;
 
 import de.polygonal.ds.List;
 import de.polygonal.ds.ArrayList;
@@ -6,7 +7,7 @@ import haxe.Timer;
 import org.jsoup.helper.StringBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.parser.tokens.Token.TokenDoctype;
+import org.jsoup.parser.Token.TokenDoctype;
 import org.jsoup.TextUtil;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.integration.ParseTest;

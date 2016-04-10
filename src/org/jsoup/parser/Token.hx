@@ -1,4 +1,4 @@
-package org.jsoup.parser.tokens;
+package org.jsoup.parser;
 
 import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
@@ -9,7 +9,7 @@ import org.jsoup.nodes.BooleanAttribute;
 /**
  * Parse tokens for the Tokeniser.
  */
-//NOTE(az): brought internal classes out, move in its own package to avoid conflicts
+//NOTE(az): brought internal classes out
 @:allow(org.jsoup.parser)
 /*abstract*/ class Token {
     var type:TokenType;

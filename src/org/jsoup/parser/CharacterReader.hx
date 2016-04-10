@@ -6,7 +6,7 @@ import de.polygonal.ds.tools.ArrayTools;
 import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities.Character;
-import org.jsoup.parser.tokens.TokeniserState;
+import org.jsoup.parser.TokeniserState;
 import unifill.CodePoint;
 
 using unifill.Unifill;

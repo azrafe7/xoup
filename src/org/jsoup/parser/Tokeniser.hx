@@ -1,9 +1,9 @@
-package org.jsoup.parser.tokens;
+package org.jsoup.parser;
 
 import org.jsoup.helper.StringBuilder;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Entities;
-import org.jsoup.parser.tokens.Token;
+import org.jsoup.parser.Token;
 import unifill.CodePoint;
 import unifill.Unifill;
 

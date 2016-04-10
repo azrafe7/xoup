@@ -7,8 +7,8 @@ import org.jsoup.nodes.*;
 import org.jsoup.nodes.Document.QuirksMode;
 import org.jsoup.nodes.Entities.Character;
 import org.jsoup.parser.HtmlTreeBuilder;
-import org.jsoup.parser.tokens.Token;
-import org.jsoup.parser.tokens.TokeniserState;
+import org.jsoup.parser.Token;
+import org.jsoup.parser.TokeniserState;
 import unifill.CodePoint;
 
 using unifill.Unifill;

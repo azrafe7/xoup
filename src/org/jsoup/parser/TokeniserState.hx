@@ -1,6 +1,7 @@
-package org.jsoup.parser.tokens;
+package org.jsoup.parser;
 
-import org.jsoup.parser.tokens.Token;
+import org.jsoup.parser.Token;
+import org.jsoup.parser.Tokeniser;
 import unifill.CodePoint;
 
 using org.jsoup.InternalTools;
