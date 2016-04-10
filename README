@@ -1,3 +1,11 @@
+hxSoup
+-------
+
+This is a WIP port of jsoup (http://jsoup.org/http://jsoup.org/). Should be already functional by now, but needs some love (improve perf, more idiomatic haxe, etc.).
+
+
+ORIGINAL README:
+
 jsoup: Java HTML parser that makes sense of real-world HTML soup.
 
 jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods.
